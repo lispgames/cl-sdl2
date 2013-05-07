@@ -6,6 +6,13 @@
   :author "Chip Collier <photex@lofidelitygames.com>"
   :license "MIT"
   :depends-on (:cffi :cffi-libffi :c2ffi-cffi)
-  :components ((:file "src/package")
+  :components ((c2ffi-cffi:spec "sdl2"
+                                :exclude-sources ("/usr/local/lib/clang/.*"
+                                                  "/usr/include/(?!stdint.h).*")
+                                :exclude-definitions ("SDL_Log"
+                                                      "SDL_LogMessageV"
+                                                      "SDL_vsnprintf"))
+               (c2ffi-cffi:spec "macros")
+               (:file "src/package")
                (:file "src/sdl2")))
 
