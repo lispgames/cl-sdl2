@@ -12,4 +12,5 @@
 (use-foreign-library libsdl2)
 
 (load "sdl2-cffi.lisp")
+(load "sdl2-macros.lisp")
 
