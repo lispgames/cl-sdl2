@@ -8,14 +8,22 @@
   :description "Bindings for SDL2 using c2ffi."
   :author "Chip Collier <photex@lofidelitygames.com>"
   :license "MIT"
+
   :depends-on (:cffi :cffi-libffi :c2ffi-cffi)
-  :components ((c2ffi-cffi:spec "sdl2-cffi"
-                                :exclude-sources ("/usr/local/lib/clang/.*"
-                                                  "/usr/include/(?!stdint.h).*")
-                                :exclude-definitions ("SDL_Log"
-                                                      "SDL_LogMessageV"
-                                                      "SDL_vsnprintf"))
-               (c2ffi-cffi:spec "sdl2-macros")
-               (:file "src/package")
-               (:file "src/sdl2")))
+  :pathname "src"
+  :serial t
+
+  :components
+  ((:file "package")
+   (:file "library")
+   (c2ffi-cffi:spec "sdl2-cffi"
+                    :package :sdl2-ffi
+                    :exclude-sources ("/usr/local/lib/clang/.*"
+                                      "/usr/include/(?!stdint.h|bits/types.h|sys/types.h).*")
+                    :exclude-definitions ("SDL_Log"
+                                          "SDL_LogMessageV"
+                                          "SDL_vsnprintf"))
+   (c2ffi-cffi:spec "sdl2-macros"
+                    :package :sdl2-ffi)
+   (:file "sdl2")))
 
