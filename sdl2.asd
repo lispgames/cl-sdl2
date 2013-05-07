@@ -1,5 +1,8 @@
 ;;;; sdl2.asd
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (asdf:load-system :c2ffi-cffi))
+
 (asdf:defsystem #:sdl2
   :serial t
   :description "Bindings for SDL2 using c2ffi."
