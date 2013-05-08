@@ -21,6 +21,9 @@
            #:gl-set-attr
            #:gl-set-attrs
 
+           ;; Utility
+           #:sdl-ptr
+
            ;; Conditions
            #:sdl-error))
 

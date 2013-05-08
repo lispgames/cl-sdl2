@@ -23,17 +23,25 @@
     (:centered (windowpos-centered))
     (t n)))
 
+(defstruct (sdl-window (:include sdl-wrapped-ptr)
+                       (:constructor %make-sdl-window)))
+
 (defun create-window (&key
-                        (title "SDL2 Window")
-                        (x :centered) (y :centered)
-                        (w 800) (h 600) flags)
+                      (title "SDL2 Window")
+                      (x :centered) (y :centered)
+                      (w 800) (h 600) flags)
   (let ((window-flags (foreign-bitfield-value 'sdl-window-flags flags))
         (x (windowpos-from-coord x))
         (y (windowpos-from-coord y)))
-    (check-null (sdl2-ffi:sdl-createwindow title x y w h window-flags))))
+    (sdl-collect
+     (%make-sdl-window
+      :ptr (check-null (sdl2-ffi:sdl-createwindow title x y w h window-flags)))
+     #'sdl2-ffi:sdl-destroywindow)))
 
 (defun destroy-window (win)
-  (sdl2-ffi:sdl-destroywindow win))
+  (sdl-cancel-collect win)
+  (sdl2-ffi:sdl-destroywindow (sdl-ptr win))
+  (sdl-invalidate win))
 
 (defun enable-screensaver ()
   (sdl2-ffi:sdl-enablescreensaver))
@@ -41,17 +49,26 @@
 (defun disable-screensaver ()
   (sdl2-ffi:sdl-disablescreensaver))
 
+(defstruct (gl-context (:include sdl-wrapped-ptr)
+                       (:constructor %make-gl-context)))
+
 (defun gl-create-context (win)
-  (check-null (sdl2-ffi:sdl-gl-createcontext win)))
+  (sdl-collect
+   (%make-gl-context
+    :ptr (check-null (sdl2-ffi:sdl-gl-createcontext (sdl-ptr win))))
+   #'sdl2-ffi:sdl-gl-deletecontext))
 
 (defun gl-delete-context (gl-context)
-  (sdl2-ffi:sdl-gl-deletecontext gl-context))
+  (sdl-cancel-collect gl-context)
+  (sdl2-ffi:sdl-gl-deletecontext (sdl-ptr gl-context))
+  (sdl-invalidate gl-context))
 
 (defun gl-extension-supported-p (extension)
   (sdl2-ffi:sdl-gl-extensionsupported extension))
 
 (defun gl-make-current (win gl-context)
-  (check-rc (sdl2-ffi:sdl-gl-makecurrent win gl-context)))
+  (check-rc (sdl2-ffi:sdl-gl-makecurrent (sdl-ptr win)
+                                         (sdl-ptr gl-context))))
 
 (defun gl-get-swap-interval ()
   (let ((rc (sdl2-ffi:sdl-gl-getswapinterval)))
@@ -63,7 +80,7 @@
 
 (defun gl-set-swapinterval (interval)
   "0 for immediate updates, 1 for updates synchronized with the vertical retrace"
-  (check-rc sdl2-ffi:sdl-gl-setswapinterval interval))
+  (check-rc (sdl2-ffi:sdl-gl-setswapinterval interval)))
 
 (defun gl-swap-window (win)
   (sdl2-ffi:sdl-gl-swapwindow win))
