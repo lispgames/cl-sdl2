@@ -76,7 +76,7 @@
     (mem-ref value :int)))
 
 (defun gl-get-attrs (&rest attrs)
-  )
+  (mapcan #'list attrs (mapcar #'gl-get-attr attrs)))
 
 (defun gl-set-attr (attr value)
   (check-rc (sdl2-ffi:sdl-gl-setattribute
@@ -84,4 +84,5 @@
              value)))
 
 (defun gl-set-attrs (&rest attr-plist)
-  )
+  (loop for (attr value) on attr-plist by #'cddr
+     do (gl-set-attr attr value)))
