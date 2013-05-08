@@ -1,7 +1,7 @@
 ;;;; package.lisp
 
 (defpackage #:sdl2
-  (:use #:cl #:cffi)
+  (:use #:cl #:alexandria #:cffi)
   (:export :sys-video
            :sys-audio
            :sys-timer

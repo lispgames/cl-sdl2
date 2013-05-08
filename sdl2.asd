@@ -9,7 +9,7 @@
   :author "Chip Collier <photex@lofidelitygames.com>, Ryan Pavlik <rpavlik@gmail.com>"
   :license "MIT"
 
-  :depends-on (:cffi :cffi-libffi :c2ffi-cffi)
+  :depends-on (:alexandria :cffi :cffi-libffi :c2ffi-cffi :cl-ppcre)
   :pathname "src"
   :serial t
 
@@ -25,6 +25,7 @@
                                           "SDL_vsnprintf"))
    (c2ffi-cffi:spec "sdl2-macros"
                     :package :sdl2-ffi)
+   (:file "util")
    (:file "sdl2")
    (:file "window")))
 
