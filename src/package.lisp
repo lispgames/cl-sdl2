@@ -10,6 +10,8 @@
            :noparachute
            :everything
            :init
-           :quit))
+           :quit
+           :create-window
+           :destroy-window))
 
 (defpackage #:sdl2-ffi)

@@ -6,7 +6,7 @@
 (asdf:defsystem #:sdl2
   :serial t
   :description "Bindings for SDL2 using c2ffi."
-  :author "Chip Collier <photex@lofidelitygames.com>"
+  :author "Chip Collier <photex@lofidelitygames.com>, Ryan Pavlik <rpavlik@gmail.com>"
   :license "MIT"
 
   :depends-on (:cffi :cffi-libffi :c2ffi-cffi)
@@ -25,5 +25,6 @@
                                           "SDL_vsnprintf"))
    (c2ffi-cffi:spec "sdl2-macros"
                     :package :sdl2-ffi)
-   (:file "sdl2")))
+   (:file "sdl2")
+   (:file "window")))
 
