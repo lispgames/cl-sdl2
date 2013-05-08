@@ -27,6 +27,13 @@
        (when (< ,rc 0)
          (error 'sdl-error :rc ,rc :string (sdl2-ffi:sdl-geterror))))))
 
+(defmacro check-null (form)
+  (with-gensyms (ptr)
+    `(let ((,ptr ,form))
+       (if (null-pointer-p ,ptr)
+           (error 'sdl-error :rc ,ptr :string (sdl2-ffi:sdl-geterror))
+           ,ptr))))
+
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
   (let ((init-flags (foreign-bitfield-value 'sdl-init-flags sdl-init-flags)))

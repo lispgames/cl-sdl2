@@ -26,7 +26,8 @@
   (let ((window-flags (foreign-bitfield-value 'sdl-window-flags flags))
         (x (windowpos-from-coord x))
         (y (windowpos-from-coord y)))
-    (sdl2-ffi:sdl-createwindow title x y w h window-flags)))
+    (check-null (sdl2-ffi:sdl-createwindow title x y w h window-flags))))
 
 (defun destroy-window (win)
   (sdl2-ffi:sdl-destroywindow win))
+
