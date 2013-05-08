@@ -27,5 +27,5 @@
                     :package :sdl2-ffi)
    (:file "util")
    (:file "sdl2")
-   (:file "window")))
+   (:file "video")))
 
