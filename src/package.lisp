@@ -7,8 +7,24 @@
            #:quit
            #:create-window
            #:destroy-window
+           #:hide-window
+           #:show-window
+           #:maximize-window
+           #:minimize-window
+           #:raise-window
+           #:restore-window
+           #:update-window
+           #:set-window-title
+           #:get-window-title
+           #:set-window-fullscreen
+           #:set-window-size
+           #:get-window-size
+           #:set-window-position
+           #:get-window-position
+           #:get-window-flags
            #:enable-screensaver
            #:disable-screensaver
+           #:screensaver-enabled-p
            #:gl-create-context
            #:gl-delete-context
            #:gl-extension-supported-p

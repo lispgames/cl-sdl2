@@ -43,11 +43,69 @@
   (sdl2-ffi:sdl-destroywindow (sdl-ptr win))
   (sdl-invalidate win))
 
+(defun hide-window (win)
+  (sdl2-ffi:sdl-hidewindow (sdl-ptr win)))
+
+(defun show-window (win)
+  (sdl2-ffi:sdl-showwindow (sdl-ptr win)))
+
+(defun maximize-window (win)
+  (sdl2-ffi:sdl-maximizewindow (sdl-ptr win)))
+
+(defun minimize-window (win)
+  (sdl2-ffi:sdl-minimizewindow (sdl-ptr win)))
+
+(defun raise-window (win)
+  (sdl2-ffi:sdl-raisewindow (sdl-ptr win)))
+
+(defun restore-window (win)
+  (sdl2-ffi:sdl-restorewindow (sdl-ptr win)))
+
+(defun update-window (win)
+  (check-rc (sdl2-ffi:sdl-updatewindowsurface (sdl-ptr win))))
+
+(defun set-window-title (win title)
+  (sdl2-ffi:sdl-setwindowtitle (sdl-ptr win) title))
+
+(defun set-window-fullscreen (win fullscreen)
+  (let ((fs (if fullscreen 1 0)))
+    (check-rc (sdl2-ffi:sdl-setwindowfullscreen (sdl-ptr fs)))))
+
+(defun set-window-size (win w h)
+  (sdl2-ffi:sdl-setwindowsize (sdl-ptr win) w h))
+
+(defun set-window-position (win x y)
+  (sdl2-ffi:sdl-setwindowposition (sdl-ptr win)
+                                  (windowpos-from-coord x)
+                                  (windowpos-from-coord y)))
+
+(defun get-window-title (win)
+  (sdl2-ffi:sdl-getwindowtitle (sdl-ptr win)))
+
+(defun get-window-position (win)
+  (with-foreign-objects ((xpos :int)
+                         (ypos :int))
+    (sdl2-ffi:sdl-getwindowposition (sdl-ptr win) xpos ypos)
+    (:x (mem-ref xpos :int) :y (mem-ref ypos :int))))
+
+(defun get-window-size (win)
+  (with-foreign-objects ((width :int)
+                         (height :int))
+    (sdl2-ffi:sdl-getwindowsize (sdl-ptr win) width height)
+    (:w (mem-ref width :int) :h (mem-ref height :int))))
+
+(defun get-window-flags (win)
+  (let ((flags (sdl2-ffi:sdl-getwindowflags (sdl-ptr win))))
+    (foreign-bitfield-symbols 'sdl-window-flags flags)))
+
 (defun enable-screensaver ()
   (sdl2-ffi:sdl-enablescreensaver))
 
 (defun disable-screensaver ()
   (sdl2-ffi:sdl-disablescreensaver))
+
+(defun screensaver-enabled-p ()
+  (sdl2-ffi:sdl-isscreensaverenabled))
 
 (defstruct (gl-context (:include sdl-wrapped-ptr)
                        (:constructor %make-gl-context)))
@@ -83,7 +141,7 @@
   (check-rc (sdl2-ffi:sdl-gl-setswapinterval interval)))
 
 (defun gl-swap-window (win)
-  (sdl2-ffi:sdl-gl-swapwindow win))
+  (sdl2-ffi:sdl-gl-swapwindow (sdl-ptr win)))
 
 (defun gl-get-attr (attr)
   (with-foreign-object (value :int)
