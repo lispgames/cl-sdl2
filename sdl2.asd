@@ -9,7 +9,8 @@
   :author "Chip Collier <photex@lofidelitygames.com>, Ryan Pavlik <rpavlik@gmail.com>"
   :license "MIT"
 
-  :depends-on (:alexandria :cffi :cffi-libffi :c2ffi-cffi :cl-ppcre)
+  :depends-on (:alexandria :cffi :cffi-libffi :c2ffi-cffi :cl-ppcre
+               :trivial-garbage)
   :pathname "src"
   :serial t
 
