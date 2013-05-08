@@ -22,7 +22,7 @@
                         (apply #'logior flags)
                         everything)))
     (let ((rc (sdl2-ffi::sdl-init init-flags)))
-      (when rc
+      (when (< rc 0)
         (error (sdl2-ffi::sdl-geterror))))))
 
 (defun quit ()
