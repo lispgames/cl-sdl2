@@ -12,24 +12,27 @@ does not itself."
                      f))
                fields)))
 
+(defun enum-keywords-and-values (enum-name &optional regexp (replace ""))
+  (let* ((parsed-type (cffi::parse-type enum-name))
+         (enum-type (cffi::name
+                     (if (typep parsed-type 'cffi::foreign-enum)
+                         parsed-type
+                         (cffi::actual-type (cffi::follow-typedefs parsed-type)))))
+         (matcher (when regexp (ppcre:create-scanner regexp)))
+         (keywords (foreign-enum-keyword-list enum-type)))
+    (loop for kw in keywords collect
+          `(,(make-keyword (ppcre:regex-replace-all matcher (string kw)
+                                                    replace))
+            ,(foreign-enum-value enum-type kw)))))
+
 (defmacro defbitfield-from-cenum ((bitfield-name enum-name
                                    &optional regexp (replace ""))
                                   &body additional-values)
   "Note this relies on some CFFI internals, but CFFI is otherwise
 broken on typedef'd enums"
-  (let* ((parsed-type (cffi::parse-type enum-name))
-         (enum-type (cffi::name
-                     (if (typep parsed-type 'cffi::foreign-enum)
-                         parsed-type
-                         (cffi::actual-type parsed-type))))
-         (matcher (when regexp (ppcre:create-scanner regexp)))
-         (keywords (foreign-enum-keyword-list enum-type)))
-    `(defbitfield* ,bitfield-name
-       ,@(loop for kw in keywords collect
-               `(,(make-keyword (ppcre:regex-replace-all matcher (string kw)
-                                                         replace))
-                 ,(foreign-enum-value enum-type kw)))
-       ,@additional-values)))
+  `(defbitfield* ,bitfield-name
+     ,@(enum-keywords-and-values enum-name regexp replace)
+     ,@additional-values))
 
 (defun struct-slots (struct-name)
   (let ((slots (cffi::slots (cffi::follow-typedefs (cffi::parse-type struct-name)))))
