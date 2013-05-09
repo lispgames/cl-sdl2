@@ -28,5 +28,8 @@
                     :package :sdl2-ffi)
    (:file "util")
    (:file "sdl2")
-   (:file "video")))
+   (:file "video")
+   (:file "keyboard-keycodes")
+   (:file "keyboard-scancodes")
+   (:file "keyboard")))
 
