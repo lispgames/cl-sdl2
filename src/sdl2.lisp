@@ -47,6 +47,15 @@
   (trivial-garbage:cancel-finalization wrapped-ptr)
   wrapped-ptr)
 
+(defmacro defwrapper (wrapped-struct (&optional ffi-type)
+                      &body more-slots)
+  `(progn
+     (defstruct (,wrapped-struct (:include sdl-wrapped-ptr)
+                                 (:constructor ,(symbolicate "%MAKE-" wrapped-struct)))
+       ,@more-slots)
+     ,@(when ffi-type
+         `((make-struct-accessors ,ffi-type ,wrapped-struct)))))
+
 (defbitfield* sdl-init-flags
   (:timer          sdl2-ffi:+sdl-init-timer+)
   (:audio          sdl2-ffi:+sdl-init-audio+)

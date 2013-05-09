@@ -23,8 +23,7 @@
     (:centered (windowpos-centered))
     (t n)))
 
-(defstruct (sdl-window (:include sdl-wrapped-ptr)
-                       (:constructor %make-sdl-window)))
+(defwrapper sdl-window ())
 
 (defun create-window (&key
                       (title "SDL2 Window")
@@ -92,7 +91,7 @@
   (with-foreign-objects ((width :int)
                          (height :int))
     (sdl2-ffi:sdl-getwindowsize (sdl-ptr win) width height)
-    (:w (mem-ref width :int) :h (mem-ref height :int))))
+    (values (mem-ref width :int) (mem-ref height :int))))
 
 (defun get-window-flags (win)
   (let ((flags (sdl2-ffi:sdl-getwindowflags (sdl-ptr win))))
@@ -107,8 +106,7 @@
 (defun screensaver-enabled-p ()
   (sdl2-ffi:sdl-isscreensaverenabled))
 
-(defstruct (gl-context (:include sdl-wrapped-ptr)
-                       (:constructor %make-gl-context)))
+(defwrapper gl-context ())
 
 (defun gl-create-context (win)
   (sdl-collect

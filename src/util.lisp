@@ -36,21 +36,20 @@ broken on typedef'd enums"
     (loop for slot being each hash-key in slots
           collect slot)))
 
-(defmacro make-struct-accessors (struct-name)
+(defmacro make-struct-accessors (struct-name wrapper-name)
   (let ((slots (struct-slots struct-name)))
     `(progn
        ,@(loop for slot in slots
-               as struct-var = (symbolicate struct-name)
                as slot-accessor = (symbolicate struct-name "-" slot)
                collect
                `(progn
                   (declaim (inline ,slot-accessor (setf ,slot-accessor)))
-                  (defun ,slot-accessor (,struct-var)
-                    (cffi:foreign-slot-value ,struct-var
+                  (defun ,slot-accessor (,wrapper-name)
+                    (cffi:foreign-slot-value (sdl-ptr ,wrapper-name)
                                              ',struct-name
                                              ',slot))
-                  (defun (setf ,slot-accessor) (val ,struct-var)
-                    (setf (cffi:foreign-slot-value ,struct-var
+                  (defun (setf ,slot-accessor) (val ,wrapper-name)
+                    (setf (cffi:foreign-slot-value (sdl-ptr ,wrapper-name)
                                                    ',struct-name
                                                    ',slot)
                           val)))))))
