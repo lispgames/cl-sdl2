@@ -31,3 +31,26 @@ broken on typedef'd enums"
                  ,(foreign-enum-value enum-type kw)))
        ,@additional-values)))
 
+(defun struct-slots (struct-name)
+  (let ((slots (cffi::slots (cffi::follow-typedefs (cffi::parse-type struct-name)))))
+    (loop for slot being each hash-key in slots
+          collect slot)))
+
+(defmacro make-struct-accessors (struct-name)
+  (let ((slots (struct-slots struct-name)))
+    `(progn
+       ,@(loop for slot in slots
+               as struct-var = (symbolicate struct-name)
+               as slot-accessor = (symbolicate struct-name "-" slot)
+               collect
+               `(progn
+                  (declaim (inline ,slot-accessor (setf ,slot-accessor)))
+                  (defun ,slot-accessor (,struct-var)
+                    (cffi:foreign-slot-value ,struct-var
+                                             ',struct-name
+                                             ',slot))
+                  (defun (setf ,slot-accessor) (val ,struct-var)
+                    (setf (cffi:foreign-slot-value ,struct-var
+                                                   ',struct-name
+                                                   ',slot)
+                          val)))))))
