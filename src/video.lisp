@@ -67,9 +67,9 @@
 (defun set-window-title (win title)
   (sdl2-ffi:sdl-setwindowtitle (sdl-ptr win) title))
 
-(defun set-window-fullscreen (win fullscreen)
-  (let ((fs (if fullscreen 1 0)))
-    (check-rc (sdl2-ffi:sdl-setwindowfullscreen (sdl-ptr fs)))))
+(defun set-window-fullscreen (win fullscreen-p)
+  (let ((fs (if fullscreen-p 1 0)))
+    (check-rc (sdl2-ffi:sdl-setwindowfullscreen (sdl-ptr win) fs))))
 
 (defun set-window-size (win w h)
   (sdl2-ffi:sdl-setwindowsize (sdl-ptr win) w h))
@@ -86,7 +86,7 @@
   (with-foreign-objects ((xpos :int)
                          (ypos :int))
     (sdl2-ffi:sdl-getwindowposition (sdl-ptr win) xpos ypos)
-    (:x (mem-ref xpos :int) :y (mem-ref ypos :int))))
+    (values (mem-ref xpos :int) (mem-ref ypos :int))))
 
 (defun get-window-size (win)
   (with-foreign-objects ((width :int)
