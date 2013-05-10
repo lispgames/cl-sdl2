@@ -1,5 +1,17 @@
 (in-package :sdl2)
 
+(defmacro defcenum* (name-and-options &body fields)
+  "A bit of a hack to evaluate CONSTANTP values because DEFBITFIELD
+does not itself."
+  `(cffi:defcenum ,name-and-options
+            ,@(mapcar (lambda (f)
+                        (if (listp f)
+                            `(,(car f) ,(if (constantp (cadr f))
+                                            (eval (cadr f))
+                                            (cadr f)))
+                            f))
+                      fields)))
+
 (defmacro defbitfield* (name-and-options &body fields)
   "A bit of a hack to evaluate CONSTANTP values because DEFBITFIELD
 does not itself."
@@ -26,11 +38,21 @@ does not itself."
             ,(foreign-enum-value enum-type kw)))))
 
 (defmacro defbitfield-from-cenum ((bitfield-name enum-name
-                                   &optional regexp (replace ""))
+                                                 &optional regexp (replace ""))
                                   &body additional-values)
   "Note this relies on some CFFI internals, but CFFI is otherwise
 broken on typedef'd enums"
   `(defbitfield* ,bitfield-name
+     ,@(enum-keywords-and-values enum-name regexp replace)
+     ,@additional-values))
+
+(defmacro defsanecenum-from-cenum ((sanecenum-name enum-name
+                                                   &optional regexp (replace ""))
+                                   &body additional-values)
+  "Playing with fire here, but cenums require an enormous amount of code just to get
+at values and keywords. Making a bitfield isn't suitable for some cases because you
+don't want *all* of the keywords a value could contain."
+  `(defcenum* ,sanecenum-name
      ,@(enum-keywords-and-values enum-name regexp replace)
      ,@additional-values))
 

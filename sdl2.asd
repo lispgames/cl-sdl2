@@ -29,6 +29,7 @@
    (:file "util")
    (:file "sdl2")
    (:file "video")
+   (:file "events")
    (:file "keyboard-keycodes")
    (:file "keyboard-scancodes")
    (:file "keyboard")))
