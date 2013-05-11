@@ -38,6 +38,12 @@
            #:gl-get-attrs
            #:gl-set-attr
            #:gl-set-attrs
+           #:get-event-type
+           #:next-event
+           #:poll-event
+           #:wait-event
+           #:wait-event-timeout
+           #:pump-events
 
            ;; Utility
            #:sdl-ptr
