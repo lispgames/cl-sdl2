@@ -1,8 +1,6 @@
 (in-package #:sdl2)
 
-(defsanecenum-from-cenum (event-type
-                          sdl2-ffi:sdl-eventtype
-                          "SDL-"))
+(defsanecenum-from-cenum (event-type sdl2-ffi:sdl-eventtype "SDL-"))
 
 (defun add-event-struct-slots (event-slots)
   (let ((hash-table (make-hash-table)))
@@ -10,30 +8,74 @@
        do (setf (gethash event-type hash-table) slot-name))
     hash-table))
 
-(defvar *event-struct-slots*
+(defvar *event-struct-data*
   (add-event-struct-slots
-   (list (list :controlleraxismotion 'sdl2-ffi::caxis)
-         (list :controllerbuttonup 'sdl2-ffi::cbutton)
-         (list :controllerbuttondown 'sdl2-ffi::cbutton)
-         (list :controllerdeviceremoved 'sdl2-ffi::cdevice)
-         (list :controllerdeviceremapped 'sdl2-ffi::cdevice)
-         (list :controllerdeviceadded 'sdl2-ffi::cdevice)
-         (list :joyaxismotion 'sdl2-ffi::jaxis)
-         (list :joyballmotion 'sdl2-ffi::jball)
-         (list :joyhatmotion 'sdl2-ffi::jhat)
-         (list :joybuttonup 'sdl2-ffi::jbutton)
-         (list :joybuttondown 'sdl2-ffi::jbutton)
-         (list :joydeviceadded 'sdl2-ffi::jdevice)
-         (list :joydeviceremoved 'sdl2-ffi::jdevice)
-         (list :keyup 'sdl2-ffi::key)
-         (list :keydown 'sdl2-ffi::key)
-         (list :mousewheel 'sdl2-ffi::wheel)
-         (list :mousebuttonup 'sdl2-ffi::button)
-         (list :mousebuttondown 'sdl2-ffi::button)
-         (list :mousemotion 'sdl2-ffi::motion)
-         (list :userevent 'sdl2-ffi::user)
-         (list :windowevent 'sdl2-ffi::window)
-         (list :quit 'sdl2-ffi::quit))))
+   (list (list :controlleraxismotion
+               (list 'sdl2-ffi::caxis
+                     'sdl2-ffi::sdl-controlleraxisevent))
+         (list :controllerbuttonup
+               (list 'sdl2-ffi::cbutton
+                     'sdl2-ffi::sdl-controllerbuttonevent))
+         (list :controllerbuttondown
+               (list 'sdl2-ffi::cbutton
+                     'sdl2-ffi::sdl-controllerbuttonevent))
+         (list :controllerdeviceremoved
+               (list 'sdl2-ffi::cdevice
+                     'sdl2-ffi::sdl-controllerdeviceevent))
+         (list :controllerdeviceremapped
+               (list 'sdl2-ffi::cdevice
+                     'sdl2-ffi::sdl-controllerdeviceevent))
+         (list :controllerdeviceadded
+               (list 'sdl2-ffi::cdevice
+                     'sdl2-ffi::sdl-controllerdeviceevent))
+         (list :joyaxismotion
+               (list 'sdl2-ffi::jaxis
+                     'sdl2-ffi::sdl-joyaxisevent))
+         (list :joyballmotion
+               (list 'sdl2-ffi::jball
+                     'sdl2-ffi::sdl-joyballevent))
+         (list :joyhatmotion
+               (list 'sdl2-ffi::jhat
+                     'sdl2-ffi::sdl-joyhatevent))
+         (list :joybuttonup
+               (list 'sdl2-ffi::jbutton
+                     'sdl2-ffi::sdl-joybuttonevent))
+         (list :joybuttondown
+               (list 'sdl2-ffi::jbutton
+                     'sdl2-ffi::sdl-joybuttonevent))
+         (list :joydeviceadded
+               (list 'sdl2-ffi::jdevice
+                     'sdl2-ffi::sdl-joydeviceevent))
+         (list :joydeviceremoved
+               (list 'sdl2-ffi::jdevice
+                     'sdl2-ffi::sdl-joydeviceevent))
+         (list :keyup
+               (list 'sdl2-ffi::key
+                     'sdl2-ffi::sdl-keyboardevent))
+         (list :keydown
+               (list 'sdl2-ffi::key
+                     'sdl2-ffi::sdl-keyboardevent))
+         (list :mousewheel
+               (list 'sdl2-ffi::wheel
+                     'sdl2-ffi::sdl-mousewheelevent))
+         (list :mousebuttonup
+               (list 'sdl2-ffi::button
+                     'sdl2-ffi::sdl-mousebuttonevent))
+         (list :mousebuttondown
+               (list 'sdl2-ffi::button
+                     'sdl2-ffi::sdl-mousebuttonevent))
+         (list :mousemotion
+               (list 'sdl2-ffi::motion
+                     'sdl2-ffi::sdl-mousemotionevent))
+         (list :userevent
+               (list 'sdl2-ffi::user
+                     'sdl2-ffi::sdl-userevent))
+         (list :windowevent
+               (list 'sdl2-ffi::window
+                     'sdl2-ffi::sdl-windowevent))
+         (list :quit
+               (list 'sdl2-ffi::quit
+                     'sdl2-ffi::sdl-quitevent)))))
 
 (defun new-event (&optional (event-type :firstevent))
   (let ((enum-value (foreign-enum-value 'event-type event-type))
@@ -48,21 +90,19 @@
   (let ((enum-value (foreign-slot-value event-ptr 'sdl2-ffi:sdl-event 'type)))
     (foreign-enum-keyword 'event-type enum-value)))
 
-(defun get-event-struct (event-ptr)
-  (let ((event-type (get-event-type event-ptr)))
-    (foreign-slot-value event-ptr 'sdl2-ffi:sdl-event (gethash event-type *event-struct-slots*))))
+(defun get-event-struct-data (event-ptr)
+  (let* ((event-type (get-event-type event-ptr)))
+    (gethash event-type *event-struct-data*)))
 
 (defun get-event-data (event-ptr)
-  (let* ((event-struct (get-event-struct event-ptr))
-         (event-struct-type (intern
-                             (format nil "SDL-~a" (get-event-type event-ptr))
-                             'sdl2-ffi))
-         (slot-names (foreign-slot-names event-struct-type)))
-    (mapcan #'list
-            (mapcar #'alexandria:make-keyword slot-names)
-            (loop for slot-name in slot-names
-               collect
-                 (foreign-slot-value event-struct event-struct-type slot-name)))))
+  (let* ((event-struct-type (second (get-event-struct-data event-ptr))))
+    (when event-struct-type
+      (let ((slot-names (foreign-slot-names event-struct-type)))
+        (mapcan #'list
+                (mapcar #'alexandria:make-keyword slot-names)
+                (loop for slot-name in slot-names
+                   collect
+                     (foreign-slot-value event-ptr event-struct-type slot-name)))))))
 
 (defun next-event (event-ptr &optional (method :poll) (timeout 1))
   "Method can be either :poll, :wait, or :wait-with-timeout"
