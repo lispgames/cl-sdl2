@@ -87,3 +87,9 @@
 (defun quit ()
   "Shuts down SDL2."
   (sdl2-ffi::sdl-quit))
+
+(defmacro with-init ((&rest sdl-init-flags) &body body)
+  `(progn
+     (init ,@sdl-init-flags)
+     ,@body
+     (quit)))
