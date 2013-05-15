@@ -66,25 +66,25 @@
 
 (defun next-event (event-ptr &optional (method :poll) (timeout 1))
   "Method can be either :poll, :wait, or :wait-with-timeout"
-  (flet ((event-fn (case method
+  (let ((event-fn (case method
                      (:poll #'sdl2-ffi:sdl-pollevent)
                      (:wait #'sdl2-ffi:sdl-waitevent)
                      (:wait-with-timeout
                       (lambda (e)
                         (sdl2-ffi:sdl-waiteventtimeout e timeout))))))
-    (let* ((eventp (event-fn event-ptr))
+    (let* ((eventp (funcall event-fn event-ptr))
            (event (list eventp (when eventp (get-event-data event-ptr)))))
       event)))
 
 (defmacro with-foreign-event ((event-ptr) &body body)
-  `(let ((,event-ptr (new-event))
-         (result (progn ,@body)))
+  `(let* ((,event-ptr (new-event))
+          (result (progn ,@body)))
      (free-event ,event-ptr)
      result))
 
-(defmacro poll-event ()
-  `(with-foreign-event (event-ptr)
-                       (next-event event-ptr)))
+(defun poll-event ()
+  (with-foreign-event (event-ptr)
+    (next-event event-ptr)))
 
 (defun wait-event ()
   (with-foreign-event (event-ptr)
