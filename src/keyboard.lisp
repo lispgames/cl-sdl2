@@ -1,1 +1,0 @@
-(in-package #:sdl2)
