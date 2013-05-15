@@ -42,6 +42,14 @@
   (sdl2-ffi:sdl-destroywindow (sdl-ptr win))
   (sdl-invalidate win))
 
+(defmacro with-window ((win &key (title "SDL2 Window")
+                            (x :centered) (y :centered)
+                            (w 800) (h 600) flags)
+                       &body body)
+  `(let ((,win (create-window :title title :x x :y y :w w :h h :flags flags)))
+     ,@body
+     (destroy-window ,win)))
+
 (defun hide-window (win)
   (sdl2-ffi:sdl-hidewindow (sdl-ptr win)))
 
