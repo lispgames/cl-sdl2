@@ -91,5 +91,6 @@
 (defmacro with-init ((&rest sdl-init-flags) &body body)
   `(progn
      (init ,@sdl-init-flags)
-     ,@body
-     (quit)))
+     (unwind-protect
+          (progn ,@body)
+       (quit))))
