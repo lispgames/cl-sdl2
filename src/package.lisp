@@ -9,6 +9,7 @@
            #:quit
            #:create-window
            #:destroy-window
+           #:with-window
            #:hide-window
            #:show-window
            #:maximize-window
@@ -38,12 +39,14 @@
            #:gl-get-attrs
            #:gl-set-attr
            #:gl-set-attrs
-           #:get-event-type
+           #:new-event
+           #:free-event
+           #:with-sdl-event
+           #:pump-events
            #:next-event
            #:poll-event
            #:wait-event
            #:wait-event-timeout
-           #:pump-events
 
            ;; Utility
            #:sdl-ptr
