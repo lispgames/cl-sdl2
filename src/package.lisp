@@ -7,6 +7,7 @@
   (:export ;; API
            #:init
            #:quit
+           #:with-init
            #:create-window
            #:destroy-window
            #:with-window
@@ -55,3 +56,6 @@
            #:sdl-error))
 
 (defpackage #:sdl2-ffi)
+
+(defpackage #:sdl2-examples
+  (:export #:basic-test))
