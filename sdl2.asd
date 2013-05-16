@@ -31,5 +31,6 @@
    (:file "video")
    (:file "events")
    (:file "keyboard-keycodes")
-   (:file "keyboard-scancodes")))
+   (:file "keyboard-scancodes")
+   (:file "examples")))
 
