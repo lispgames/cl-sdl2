@@ -137,6 +137,12 @@
            (event (list eventp (unless (= 0 eventp) (get-event-data event-ptr)))))
       event)))
 
+(defmacro with-event-loop ((&key (framerate 60)) &body forms)
+  (let ((quit nil))
+    (with-sdl-event (sdl-event)
+      `(loop until quit
+          do (setf quit t)))))
+
 ;;; The following three functions shouldn't be used in a real
 ;;; game loop. They are simply here for easier testing and
 ;;; experimentation.
