@@ -44,6 +44,7 @@
            #:free-event
            #:with-sdl-event
            #:pump-events
+           #:push-event
            #:next-event
            #:poll-event
            #:wait-event
