@@ -1,9 +1,7 @@
 ;;;; package.lisp
 
-(defpackage #:sdl2-constants)
-
 (defpackage #:sdl2
-  (:use #:cl #:alexandria #:cffi #:sdl2-constants)
+  (:use #:cl #:alexandria #:cffi)
   (:export ;; API
            #:init
            #:quit
@@ -59,4 +57,5 @@
 (defpackage #:sdl2-ffi)
 
 (defpackage #:sdl2-examples
+  (:use #:cl #:alexandria #:cffi)
   (:export #:basic-test))

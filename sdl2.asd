@@ -31,6 +31,16 @@
    (:file "video")
    (:file "events")
    (:file "keyboard-keycodes")
-   (:file "keyboard-scancodes")
-   (:file "examples")))
+   (:file "keyboard-scancodes")))
+
+(asdf:defsystem #:sdl2-examples
+  :serial t
+  :description "simple examples to demonstrate common usage of sdl2."
+  :author "Chip Collier <photex@lofidelitygames.com>"
+  :license "MIT"
+  :depends-on (:sdl2)
+  :pathname "examples"
+  :serial t
+
+  :components ((:file basic)))
 
