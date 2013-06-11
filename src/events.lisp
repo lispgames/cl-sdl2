@@ -2,13 +2,19 @@
 
 (defsanecenum-from-cenum (event-type sdl2-ffi:sdl-eventtype "SDL-"))
 
-(defun add-event-struct-slots (event-slots)
+(defun add-event-struct-slots (event-descriptions)
   (let ((hash-table (make-hash-table)))
-    (loop for (event-type slot-name) in event-slots
-       do (setf (gethash event-type hash-table) slot-name))
+    (loop for (event-type description) in event-descriptions
+       do (let* ((slot-name (first description))
+                 (struct-type (second description))
+                 (struct-slot-names (cffi:foreign-slot-names struct-type)))
+              (setf (gethash event-type hash-table)
+                    (list slot-name
+                          (list :struct-type struct-type
+                                :slot-names struct-slot-names)))))
     hash-table))
 
-(defvar *event-struct-data*
+(defparameter *event-struct-data*
   (add-event-struct-slots
    (list (list :controlleraxismotion
                (list 'sdl2-ffi::caxis
@@ -67,9 +73,6 @@
          (list :mousemotion
                (list 'sdl2-ffi::motion
                      'sdl2-ffi::sdl-mousemotionevent))
-         (list :userevent
-               (list 'sdl2-ffi::user
-                     'sdl2-ffi::sdl-userevent))
          (list :windowevent
                (list 'sdl2-ffi::window
                      'sdl2-ffi::sdl-windowevent))
@@ -80,7 +83,9 @@
 (defun new-event (&optional (event-type :firstevent))
   (let ((enum-value (foreign-enum-value 'event-type event-type))
         (event-ptr (foreign-alloc 'sdl2-ffi:sdl-event)))
-    (setf (foreign-slot-value event-ptr 'sdl2-ffi:sdl-event 'type) enum-value)
+    (setf (foreign-slot-value event-ptr
+                              'sdl2-ffi:sdl-event
+                              'sdl2-ffi::type) enum-value)
     event-ptr))
 
 (defun free-event (event-ptr)
