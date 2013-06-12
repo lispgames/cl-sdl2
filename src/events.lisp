@@ -76,6 +76,21 @@
          (list :windowevent
                (list 'sdl2-ffi::window
                      'sdl2-ffi::sdl-windowevent))
+         (list :dropevent
+               (list 'sdl2-ffi::drop
+                     'sdl2-ffi::sdl-dropevent))
+         (list :dollargesture
+               (list 'sdl2-ffi::dgesture
+                     'sdl2-ffi::sdl-dollargestureevent))
+         (list :multigesture
+               (list 'sdl2-ffi::mgesture
+                     'sdl2-ffi::sdl-multigestureevent))
+         (list :touchfinger
+               (list 'sdl2-ffi::tfinger
+                     'sdl2-ffi::sdl-touchfingerevent))
+         (list :text
+               (list 'sdl2-ffi::text
+                     'sdl2-ffi::sdl-textinputevent))
          (list :quit
                (list 'sdl2-ffi::quit
                      'sdl2-ffi::sdl-quitevent)))))
