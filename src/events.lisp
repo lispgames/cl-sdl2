@@ -108,7 +108,7 @@
 
 (defmacro with-sdl-event ((event-ptr &optional (event-type :firstevent))
                           &body body)
-  `(let* ((,event-ptr (new-event))
+  `(let* ((,event-ptr (new-event ,event-type))
           (result (progn ,@body)))
      (free-event ,event-ptr)
      result))
@@ -117,9 +117,8 @@
   (let ((enum-value (foreign-slot-value event-ptr 'sdl2-ffi:sdl-event 'type)))
     (foreign-enum-keyword 'event-type enum-value)))
 
-(defun get-event-struct-data (event-ptr)
-  (let* ((event-type (get-event-type event-ptr))
-         (event-data (gethash event-type *event-struct-data*)))
+(defun get-event-struct-data (event-ptr event-type)
+  (let* ((event-data (gethash event-type *event-struct-data*)))
     (if (equal nil event-data)
         (nil nil)
         event-data)))
@@ -131,24 +130,64 @@
 
 (defun push-event (event-type)
   (check-rc (with-sdl-event (event-ptr event-type)
-              (sdl2-ffi:sdl-pushevent event-ptr))))
+              (sdl2-ffi::sdl-pushevent event-ptr))))
+
+(defmacro push-quit-event ()
+  `(push-event :quit))
 
 (defun next-event (event-ptr &optional (method :poll) (timeout 1))
   "Method can be either :poll, :wait, or :wait-with-timeout"
-  (funcall (case method
-             (:poll #'sdl2-ffi:sdl-pollevent)
-             (:wait #'sdl2-ffi:sdl-waitevent)
-             (:wait-with-timeout
-              (lambda (e)
-                (sdl2-ffi:sdl-waiteventtimeout e timeout)))
-             (otherwise (error "Event method must be :poll :wait or :wait-with-timeout")))
-           event-ptr))
+  (case method
+    (:poll `(sdl2-ffi:sdl-pollevent ,event-ptr))
+    (:wait `(sdl2-ffi:sdl-waitevent ,event-ptr))
+    (:wait-with-timeout `(sdl2-ffi:sdl-waiteventtimeout ,event-ptr timeout))
+    (otherwise (error "Event method must be :poll :wait or :wait-with-timeout"))))
 
-(defmacro with-event-loop ((&key (framerate 60)) &body forms)
-  (let ((quit nil))
-    (with-sdl-event (sdl-event)
-      `(loop until quit
-          do ,@forms))))
+(defun expand-idle-handler (event-handlers)
+  `(lambda () ,@(remove nil (mapcar #'(lambda (handler)
+                                        (cond ((eql :idle (first handler))
+                                               `(progn ,@(rest handler)))))
+                                    event-handlers))))
+
+(defun expand-quit-handler (sdl-event forms quit)
+  (declare (ignore sdl-event))
+  `(:quit (setf ,quit (funcall #'(lambda () ,@forms)))))
+
+(defun expand-handler (sdl-event event-type params forms event-data))
+
+;; TODO you should be able to specify a target framerate
+(defmacro with-event-loop ((&key (method :poll) (timeout nil)) &rest event-handlers)
+  (let ((quit (gensym "quit-"))
+        (sdl-event (gensym "sdl-event-"))
+        (idle-func (gensym "idle-func-")))
+    `(let ((,quit nil)
+           (,idle-func nil))
+       (with-sdl-event (,sdl-event)
+         (setf ,idle-func ,(sdl2::expand-idle-handler event-handlers))
+         (loop until ,quit
+            do (loop until (= 0 ,(sdl2::next-event sdl-event method timeout))
+                  do (case (get-event-type ,sdl-event)
+                       ,@(remove nil
+                                 (mapcar
+                                  #'(lambda (handler)
+                                      (if (eq (first handler) :quit)
+                                          (expand-quit-handler sdl-event
+                                                               (rest (rest (handler)))
+                                                               quit)
+                                          (let* ((event-type (first handler))
+                                                 (params (second handler))
+                                                 (forms (rest (rest handler)))
+                                                 (event-data (gethash event-type) *event-struct-data*))
+                                            (when (event-data)
+                                              (expand-handler sdl-event
+                                                              event-type
+                                                              params
+                                                              forms
+                                                              event-data)))))
+                                  event-handlers)))))
+         (unless ,quit
+           (when ,idle-func
+             (funcall ,idle-func)))))))
 
 ;;; The following three functions shouldn't be used in a real
 ;;; game loop. They are simply here for easier testing and
