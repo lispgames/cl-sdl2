@@ -152,10 +152,10 @@
     (otherwise (error "Event method must be :poll :wait or :wait-with-timeout"))))
 
 (defun expand-idle-handler (event-handlers)
-  `(lambda () ,@(remove nil (mapcar #'(lambda (handler)
-                                        (cond ((eql :idle (first handler))
-                                               `(progn ,@(rest handler)))))
-                                    event-handlers))))
+  (remove nil (mapcar #'(lambda (handler)
+                          (cond ((eq (first handler) :idle)
+                                 `(progn ,@(rest (rest handler))))))
+                      event-handlers)))
 
 (defun expand-quit-handler (sdl-event forms quit)
   (declare (ignore sdl-event))
@@ -195,7 +195,7 @@
     `(let ((,quit nil)
            (,idle-func nil))
        (with-sdl-event (,sdl-event)
-         (setf ,idle-func ,(sdl2::expand-idle-handler event-handlers))
+         (setf ,idle-func #'(lambda () ,@(expand-idle-handler event-handlers)))
          (loop until ,quit
             do (loop until (= 0 ,(sdl2::next-event sdl-event method timeout))
                   do (case (get-event-type ,sdl-event)
@@ -216,10 +216,9 @@
                                                               params
                                                               forms
                                                               event-data)))))
-                                  event-handlers)))))
-         (unless ,quit
-           (when ,idle-func
-             (funcall ,idle-func)))))))
+                                  event-handlers))))
+              (unless ,quit
+                (funcall ,idle-func)))))))
 
 ;;; The following three functions shouldn't be used in a real
 ;;; game loop. They are simply here for easier testing and
