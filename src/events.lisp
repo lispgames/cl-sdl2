@@ -140,7 +140,7 @@
   (case method
     (:poll `(sdl2-ffi:sdl-pollevent ,event-ptr))
     (:wait `(sdl2-ffi:sdl-waitevent ,event-ptr))
-    (:wait-with-timeout `(sdl2-ffi:sdl-waiteventtimeout ,event-ptr timeout))
+    (:wait-with-timeout `(sdl2-ffi:sdl-waiteventtimeout ,event-ptr ,timeout))
     (otherwise (error "Event method must be :poll :wait or :wait-with-timeout"))))
 
 (defun expand-idle-handler (event-handlers)
