@@ -10,8 +10,11 @@
       (sdl2:with-event-loop (:method :poll)
         (:keyup ()
                 (sdl2:push-event :quit))
-        (:mousemotion (:x x :y y :state state)
-                      (print (format nil "Mouse motion: ~a, ~a" x y)))
+        (:mousemotion (:x x :y y :xrel xrel :yrel yrel :state state)
+                      (print (format
+                              nil
+                              "Mouse motion abs(rel): ~a (~a), ~a (~a)~%Mouse state: ~a~%"
+                              x xrel y yrel state)))
         (:idle ()
                (sdl2:gl-swap-window win))
         (:quit ()
