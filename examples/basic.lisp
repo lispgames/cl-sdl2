@@ -17,4 +17,4 @@
         (:quit ()
                t))
       (sdl2:gl-delete-context gl-context)
-      (sdl2:destroy-window win)))
+      (sdl2:destroy-window win))))

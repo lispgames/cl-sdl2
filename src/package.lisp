@@ -44,6 +44,7 @@
            #:pump-events
            #:push-event
            #:next-event
+           #:with-event-loop
            #:poll-event
            #:wait-event
            #:wait-event-timeout

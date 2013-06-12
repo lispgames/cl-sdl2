@@ -2,16 +2,23 @@
 
 (defsanecenum-from-cenum (event-type sdl2-ffi:sdl-eventtype "SDL-"))
 
+(defun hash-slot-names (slot-names)
+  (let ((hash-table (make-hash-table :test #'eq)))
+    (loop for slot-name in slot-names
+       do (setf (gethash (alexandria:make-keyword slot-name) hash-table)
+                slot-name))
+    hash-table))
+
 (defun add-event-struct-slots (event-descriptions)
   (let ((hash-table (make-hash-table)))
     (loop for (event-type description) in event-descriptions
        do (let* ((slot-name (first description))
                  (struct-type (second description))
-                 (struct-slot-names (cffi:foreign-slot-names struct-type)))
+                 (slots (cffi:foreign-slot-names struct-type)))
               (setf (gethash event-type hash-table)
                     (list slot-name
-                          (list :struct-type struct-type
-                                :slot-names struct-slot-names)))))
+                          (list :type struct-type
+                                :slots (hash-slot-names slots))))))
     hash-table))
 
 (defparameter *event-struct-data*
@@ -76,19 +83,22 @@
          (list :windowevent
                (list 'sdl2-ffi::window
                      'sdl2-ffi::sdl-windowevent))
-         (list :dropevent
+         (list :dropfile
                (list 'sdl2-ffi::drop
                      'sdl2-ffi::sdl-dropevent))
-         (list :dollargesture
-               (list 'sdl2-ffi::dgesture
-                     'sdl2-ffi::sdl-dollargestureevent))
          (list :multigesture
                (list 'sdl2-ffi::mgesture
                      'sdl2-ffi::sdl-multigestureevent))
-         (list :touchfinger
+         (list :fingerup
                (list 'sdl2-ffi::tfinger
                      'sdl2-ffi::sdl-touchfingerevent))
-         (list :text
+         (list :fingerdown
+               (list 'sdl2-ffi::tfinger
+                     'sdl2-ffi::sdl-touchfingerevent))
+         (list :textediting
+               (list 'sdl2-ffi::text
+                     'sdl2-ffi::sdl-textinputevent))
+         (list :textinput
                (list 'sdl2-ffi::text
                      'sdl2-ffi::sdl-textinputevent))
          (list :quit
@@ -123,8 +133,6 @@
         (nil nil)
         event-data)))
 
-(defun unpack-event (event-ptr))
-
 (defun pump-events ()
   (sdl2-ffi:sdl-pumpevents))
 
@@ -153,14 +161,30 @@
   (declare (ignore sdl-event))
   `(:quit (setf ,quit (funcall #'(lambda () ,@forms)))))
 
+(defun unpack-event-params (event-ptr data params)
+  (let ((event-slot (first data))
+        (ffi-type (getf (second data) :type))
+        (slots (getf (second data) :slots)))
+    (mapcar (lambda (param)
+              (let ((keyword (first param))
+                    (binding (second param)))
+                (when (gethash keyword slots)
+                  `(,binding
+                    (cffi:foreign-slot-value
+                     (cffi:foreign-slot-value ,event-ptr 'sdl2-ffi::sdl-event ,event-slot)
+                     ,ffi-type (gethash keyword slots))))))
+            params)))
+
 (defun expand-handler (sdl-event event-type params forms event-data)
-  (let ((keyword-list nil))
+  (let ((parameter-pairs nil))
     (do ((keyword params (if (cdr keyword)
                              (cddr keyword)
                              nil)))
         ((null keyword))
-      (push (list (first keyword) (second keyword))))
-    ))
+      (push (list (first keyword) (second keyword)) parameter-pairs))
+    `(,event-type
+      (let (,@(unpack-event-params sdl-event event-data parameter-pairs))
+        ,@forms))))
 
 ;; TODO you should be able to specify a target framerate
 (defmacro with-event-loop ((&key (method :poll) (timeout nil)) &rest event-handlers)
@@ -179,13 +203,13 @@
                                   #'(lambda (handler)
                                       (if (eq (first handler) :quit)
                                           (expand-quit-handler sdl-event
-                                                               (rest (rest (handler)))
+                                                               (rest (rest handler))
                                                                quit)
                                           (let* ((event-type (first handler))
                                                  (params (second handler))
                                                  (forms (rest (rest handler)))
-                                                 (event-data (gethash event-type) *event-struct-data*))
-                                            (when (event-data)
+                                                 (event-data (gethash event-type *event-struct-data*)))
+                                            (when event-data
                                               (expand-handler sdl-event
                                                               event-type
                                                               params
