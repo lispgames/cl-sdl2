@@ -171,8 +171,9 @@
                 (when (gethash keyword slots)
                   `(,binding
                     (cffi:foreign-slot-value
-                     (cffi:foreign-slot-value ,event-ptr 'sdl2-ffi::sdl-event ,event-slot)
-                     ,ffi-type (gethash keyword slots))))))
+                     (cffi:foreign-slot-value ,event-ptr 'sdl2-ffi::sdl-event (quote ,event-slot))
+                     (quote ,ffi-type)
+                     (quote ,(gethash keyword slots)))))))
             params)))
 
 (defun expand-handler (sdl-event event-type params forms event-data)
