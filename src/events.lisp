@@ -153,7 +153,14 @@
   (declare (ignore sdl-event))
   `(:quit (setf ,quit (funcall #'(lambda () ,@forms)))))
 
-(defun expand-handler (sdl-event event-type params forms event-data))
+(defun expand-handler (sdl-event event-type params forms event-data)
+  (let ((keyword-list nil))
+    (do ((keyword params (if (cdr keyword)
+                             (cddr keyword)
+                             nil)))
+        ((null keyword))
+      (push (list (first keyword) (second keyword))))
+    ))
 
 ;; TODO you should be able to specify a target framerate
 (defmacro with-event-loop ((&key (method :poll) (timeout nil)) &rest event-handlers)
