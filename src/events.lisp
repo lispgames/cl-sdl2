@@ -127,12 +127,6 @@
   (let ((enum-value (foreign-slot-value event-ptr 'sdl2-ffi:sdl-event 'type)))
     (foreign-enum-keyword 'event-type enum-value)))
 
-(defun get-event-struct-data (event-ptr event-type)
-  (let* ((event-data (gethash event-type *event-struct-data*)))
-    (if (equal nil event-data)
-        (nil nil)
-        event-data)))
-
 (defun pump-events ()
   (sdl2-ffi:sdl-pumpevents))
 

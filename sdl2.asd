@@ -31,7 +31,8 @@
    (:file "video")
    (:file "events")
    (:file "keyboard-keycodes")
-   (:file "keyboard-scancodes")))
+   (:file "keyboard-scancodes")
+   (:file "keyboard")))
 
 (asdf:defsystem #:sdl2-examples
   :serial t

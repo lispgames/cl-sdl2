@@ -16,7 +16,8 @@
       (gl:clear-color 0.0 0.0 1.0 1.0)
       (gl:clear :color-buffer)
       (sdl2:with-event-loop (:method :poll)
-        (:keyup ()
+        (:keyup (:keysym keysym)
+                (print (format nil "Key sym value: ~a" keysym))
                 (sdl2:push-event :quit))
         (:mousemotion (:x x :y y :xrel xrel :yrel yrel :state state)
                       (print (format
