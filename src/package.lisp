@@ -48,6 +48,12 @@
            #:poll-event
            #:wait-event
            #:wait-event-timeout
+           #:keysym-slot-value
+           #:scancode-value
+           #:sym-value
+           #:mod-value
+           #:mod-keywords
+           #:mod-value-p
 
            ;; Utility
            #:sdl-ptr

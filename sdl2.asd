@@ -10,7 +10,7 @@
   :license "MIT"
 
   :depends-on (:alexandria :cffi :cffi-libffi :c2ffi-cffi :cl-ppcre
-               :trivial-garbage)
+               :trivial-garbage :cl-opengl)
   :pathname "src"
   :serial t
 
@@ -31,7 +31,6 @@
    (:file "video")
    (:file "events")
    (:file "keyboard-keycodes")
-   (:file "keyboard-scancodes")
    (:file "keyboard")))
 
 (asdf:defsystem #:sdl2-examples
