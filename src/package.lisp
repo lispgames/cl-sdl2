@@ -51,6 +51,13 @@
            #:mod-value
            #:mod-keywords
            #:mod-value-p
+           #:warp-mouse-in-window
+           #:hide-cursor
+           #:show-cursor
+           #:toggle-cursor
+           #:relative-mouse-mode
+           #:absolute-mouse-mode
+           #:toggle-relative-mouse-mode
            #:joystick-count
            #:joystick-open
            #:joystick-close
@@ -60,6 +67,12 @@
            #:joystick-axis-count
            #:joystick-ball-count
            #:joystick-button-count
+           #:game-controller-p
+           #:game-controller-name-for-index
+           #:game-controller-open
+           #:game-controller-close
+           #:game-controller-attached-p
+           #:game-controller-add-mapping
 
            ;; Utility
            #:sdl-ptr
