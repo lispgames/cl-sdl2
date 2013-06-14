@@ -20,7 +20,8 @@
    #'sdl2-ffi::sdl-joystickclose))
 
 (defun joystick-close (joystick)
-  (sdl2-ffi::sdl-joystickclose (sdl-ptr joystick)))
+  (sdl2-ffi::sdl-joystickclose (sdl-ptr joystick))
+  (sdl-cancel-collect joystick))
 
 (defun joystick-name-for-index (device-index)
   (check-null (sdl2-ffi::sdl-joysticknameforindex device-index)))
