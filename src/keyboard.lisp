@@ -29,3 +29,6 @@
   (let ((bitfield-value (foreign-bitfield-value 'keymod keywords)))
     (not (= 0 (logand bitfield-value value)))))
 
+;; TODO need to be able to unpack a keysym struct in one go
+;;(defmacro with-keysym-slot-values ())
+
