@@ -214,19 +214,3 @@
               (unless ,quit
                 (funcall ,idle-func)))))))
 
-;;; The following three functions shouldn't be used in a real
-;;; game loop. They are simply here for easier testing and
-;;; experimentation.
-
-(defun poll-event ()
-  (with-sdl-event (event-ptr)
-    (next-event event-ptr)))
-
-(defun wait-event ()
-  (with-sdl-event (event-ptr)
-    (next-event event-ptr :wait)))
-
-(defun wait-event-timeout (timeout)
-  (with-sdl-event (event-ptr)
-    (next-event event-ptr :wait-with-timeout timeout)))
-
