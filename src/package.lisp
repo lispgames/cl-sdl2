@@ -45,15 +45,21 @@
            #:push-event
            #:next-event
            #:with-event-loop
-           #:poll-event
-           #:wait-event
-           #:wait-event-timeout
            #:keysym-slot-value
            #:scancode-value
            #:sym-value
            #:mod-value
            #:mod-keywords
            #:mod-value-p
+           #:joystick-count
+           #:joystick-open
+           #:joystick-close
+           #:joystick-name-for-index
+           #:joystick-name
+           #:joystick-hat-count
+           #:joystick-axis-count
+           #:joystick-ball-count
+           #:joystick-button-count
 
            ;; Utility
            #:sdl-ptr
