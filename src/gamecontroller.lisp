@@ -1,5 +1,66 @@
 (in-package #:sdl2)
 
+;; SDL2 has some mappings built-in, but since I have a wonderful Logitech
+;; controller that isn't part of the spec yet I embed these here. Also
+;; it's a good example of how to provide your own
+
+(defparameter *default-controller-maps* ())
+
+(defmacro add-to-default-controller-maps (&rest maps)
+  `(setf *default-controller-maps*
+         (append *default-controller-maps* ,@maps)))
+
+(add-to-default-controller-maps
+ ;; The primary mode for the F710 is basically an Xbox controller
+ '((guid "030000006d0400001fc2000005030000")
+   (name "Logitech Wireless Gamepad F710")
+   (a b0)
+   (b b1)
+   (x b2)
+   (y b3)
+   (start b7)
+   (guide b8)
+   (back b6)
+   (leftshoulder b4)
+   (rightshoulder b5)
+   (leftstick b9)
+   (rightstick b10)
+   (dpup h0.1)
+   (dpdown h0.4)
+   (dpleft h0.8)
+   (dpright h0.2)
+   (leftx a0)
+   (lefty a1)
+   (rightx a3)
+   (righty a4)
+   (lefttrigger a2)
+   (righttrigger a5))
+ ;; The F710 has a "legacy" mode for systems that don't
+ ;; support a controller that looks like an XBox controller
+ '((guid "6d0400000000000019c2000000000000")
+   (name "Logitech Wireless Gamepad F710 (alt)")
+   (a b0)
+   (b b1)
+   (x b2)
+   (y b3)
+   (start b7)
+   (guide b8)
+   (back b6)
+   (leftshoulder b4)
+   (rightshoulder b5)
+   (leftstick b9)
+   (rightstick b10)
+   (dpup h0.1)
+   (dpdown h0.4)
+   (dpleft h0.8)
+   (dpright h0.2)
+   (leftx a0)
+   (lefty a1)
+   (rightx a4)
+   (righty a3)
+   (lefttrigger a2)
+   (righttrigger a5)))
+
 (defwrapper sdl-gamecontroller ())
 
 (defun game-controller-p (device-index)
@@ -24,4 +85,4 @@
 (defun game-controller-add-mapping (mapping-string)
   (sdl2-ffi::sdl-gamecontrolleraddmapping mapping-string))
 
-;; TODO add support to build mapping string from lisp data
+

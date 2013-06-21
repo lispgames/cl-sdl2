@@ -31,7 +31,10 @@
    (:file "video")
    (:file "events")
    (:file "keyboard-keycodes")
-   (:file "keyboard")))
+   (:file "keyboard")
+   (:file "mouse")
+   (:file "joystick")
+   (:file "gamecontroller")))
 
 (asdf:defsystem #:sdl2-examples
   :serial t
