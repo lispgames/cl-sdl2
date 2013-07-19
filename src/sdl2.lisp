@@ -36,18 +36,19 @@
   (with-gensyms (rc)
     `(let ((,rc ,form))
        (when (< ,rc 0)
-         (error 'sdl-rc-error :rc ,rc :string (sdl2-ffi:sdl-get-error))))))
+         (error 'sdl-rc-error :rc ,rc :string (sdl2-ffi:sdl-get-error)))
+       ,rc)))
 
 (defmacro check-null (form)
-  (with-gensyms (ptr)
-    `(let ((,ptr ,form))
-       (if (null-pointer-p ,ptr)
-           (error 'sdl-rc-error :rc ,ptr :string (sdl2-ffi:sdl-get-error))
-           ,ptr))))
+  (with-gensyms (wrapper)
+    `(let ((,wrapper ,form))
+       (if (null-pointer-p (autowrap:ptr ,wrapper))
+           (error 'sdl-rc-error :rc ,wrapper :string (sdl2-ffi:sdl-get-error))
+           ,wrapper))))
 
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
-  (let ((init-flags (apply #'autowrap:mask 'sdl-init-flags sdl-init-flags)))
+  (let ((init-flags (autowrap:mask-apply 'sdl-init-flags sdl-init-flags)))
     (check-rc (sdl2-ffi:sdl-init init-flags))))
 
 (defun quit ()
