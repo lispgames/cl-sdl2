@@ -1,7 +1,5 @@
 (in-package :sdl2)
 
-(defctype sdl2-ffi::size-t :unsigned-int)
-
 (define-foreign-library libsdl2
   (:darwin (:default "libSDL2"))
   (:unix (:or "libSDL2-2.0.so.0" "libSDL2"))
