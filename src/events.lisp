@@ -1,7 +1,5 @@
 (in-package #:sdl2)
 
-(defsanecenum-from-cenum (event-type sdl2-ffi:sdl-eventtype "SDL-"))
-
 (defun hash-slot-names (slot-names)
   (let ((hash-table (make-hash-table :test #'eq)))
     (loop for slot-name in slot-names
@@ -106,15 +104,16 @@
                      'sdl2-ffi::sdl-quitevent)))))
 
 (defun new-event (&optional (event-type :firstevent))
-  (let ((enum-value (foreign-enum-value 'event-type event-type))
-        (event-ptr (foreign-alloc 'sdl2-ffi:sdl-event)))
-    (setf (foreign-slot-value event-ptr
-                              'sdl2-ffi:sdl-event
-                              'sdl2-ffi::type) enum-value)
-    event-ptr))
+  (let ((event (alloc 'sdl2-ffi:sdl-event)))
+    (sdl-collect event)
+    (setf (sdl2-ffi:sdl-event.type event)
+          (enum-value 'sdl2-ffi:sdl-event-type event-type))
+    event))
 
-(defun free-event (event-ptr)
-  (foreign-free event-ptr))
+(defun free-event (event)
+  (sdl-cancel-collect event)
+  (foreign-free (ptr event))
+  (invalidate event))
 
 (defmacro with-sdl-event ((event-ptr &optional (event-type :firstevent))
                           &body body)
@@ -123,27 +122,33 @@
      (free-event ,event-ptr)
      result))
 
-(defun get-event-type (event-ptr)
-  (let ((enum-value (foreign-slot-value event-ptr 'sdl2-ffi:sdl-event 'sdl2-ffi::type)))
-    (foreign-enum-keyword 'event-type enum-value)))
+(defun get-event-type (event)
+  (enum-key 'sdl2-ffi:sdl-event-type (sdl2-ffi:sdl-event.type event)))
 
 (defun pump-events ()
-  (sdl2-ffi:sdl-pumpevents))
+  (sdl2-ffi:sdl-pump-events))
 
 (defun push-event (event-type)
-  (check-rc (with-sdl-event (event-ptr event-type)
-              (sdl2-ffi::sdl-pushevent event-ptr))))
+  (with-alloc (event 'sdl2-ffi:sdl-event)
+    (setf (sdl2-ffi:sdl-event.type event)
+          (enum-value 'sdl2-ffi:sdl-event-type event-type))
+    (check-rc (sdl2-ffi::sdl-push-event event))))
 
-(defmacro push-quit-event ()
-  `(push-event :quit))
+(defun push-quit-event ()
+  (push-event :quit))
 
-(defun next-event (event-ptr &optional (method :poll) (timeout 1))
-  "Method can be either :poll, :wait, or :wait-with-timeout"
+(defun next-event (event &optional (method :poll) timeout)
+  "Method can be either :poll, :wait.  If :wait is used,
+`TIMEOUT` may be specified."
   (case method
-    (:poll `(sdl2-ffi:sdl-pollevent ,event-ptr))
-    (:wait `(sdl2-ffi:sdl-waitevent ,event-ptr))
-    (:wait-with-timeout `(sdl2-ffi:sdl-waiteventtimeout ,event-ptr ,timeout))
-    (otherwise (error "Event method must be :poll :wait or :wait-with-timeout"))))
+    (:poll (sdl2-ffi:sdl-poll-event event))
+    (:wait
+     (if timeout
+         (sdl2-ffi:sdl-wait-event-timeout event timeout)
+         (sdl2-ffi:sdl-wait-event event)))
+    (:wait-with-timeout
+     (sdl2-ffi:sdl-wait-event-timeout event (or timeout 0)))
+    (otherwise (error "Event method must be :poll or :wait"))))
 
 (defun expand-idle-handler (event-handlers)
   (remove nil (mapcar #'(lambda (handler)

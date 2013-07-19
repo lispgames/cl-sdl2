@@ -1,7 +1,10 @@
 ;;;; package.lisp
 
 (defpackage #:sdl2
-  (:use #:cl #:alexandria #:cffi)
+  (:use #:cl #:alexandria #:autowrap.minimal)
+  (:import-from :cffi
+                #:mem-ref #:with-foreign-objects #:with-foreign-object
+                #:foreign-alloc #:foreign-free #:null-pointer-p)
   (:export ;; API
            #:init
            #:quit
