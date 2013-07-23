@@ -2,6 +2,8 @@
 
 (autowrap:c-include
  '(sdl2 autowrap-spec "SDL2.h")
+ :accessor-package :sdl2-ffi.accessors
+ :function-package :sdl2-ffi.functions
  :spec-path '(sdl2 autowrap-spec)
  :exclude-sources ("/usr/local/lib/clang/3.3/include/(?!stddef.h)"
                    "/usr/include/(?!stdint.h|bits/types.h|sys/types.h).*")
@@ -15,3 +17,4 @@
                      ("SDL_GLattr" . "SDL-GLATTR")
                      ("SDL_GLprofile" . "SDL-GLPROFILE")
                      ("SDL_GLcontextFlag" . "SDL-GLCONTEXT-FLAG")))
+

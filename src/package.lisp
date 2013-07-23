@@ -1,10 +1,16 @@
 ;;;; package.lisp
 
+(defpackage #:sdl2-ffi)
+(defpackage #:sdl2-ffi.accessors)
+(defpackage #:sdl2-ffi.functions)
+
 (defpackage #:sdl2
-  (:use #:cl #:alexandria #:autowrap.minimal)
+  (:use #:cl #:alexandria #:autowrap.minimal
+        #:sdl2-ffi.accessors #:sdl2-ffi.functions)
   (:import-from :cffi
                 #:mem-ref #:with-foreign-objects #:with-foreign-object
                 #:foreign-alloc #:foreign-free #:null-pointer-p)
+  (:shadow #:sdl-error)
   (:export ;; API
            #:init
            #:quit
@@ -76,14 +82,18 @@
            #:game-controller-close
            #:game-controller-attached-p
            #:game-controller-add-mapping
+           #:key-down-p
+           #:key-up-p
+           #:scancode-value
+           #:mod-value
+           #:sym-value
+           #:scancode=
 
            ;; Utility
            #:sdl-ptr
 
            ;; Conditions
            #:sdl-error))
-
-(defpackage #:sdl2-ffi)
 
 (defpackage #:sdl2-examples
   (:use #:cl #:alexandria #:cffi)

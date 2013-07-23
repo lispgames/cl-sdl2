@@ -6,7 +6,7 @@
   :author "Chip Collier <photex@lofidelitygames.com>, Ryan Pavlik <rpavlik@gmail.com>"
   :license "MIT"
 
-  :depends-on (:alexandria :autowrap :cl-ppcre :trivial-garbage :cl-opengl)
+  :depends-on (:alexandria :cl-autowrap :cl-ppcre :trivial-garbage :cl-opengl)
   :pathname "src"
   :serial t
 
@@ -22,11 +22,9 @@
    (:file "sdl2")
    (:file "video")
    (:file "events")
-   (:file "keyboard-keycodes")
    (:file "keyboard")))
 
 (asdf:defsystem #:sdl2-examples
-  :serial t
   :description "simple examples to demonstrate common usage of sdl2."
   :author "Chip Collier <photex@lofidelitygames.com>"
   :license "MIT"
@@ -34,5 +32,5 @@
   :pathname "examples"
   :serial t
 
-  :components ((:file basic)))
+  :components ((:file "basic")))
 
