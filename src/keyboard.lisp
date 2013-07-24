@@ -1,33 +1,31 @@
 (in-package #:sdl2)
 
-(defbitfield-from-cenum (keymod sdl2-ffi::sdl-keymod "SDL-"))
+(autowrap:define-bitmask-from-enum (keymod sdl2-ffi::sdl-keymod))
 
-(defmacro keysym-slot-value (sdl-keysym-ptr slot-name)
-  `(foreign-slot-value ,sdl-keysym-ptr
-                       ;; TODO why do I need this? I get an error
-                       ;; if I use 'sdl2-ffi::sdl-keysym even though
-                       ;; that's what this function returns
-                       (foreign-slot-type 'sdl2-ffi::sdl-keyboardevent
-                                          'sdl2-ffi::keysym)
-                       ,slot-name))
+(defun key-down-p (state)
+  (= state sdl2-ffi:+sdl-pressed+))
 
-(defun scancode-value (sdl-keysym-ptr)
-  (keysym-slot-value sdl-keysym-ptr 'sdl2-ffi::scancode))
+(defun key-up-p (state)
+  (= state sdl2-ffi:+sdl-released+))
 
-(defun sym-value (sdl-keysym-ptr)
-  (keysym-slot-value sdl-keysym-ptr 'sdl2-ffi::sym))
+(defun scancode-value (keysym)
+  (sdl-keysym.scancode keysym))
 
-(defun mod-value (sdl-keysym-ptr)
-  (keysym-slot-value sdl-keysym-ptr 'sdl2-ffi::mod))
+(defun mod-value (keysym)
+  (sdl-keysym.mod keysym))
+
+(defun sym-value (keysym)
+  (sdl-keysym.sym keysym))
+
+(defun scancode= (scancode scancode-key)
+  (= scancode (autowrap:enum-value 'sdl2-ffi:sdl-scancode scancode-key)))
 
 (defun mod-keywords (value)
-  ;; using rest here because :kmod-none is always first
-  ;; TODO is it possible that I'm using it incorrectly?
-  (rest (foreign-bitfield-symbols 'keymod value)))
+  (autowrap:mask-keywords 'keymod value))
 
 (defun mod-value-p (value &rest keywords)
-  (let ((bitfield-value (foreign-bitfield-value 'keymod keywords)))
-    (not (= 0 (logand bitfield-value value)))))
+  (let ((mask (autowrap:mask-apply 'keymod keywords)))
+    (/= 0 (logand mask value))))
 
 ;; TODO need to be able to unpack a keysym struct in one go
 ;;(defmacro with-keysym-slot-values ())
