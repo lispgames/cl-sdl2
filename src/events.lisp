@@ -25,7 +25,7 @@
   (sdl-pump-events))
 
 (defun push-event (event-type)
-  (with-alloc (event 'sdl-event)
+  (with-alloc (event 'sdl2-ffi:sdl-event)
     (setf (sdl-event.type event)
           (enum-value 'sdl2-ffi:sdl-event-type event-type))
     (check-rc (sdl-push-event event))))
