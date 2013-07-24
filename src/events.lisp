@@ -122,8 +122,7 @@
          (setf ,idle-func #'(lambda () ,@(expand-idle-handler event-handlers)))
          (loop until ,quit
                do (loop until (= 0 (next-event ,sdl-event ,method ,timeout))
-                        do (:say (get-event-type ,sdl-event))
-                           (case (get-event-type ,sdl-event)
+                        do (case (get-event-type ,sdl-event)
                              ,@(remove nil
                                 (mapcar
                                  #'(lambda (handler)

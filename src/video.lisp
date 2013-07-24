@@ -35,7 +35,8 @@
 (defun destroy-window (win)
   (sdl-cancel-collect win)
   (sdl-destroy-window win)
-  (autowrap:invalidate win))
+  (autowrap:invalidate win)
+  (values))
 
 (defmacro with-window ((win &key (title "SDL2 Window")
                         (x :centered) (y :centered)
