@@ -32,7 +32,7 @@
                                  scancode
                                  mod-value))))))
         (:keyup (:keysym keysym)
-          (when (equal :sdl-scancode-escape (sdl2:scancode-value keysym))
+          (when (sdl2:scancode= (sdl2:scancode-value keysym) :scancode-escape)
             (sdl2:push-event :quit)))
         (:mousemotion (:x x :y y :xrel xrel :yrel yrel :state state)
           (print (format
