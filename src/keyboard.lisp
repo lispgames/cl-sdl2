@@ -11,14 +11,24 @@
 (defun scancode-value (keysym)
   (sdl-keysym.scancode keysym))
 
+(defun scancode (keysym)
+  (autowrap:enum-key 'sdl2-ffi:sdl-scancode
+                     (scancode-value keysym)))
+
 (defun mod-value (keysym)
   (sdl-keysym.mod keysym))
 
 (defun sym-value (keysym)
   (sdl-keysym.sym keysym))
 
-(defun scancode= (scancode scancode-key)
+(defgeneric scancode= (value scancode-key))
+
+(defmethod scancode= ((scancode integer) scancode-key)
   (= scancode (autowrap:enum-value 'sdl2-ffi:sdl-scancode scancode-key)))
+
+(defmethod scancode= ((keysym sdl2-ffi:sdl-keysym) scancode-key)
+  (= (scancode-value keysym)
+     (autowrap:enum-value 'sdl2-ffi:sdl-scancode scancode-key)))
 
 (defun mod-keywords (value)
   (autowrap:mask-keywords 'keymod value))
