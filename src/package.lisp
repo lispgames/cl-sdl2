@@ -92,6 +92,7 @@
            #:copy-point
            #:copy-into-point
            #:free-point
+           #:with-points
            #:make-rect
            #:copy-rect
            #:copy-into-rect
