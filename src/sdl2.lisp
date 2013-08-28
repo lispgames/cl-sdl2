@@ -11,7 +11,7 @@
    (string :initarg :string :initform nil :accessor sdl-error-string))
   (:report (lambda (c s)
              (with-slots (code string) c
-              (format s "SDL Error (~A): ~A" code string)))))
+               (format s "SDL Error (~A): ~A" code string)))))
 
 (defun sdl-collect (wrapped-ptr &optional (free-fun #'foreign-free))
   (let ((ptr (autowrap:ptr wrapped-ptr)))
@@ -21,6 +21,11 @@
 (defun sdl-cancel-collect (wrapped-ptr)
   (tg:cancel-finalization wrapped-ptr)
   wrapped-ptr)
+
+(defun sdl-true-p (integer-bool)
+  "Use this function to convert truth from a low level wrapped SDL function
+returning an SDL_true into CL's boolean type system."
+  (= (autowrap:enum-value 'sdl2-ffi:sdl-bool :true) integer-bool))
 
 (autowrap:define-bitmask-from-constants (sdl-init-flags)
   sdl2-ffi:+sdl-init-timer+

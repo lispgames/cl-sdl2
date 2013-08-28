@@ -22,7 +22,8 @@
    (:file "sdl2")
    (:file "video")
    (:file "events")
-   (:file "keyboard")))
+   (:file "keyboard")
+   (:file "rect")))
 
 (asdf:defsystem #:sdl2-examples
   :description "simple examples to demonstrate common usage of sdl2."
