@@ -62,24 +62,24 @@
    (righttrigger a5)))
 
 (defun game-controller-p (device-index)
-  (= 1 (sdl-isgamecontroller device-index)))
+  (= 1 (sdl-is-game-controller device-index)))
 
 (defun game-controller-name-for-index (device-index)
-  (sdl-gamecontrollernameforindex device-index))
+  (sdl-game-controller-name-for-index device-index))
 
 (defun game-controller-open (device-index)
   (sdl-collect
-   (check-null (sdl-gamecontrolleropen device-index))
-   (lambda (gc) (sdl-gamecontrollerclose gc))))
+   (check-null (sdl-game-controller-open device-index))
+   (lambda (gc) (sdl-game-controller-close gc))))
 
 (defun game-controller-close (gamecontroller)
-  (sdl-gamecontrollerclose gamecontroller)
+  (sdl-game-controller-close gamecontroller)
   (sdl-cancel-collect gamecontroller))
 
 (defun game-controller-attached-p (gamecontroller)
-  (= 1 (sdl-gamecontrollergetattached gamecontroller)))
+  (= 1 (sdl-game-controller-get-attached gamecontroller)))
 
 (defun game-controller-add-mapping (mapping-string)
-  (sdl-gamecontrolleraddmapping mapping-string))
+  (sdl-game-controller-add-mapping mapping-string))
 
 
