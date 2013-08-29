@@ -88,6 +88,21 @@
            #:mod-value
            #:sym-value
            #:scancode=
+           #:make-point
+           #:copy-point
+           #:copy-into-point
+           #:free-point
+           #:with-points
+           #:make-rect
+           #:copy-rect
+           #:copy-into-rect
+           #:free-rect
+           #:with-rects
+           #:rect-empty
+           #:rect-equals
+           #:has-intersect
+           #:intersect-rect
+           #:union-rect
 
            ;; Utility
            #:sdl-ptr

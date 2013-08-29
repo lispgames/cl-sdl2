@@ -25,7 +25,8 @@
    (:file "keyboard")
    (:file "mouse")
    (:file "joystick")
-   (:file "gamecontroller")))
+   (:file "gamecontroller")
+   (:file "rect")))
 
 (asdf:defsystem #:sdl2-examples
   :description "simple examples to demonstrate common usage of sdl2."
