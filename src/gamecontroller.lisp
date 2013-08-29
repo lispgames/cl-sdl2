@@ -61,28 +61,25 @@
    (lefttrigger a2)
    (righttrigger a5)))
 
-(defwrapper sdl-gamecontroller ())
-
 (defun game-controller-p (device-index)
-  (= 1 (sdl2-ffi::sdl-isgamecontroller device-index)))
+  (= 1 (sdl-isgamecontroller device-index)))
 
 (defun game-controller-name-for-index (device-index)
-  (sdl2-ffi::sdl-gamecontrollernameforindex device-index))
+  (sdl-gamecontrollernameforindex device-index))
 
 (defun game-controller-open (device-index)
   (sdl-collect
-   (%make-sdl-gamecontroller
-    :ptr (check-null (sdl2-ffi::sdl-gamecontrolleropen device-index)))
-   #'sdl2-ffi::sdl-gamecontrollerclose))
+   (check-null (sdl-gamecontrolleropen device-index))
+   (lambda (gc) (sdl-gamecontrollerclose gc))))
 
 (defun game-controller-close (gamecontroller)
-  (sdl2-ffi::sdl-gamecontrollerclose (sdl-ptr gamecontroller))
+  (sdl-gamecontrollerclose gamecontroller)
   (sdl-cancel-collect gamecontroller))
 
 (defun game-controller-attached-p (gamecontroller)
-  (= 1 (sdl2-ffi::sdl-gamecontrollergetattached (sdl-ptr gamecontroller))))
+  (= 1 (sdl-gamecontrollergetattached gamecontroller)))
 
 (defun game-controller-add-mapping (mapping-string)
-  (sdl2-ffi::sdl-gamecontrolleraddmapping mapping-string))
+  (sdl-gamecontrolleraddmapping mapping-string))
 
 
