@@ -5,6 +5,7 @@ Written by
 
     Chip Collier <photex@lofidelitygames.com>
     Ryan Pavlik <rpavlik@gmail.com>
+    Peter Keller <psilord@cs.wisc.edu>
 
 License
 =======
