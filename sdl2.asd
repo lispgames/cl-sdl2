@@ -3,7 +3,7 @@
 (asdf:defsystem #:sdl2
   :serial t
   :description "Bindings for SDL2 using c2ffi."
-  :author "Chip Collier <photex@lofidelitygames.com>, Ryan Pavlik <rpavlik@gmail.com>"
+  :author "Chip Collier <photex@lofidelitygames.com>, Ryan Pavlik <rpavlik@gmail.com>, Peter Keller <psilord@cs.wisc.edu>"
   :license "MIT"
 
   :depends-on (:alexandria :cl-autowrap :cl-ppcre :trivial-garbage :cl-opengl)
