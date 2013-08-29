@@ -14,6 +14,7 @@
 
 (defmacro with-sdl-event ((event &optional (event-type :firstevent))
                           &body body)
+  "Allocate and automatically free an sdl event struct."
   `(let ((,event (new-event ,event-type)))
      (unwind-protect (progn ,@body)
        (free-event ,event))))
@@ -25,6 +26,7 @@
   (sdl-pump-events))
 
 (defun push-event (event-type)
+  "Allocates a new sdl event struct of the specified type and pushes it into the queue."
   (with-alloc (event 'sdl2-ffi:sdl-event)
     (setf (sdl-event.type event)
           (enum-value 'sdl2-ffi:sdl-event-type event-type))

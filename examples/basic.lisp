@@ -22,6 +22,8 @@
       ;; open any game controllers
       (loop for i from 0 upto (- (sdl2:joystick-count) 1)
          do (when (sdl2:game-controller-p i)
+              (format t "Found gamecontroller: ~a~%"
+                      (sdl2:game-controller-name-for-index i))
               (setf controllers (acons i (sdl2:game-controller-open i) controllers))))
       
       (sdl2:with-event-loop (:method :poll)

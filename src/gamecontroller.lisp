@@ -62,9 +62,12 @@
    (righttrigger a5)))
 
 (defun game-controller-p (device-index)
+  "Returns t if the device-index provided belongs to a 
+joystick with a known gamecontroller mapping."
   (= 1 (sdl-is-game-controller device-index)))
 
 (defun game-controller-name-for-index (device-index)
+  "Return the human readable name for the device-index provided."
   (sdl-game-controller-name-for-index device-index))
 
 (defun game-controller-open (device-index)
@@ -80,6 +83,7 @@
   (= 1 (sdl-game-controller-get-attached gamecontroller)))
 
 (defun game-controller-add-mapping (mapping-string)
+  "Add a gamecontroller mapping at runtime."
   (sdl-game-controller-add-mapping mapping-string))
 
 
