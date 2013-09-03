@@ -86,4 +86,5 @@ joystick with a known gamecontroller mapping."
   "Add a gamecontroller mapping at runtime."
   (sdl-game-controller-add-mapping mapping-string))
 
-
+(defun game-controller-get-joystick (gamecontroller)
+  (sdl-game-controller-get-joystick gamecontroller))
