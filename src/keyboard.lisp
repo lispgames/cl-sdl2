@@ -37,6 +37,4 @@
   (let ((mask (autowrap:mask-apply 'keymod keywords)))
     (/= 0 (logand mask value))))
 
-;; TODO need to be able to unpack a keysym struct in one go
-;;(defmacro with-keysym-slot-values ())
 
