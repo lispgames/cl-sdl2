@@ -82,6 +82,7 @@
            #:game-controller-close
            #:game-controller-attached-p
            #:game-controller-add-mapping
+           #:game-controller-get-joystick
            #:key-down-p
            #:key-up-p
            #:scancode-value
@@ -103,6 +104,13 @@
            #:has-intersect
            #:intersect-rect
            #:union-rect
+           #:haptic-open
+           #:haptic-open-from-joystick
+           #:rumble-init
+           #:rumble-play
+           #:haptic-close
+           #:joystick-is-haptic
+           #:mouse-is-haptic
 
            ;; Utility
            #:sdl-ptr
