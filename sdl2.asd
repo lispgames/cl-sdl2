@@ -26,6 +26,7 @@
    (:file "mouse")
    (:file "joystick")
    (:file "gamecontroller")
+   (:file "haptic")
    (:file "rect")))
 
 (asdf:defsystem #:sdl2-examples
