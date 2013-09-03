@@ -23,6 +23,11 @@
    (check-null (sdl-haptic-open-from-joystick source))
    (lambda (h) (sdl-haptic-close h))))
 
+(defun haptic-open-from-mouse ()
+  (sdl-collect
+   (check-null (sdl-haptic-open-from-mouse))
+   (lambda (h) (sdl-haptic-close h))))
+
 (defun haptic-close (haptic)
   (sdl-haptic-close haptic)
   (sdl-cancel-collect haptic))
