@@ -2,10 +2,10 @@
 
 
 (defun joystick-is-haptic (joystick)
-  (sdl-joystick-is-haptic joystick))
+  (sdl-true-p (sdl-joystick-is-haptic joystick)))
 
 (defun mouse-is-haptic ()
-  (sdl-mouse-is-haptic))
+  (sdl-true-p (sdl-mouse-is-haptic)))
 
 (defmacro %haptic-open (fn source)
   `(sdl-collect
@@ -15,8 +15,8 @@
 ;; TODO wth can't I use the macro above?
 (defun haptic-open (source)
   (sdl-collect
-    (check-null (sdl-haptic-open source))
-    (lambda (h) (sdl-haptic-close h))))
+   (check-null (sdl-haptic-open source))
+   (lambda (h) (sdl-haptic-close h))))
 
 (defun haptic-open-from-joystick (source)
   (sdl-collect
