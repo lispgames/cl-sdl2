@@ -32,4 +32,4 @@ If the returned value from the callback is 0, the timer is canceled."
 
 (defun remove-timer (timer)
   "Use this function to remove a timer created with 'add-timer'."
-  (check-true (sdl-remove-timer)))
+  (check-true (sdl-remove-timer timer)))

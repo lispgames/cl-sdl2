@@ -21,10 +21,7 @@
     (:centered (windowpos-centered))
     (t n)))
 
-(defun create-window (&key
-                      (title "SDL2 Window")
-                      (x :centered) (y :centered)
-                      (w 800) (h 600) flags)
+(defun create-window (&key (title "SDL2 Window") (x :centered) (y :centered) (w 800) (h 600) flags)
   (let ((window-flags (mask-apply 'sdl-window-flags flags))
         (x (windowpos-from-coord x))
         (y (windowpos-from-coord y)))

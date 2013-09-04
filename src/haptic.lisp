@@ -1,40 +1,61 @@
 (in-package #:sdl2)
 
 
-(defun joystick-is-haptic (joystick)
+(defun joystick-is-haptic-p (joystick)
   (sdl-true-p (sdl-joystick-is-haptic joystick)))
 
-(defun mouse-is-haptic ()
+(defun mouse-is-haptic-p ()
   (sdl-true-p (sdl-mouse-is-haptic)))
 
 (defmacro %haptic-open (fn source)
+  "Unused"
   `(sdl-collect
     (check-null (,fn ,source))
     (lambda (h) (sdl-haptic-close h))))
 
 ;; TODO wth can't I use the macro above?
 (defun haptic-open (source)
+  "Use this function to open the N'th haptic device for use."
   (sdl-collect
    (check-null (sdl-haptic-open source))
    (lambda (h) (sdl-haptic-close h))))
 
 (defun haptic-open-from-joystick (source)
+  "Use this function to open a joystick haptic device for use"
   (sdl-collect
    (check-null (sdl-haptic-open-from-joystick source))
    (lambda (h) (sdl-haptic-close h))))
 
 (defun haptic-open-from-mouse ()
+  "Use this function to open the mouses haptic device for use."
   (sdl-collect
    (check-null (sdl-haptic-open-from-mouse))
    (lambda (h) (sdl-haptic-close h))))
 
 (defun haptic-close (haptic)
+  "Use this function to close an opened haptic device."
   (sdl-haptic-close haptic)
   (sdl-cancel-collect haptic))
 
+(defmacro haptic-index (haptic)
+  `(sdl-haptic-index haptic))
+
+(defun haptic-opened-p (haptic)
+  (sdl-true-p (sdl-haptic-opened (haptic-index haptic))))
+
+(defun rumble-supported-p (haptic)
+  "Use this function to test whether rumble is supported on a haptic device."
+  (sdl-true-p (sdl-haptic-rumble-supported haptic)))
+
 (defun rumble-init (haptic)
+  "Use this function to initialize a haptic device for simple rumble."
   (check-rc (sdl-haptic-rumble-init haptic)))
 
 (defun rumble-play (haptic strength duration)
+  "Use this function to play a simple rumble effect on a haptic device."
   (check-rc (sdl-haptic-rumble-play haptic strength duration)))
+
+(defun rumble-stop (haptic)
+  "Use this function to stop the rumble on a haptic device."
+  (check-rc (sdl-haptic-rumble-stop haptic)))
 

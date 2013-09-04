@@ -1,25 +1,21 @@
 (in-package #:sdl2)
 
 
-(defun warp-mouse-in-window (win x y)
-  (sdl2-ffi::sdl-warpmouseinwindow (sdl-ptr win) x y))
+(defmacro warp-mouse-in-window (win x y)
+  "Use this function to move the mouse to the given position within the window."
+  `(sdl-warp-mouse-in-window win x y))
 
 (defun hide-cursor ()
-  (check-rc (sdl2-ffi::sdl-showcursor 0)))
+  (check-rc (sdl-show-cursor nil)))
 
 (defun show-cursor ()
-  (check-rc (sdl2-ffi::sdl-showcursor 1)))
+  (check-rc (sdl-show-cursor t)))
 
-(defun toggle-cursor ()
-  (let ((cursor-state (check-rc (sdl2-ffi::sdl-showcursor -1))))
-    (sdl2-ffi::sdl-showcursor (logxor 1 cursor-state))))
+(defun set-relative-mouse-mode (enabled)
+  (check-rc (sdl-set-relative-mouse-mode enabled)))
 
-(defun relative-mouse-mode ()
-  (check-rc (sdl2-ffi::sdl-setrelativemousemode 1)))
-
-(defun absolute-mouse-mode ()
-  (check-rc (sdl2-ffi::sdl-setrelativemousemode 0)))
+(defun relative-mouse-mode-p ()
+  (sdl-true-p (sdl-get-relative-mouse-mode)))
 
 (defun toggle-relative-mouse-mode ()
-  (let ((relative-state (check-rc (sdl2-ffi::sdl-getrelativemousemode))))
-    (sdl2-ffi::sdl-setrelativemousemode (logxor 1 relative-state))))
+  (set-relative-mouse-mode (not (relative-mouse-mode-p))))

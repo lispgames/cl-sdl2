@@ -4,6 +4,7 @@
 (require :cl-opengl)
 
 (defun basic-test ()
+  "The kitchen sink."
   (sdl2:with-init (:everything)
     (let* ((win (sdl2:create-window :flags '(:shown :opengl)))
            (gl-context (sdl2:gl-create-context win))
@@ -28,11 +29,12 @@
               (let* ((gc (sdl2:game-controller-open i))
                      (joy (sdl2:game-controller-get-joystick gc)))
                 (setf controllers (acons i gc controllers))
-                (when (sdl2:joystick-is-haptic joy)
+                (when (sdl2:joystick-is-haptic-p joy)
                   (let ((h (sdl2:haptic-open-from-joystick joy)))
                     (setf haptic (acons i h haptic))
                     (sdl2:rumble-init h))))))
-      
+
+      ;; main loop
       (sdl2:with-event-loop (:method :poll)
         (:keydown
          (:keysym keysym)
@@ -40,16 +42,16 @@
                (sym (sdl2:sym-value keysym))
                (mod-value (sdl2:mod-value keysym)))
            (if (sdl2:scancode= scancode :scancode-w)
-               (if (and
-                    (sdl2::mod-value-p mod-value :kmod-rctrl :kmod-lctrl)
-                    (sdl2::mod-value-p mod-value :kmod-rshift :kmod-lshift))
-                   (print "BACKWARD")
-                   (print "FORWARD"))
+               (format t "~a~%"
+                       (if (and (sdl2::mod-value-p mod-value :kmod-rctrl :kmod-lctrl)
+                                (sdl2::mod-value-p mod-value :kmod-rshift :kmod-lshift))
+                           "Forward"
+                           "Backward"))
                (progn
-                 (print (format nil "Key sym: ~a, code: ~a, mod: ~a"
-                                sym
-                                scancode
-                                mod-value))))))
+                 (format t "Key sym: ~a, code: ~a, mod: ~a~%"
+                         sym
+                         scancode
+                         mod-value)))))
         
         (:keyup
          (:keysym keysym)
@@ -58,10 +60,8 @@
         
         (:mousemotion
          (:x x :y y :xrel xrel :yrel yrel :state state)
-         (print (format
-                 nil
-                 "Mouse motion abs(rel): ~a (~a), ~a (~a)~%Mouse state: ~a"
-                 x xrel y yrel state)))
+         (format t "Mouse motion abs(rel): ~a (~a), ~a (~a)~%Mouse state: ~a~%"
+                 x xrel y yrel state))
         
         (:controlleraxismotion
          (:which controller-id :axis axis-id :value value)
