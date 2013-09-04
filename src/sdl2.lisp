@@ -44,6 +44,20 @@ returning an SDL_true into CL's boolean type system."
          (error 'sdl-rc-error :rc ,rc :string (sdl-get-error)))
        ,rc)))
 
+(defmacro check-non-zero (form)
+  (with-gensyms (rc)
+    `(let ((,rc ,form))
+       (unless (> ,rc 0)
+         (error 'sdl-rc-error :rc ,rc :string (sdl-get-error)))
+       ,rc)))
+
+(defmacro check-true (form)
+  (with-gensyms (rc)
+    `(let ((,rc ,form))
+       (unless (sdl-true-p ,rc)
+         (error 'sdl-rc-error :rc ,rc :string (sdl-get-error)))
+       ,rc)))
+
 (defmacro check-null (form)
   (with-gensyms (wrapper)
     `(let ((,wrapper ,form))
