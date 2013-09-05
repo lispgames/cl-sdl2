@@ -68,7 +68,7 @@ joystick with a known gamecontroller mapping."
 
 (defmacro game-controller-name-for-index (device-index)
   "Return the human readable name for the device-index provided."
-  `(sdl-game-controller-name-for-index device-index))
+  `(sdl-game-controller-name-for-index ,device-index))
 
 (defun game-controller-open (device-index)
   (sdl-collect
@@ -85,7 +85,7 @@ joystick with a known gamecontroller mapping."
 (defmacro game-controller-add-mapping (mapping-string)
   "Use this function to add support for controllers that SDL is unaware 
 of or to cause an existing controller to have a different binding."
-  `(sdl-game-controller-add-mapping mapping-string))
+  `(sdl-game-controller-add-mapping ,mapping-string))
 
 (defmacro game-controller-get-joystick (gamecontroller)
-  `(sdl-game-controller-get-joystick gamecontroller))
+  `(sdl-game-controller-get-joystick ,gamecontroller))
