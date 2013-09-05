@@ -6,10 +6,10 @@
   `(sdl-warp-mouse-in-window win x y))
 
 (defun hide-cursor ()
-  (check-rc (sdl-show-cursor sdl2-ffi:+sdl-disable+)))
+  (sdl-true-p (check-rc (sdl-show-cursor sdl2-ffi:+sdl-disable+))))
 
 (defun show-cursor ()
-  (check-rc (sdl-show-cursor sdl2-ffi:+sdl-enable+)))
+  (sdl-true-p (check-rc (sdl-show-cursor sdl2-ffi:+sdl-enable+))))
 
 (defun set-relative-mouse-mode (enabled)
   (check-rc (sdl-set-relative-mouse-mode enabled)))

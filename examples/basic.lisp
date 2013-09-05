@@ -51,7 +51,11 @@
                  (format t "Key sym: ~a, code: ~a, mod: ~a~%"
                          sym
                          scancode
-                         mod-value)))))
+                         mod-value)))
+           (when (sdl2:scancode= scancode :scancode-s)
+             (sdl2:show-cursor))
+           (when (sdl2:scancode= scancode :scancode-h)
+             (sdl2:hide-cursor))))
         
         (:keyup
          (:keysym keysym)
