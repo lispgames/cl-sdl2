@@ -28,7 +28,8 @@
    (:file "gamecontroller")
    (:file "haptic")
    (:file "timer")
-   (:file "rect")))
+   (:file "rect")
+   (:file "platform")))
 
 (asdf:defsystem #:sdl2-examples
   :description "simple examples to demonstrate common usage of sdl2."

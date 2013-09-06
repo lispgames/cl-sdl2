@@ -144,6 +144,14 @@
            #:add-timer
            #:remove-timer
 
+           ;; platform.lisp
+           #:platform
+           #:cpu-cache-line-size
+           #:cpu-count
+           #:mmx-p #:alti-vec-p #:rdtsc-p
+           #:sse-p #:sse2-p #:sse3-p #:sse41-p #:sse42-p
+           #:power-info
+
            ;; Utility
            #:sdl-ptr
 
