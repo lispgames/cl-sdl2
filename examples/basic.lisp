@@ -41,21 +41,14 @@
          (let ((scancode (sdl2:scancode-value keysym))
                (sym (sdl2:sym-value keysym))
                (mod-value (sdl2:mod-value keysym)))
-           (if (sdl2:scancode= scancode :scancode-w)
-               (format t "~a~%"
-                       (if (and (sdl2::mod-value-p mod-value :kmod-rctrl :kmod-lctrl)
-                                (sdl2::mod-value-p mod-value :kmod-rshift :kmod-lshift))
-                           "Forward"
-                           "Backward"))
-               (progn
-                 (format t "Key sym: ~a, code: ~a, mod: ~a~%"
-                         sym
-                         scancode
-                         mod-value)))
-           (when (sdl2:scancode= scancode :scancode-s)
-             (sdl2:show-cursor))
-           (when (sdl2:scancode= scancode :scancode-h)
-             (sdl2:hide-cursor))))
+           (cond
+             ((sdl2:scancode= scancode :scancode-w) (format t "~a~%" "WALK"))
+             ((sdl2:scancode= scancode :scancode-s) (sdl2:show-cursor))
+             ((sdl2:scancode= scancode :scancode-h) (sdl2:hide-cursor)))
+           (format t "Key sym: ~a, code: ~a, mod: ~a~%"
+                   sym
+                   scancode
+                   mod-value)))
         
         (:keyup
          (:keysym keysym)
