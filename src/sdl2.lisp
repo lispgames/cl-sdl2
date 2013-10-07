@@ -84,11 +84,13 @@ returning an SDL_true into CL's boolean type system."
 
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
+  #-:gamekit
   (let ((init-flags (autowrap:mask-apply 'sdl-init-flags sdl-init-flags)))
     (check-rc (sdl-init init-flags))))
 
 (defun quit ()
   "Shuts down SDL2."
+  #-:gamekit
   (sdl-quit))
 
 (defmacro with-init ((&rest sdl-init-flags) &body body)
