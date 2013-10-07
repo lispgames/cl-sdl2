@@ -65,6 +65,23 @@ returning an SDL_true into CL's boolean type system."
            (error 'sdl-rc-error :rc ,wrapper :string (sdl-get-error))
            ,wrapper))))
 
+#+(and sb-thread darwin)
+(defmacro in-main-thread (&body b)
+  `(let ((thread (first (last (sb-thread:list-all-threads)))))
+     (sb-thread:interrupt-thread
+      thread #'(lambda ()
+                 (sb-int:with-float-traps-masked
+                     (:underflow :overflow :inexact :invalid :divide-by-zero) ,@b)))))
+
+#+(and ccl darwin)
+(defmacro in-main-thread (&body b)
+  `(let ((thread (find 0 (all-processes) :key #'process-serial-number)))
+     (process-interrupt thread (lambda () ,@b))))
+
+#-darwin
+(defmacro in-main-thread (&body b)
+  ,@b)
+
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
   (let ((init-flags (autowrap:mask-apply 'sdl-init-flags sdl-init-flags)))
@@ -75,7 +92,7 @@ returning an SDL_true into CL's boolean type system."
   (sdl-quit))
 
 (defmacro with-init ((&rest sdl-init-flags) &body body)
-  `(progn
+  `(in-main-thread
      (init ,@sdl-init-flags)
      (unwind-protect
           (progn ,@body)
