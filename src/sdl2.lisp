@@ -65,22 +65,25 @@ returning an SDL_true into CL's boolean type system."
            (error 'sdl-rc-error :rc ,wrapper :string (sdl-get-error))
            ,wrapper))))
 
-#+(and sb-thread darwin)
+(defmacro without-fp-traps (&body body)
+  #+:sbcl
+  `(sb-int:with-float-traps-masked (:underflow
+                                    :overflow
+                                    :inexact
+                                    :invalid
+                                    :divide-by-zero) ,@body)
+  #-:sbcl
+  `(progn ,@body))
+
 (defmacro in-main-thread (&body b)
+  #+ (and :ccl darwin)
+  `(let ((thread (find 0 (ccl:all-processes) :key #'ccl:process-serial-number)))
+     (ccl:process-interrupt thread (lambda () (without-fp-traps ,@b))))
+  #+ (and :sbcl darwin)
   `(let ((thread (first (last (sb-thread:list-all-threads)))))
-     (sb-thread:interrupt-thread
-      thread #'(lambda ()
-                 (sb-int:with-float-traps-masked
-                     (:underflow :overflow :inexact :invalid :divide-by-zero) ,@b)))))
-
-#+(and ccl darwin)
-(defmacro in-main-thread (&body b)
-  `(let ((thread (find 0 (all-processes) :key #'process-serial-number)))
-     (process-interrupt thread (lambda () ,@b))))
-
-#-darwin
-(defmacro in-main-thread (&body b)
-  ,@b)
+     (sb-thread:interrupt-thread thread (lambda () (without-fp-traps ,@b))))
+  #-darwin
+  `(without-fp-traps ,@b))
 
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
