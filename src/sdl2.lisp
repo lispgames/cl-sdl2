@@ -76,17 +76,23 @@ returning an SDL_true into CL's boolean type system."
   `(progn ,@body))
 
 (defmacro in-main-thread (&body b)
-  #+ (and :ccl darwin)
+  #+ (and ccl darwin)
   `(let ((thread (find 0 (ccl:all-processes) :key #'ccl:process-serial-number)))
      (ccl:process-interrupt thread (lambda () (without-fp-traps ,@b))))
-  #+ (and :sbcl darwin)
+  #+ (and sbcl darwin)
   `(let ((thread (first (last (sb-thread:list-all-threads)))))
      (sb-thread:interrupt-thread thread (lambda () (without-fp-traps ,@b))))
   #-darwin
   `(without-fp-traps ,@b))
 
+#+:darwin
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (ql:quickload :cl-glut))
+
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
+  #+:darwin
+  (cl-glut:init)
   #-:gamekit
   (let ((init-flags (autowrap:mask-apply 'sdl-init-flags sdl-init-flags)))
     (check-rc (sdl-init init-flags))))
