@@ -1,7 +1,6 @@
 ((#:quickloads
   "swank"
   "alexandria"
-  "osicat"
   "cl-fad"
   "cl-ppcre"
   "trivial-garbage"
