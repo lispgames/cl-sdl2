@@ -85,12 +85,12 @@ returning an SDL_true into CL's boolean type system."
   #-darwin
   `(without-fp-traps ,@b))
 
-#+:darwin
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (ql:quickload :cl-glut))
-
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
+  ;; HACK! glutInit on OSX uses some magic undocumented API to
+  ;; correctly make the calling thread the primary thread. This
+  ;; allows cl-sdl2 to actually work. Nothing else seemed to
+  ;; work at all to be honest.
   #+:darwin
   (cl-glut:init)
   #-:gamekit
