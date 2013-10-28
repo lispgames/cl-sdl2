@@ -65,17 +65,45 @@ returning an SDL_true into CL's boolean type system."
            (error 'sdl-rc-error :rc ,wrapper :string (sdl-get-error))
            ,wrapper))))
 
+(defmacro without-fp-traps (&body body)
+  #+:sbcl
+  `(sb-int:with-float-traps-masked (:underflow
+                                    :overflow
+                                    :inexact
+                                    :invalid
+                                    :divide-by-zero) ,@body)
+  #-:sbcl
+  `(progn ,@body))
+
+(defmacro in-main-thread (&body b)
+  #+ (and ccl darwin)
+  `(let ((thread (find 0 (ccl:all-processes) :key #'ccl:process-serial-number)))
+     (ccl:process-interrupt thread (lambda () (without-fp-traps ,@b))))
+  #+ (and sbcl darwin)
+  `(let ((thread (first (last (sb-thread:list-all-threads)))))
+     (sb-thread:interrupt-thread thread (lambda () (without-fp-traps ,@b))))
+  #-darwin
+  `(without-fp-traps ,@b))
+
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
+  ;; HACK! glutInit on OSX uses some magic undocumented API to
+  ;; correctly make the calling thread the primary thread. This
+  ;; allows cl-sdl2 to actually work. Nothing else seemed to
+  ;; work at all to be honest.
+  #+:darwin
+  (cl-glut:init)
+  #-:gamekit
   (let ((init-flags (autowrap:mask-apply 'sdl-init-flags sdl-init-flags)))
     (check-rc (sdl-init init-flags))))
 
 (defun quit ()
   "Shuts down SDL2."
+  #-:gamekit
   (sdl-quit))
 
 (defmacro with-init ((&rest sdl-init-flags) &body body)
-  `(progn
+  `(in-main-thread
      (init ,@sdl-init-flags)
      (unwind-protect
           (progn ,@body)

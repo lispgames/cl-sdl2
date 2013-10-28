@@ -122,23 +122,14 @@
            (,idle-func nil))
        (with-sdl-event (,sdl-event)
          (setf ,idle-func #'(lambda () ,@(expand-idle-handler event-handlers)))
-         (loop until ,quit
-            do (loop until (= 0 (next-event ,sdl-event ,method ,timeout))
-                  do (case (get-event-type ,sdl-event)
-                       ,@(remove nil
-                                 (mapcar
-                                  #'(lambda (handler)
-                                      (if (eq (first handler) :quit)
-                                          (expand-quit-handler sdl-event
-                                                               (rest (rest handler))
-                                                               quit)
-                                          (let* ((event-type (first handler))
-                                                 (params (second handler))
-                                                 (forms (rest (rest handler))))
-                                            (expand-handler sdl-event
-                                                            event-type
-                                                            params
-                                                            forms))))
-                                  event-handlers))))
-              (unless ,quit
-                (funcall ,idle-func)))))))
+         (loop :until ,quit :do
+            (loop :until (= 0 (next-event ,sdl-event ,method ,timeout)) :do
+               (case (get-event-type ,sdl-event)
+                 ,@(loop :for (type params . forms) :in event-handlers :collect
+                      (if (eq type :quit)
+                          (expand-quit-handler sdl-event forms quit)
+                          (expand-handler sdl-event type params forms))
+                      :into results
+                      :finally (return (remove nil results)))))
+            (unless ,quit
+              (funcall ,idle-func)))))))
