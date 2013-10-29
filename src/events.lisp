@@ -117,19 +117,24 @@
 (defmacro with-event-loop ((&key (method :poll) (timeout nil)) &rest event-handlers)
   (let ((quit (gensym "QUIT-"))
         (sdl-event (gensym "SDL-EVENT-"))
-        (idle-func (gensym "IDLE-FUNC-")))
+        (idle-func (gensym "IDLE-FUNC-"))
+        (rc (gensym "RC-")))
     `(let ((,quit nil)
            (,idle-func nil))
        (with-sdl-event (,sdl-event)
          (setf ,idle-func #'(lambda () ,@(expand-idle-handler event-handlers)))
-         (loop :until ,quit :do
-            (loop :until (= 0 (next-event ,sdl-event ,method ,timeout)) :do
-               (case (get-event-type ,sdl-event)
-                 ,@(loop :for (type params . forms) :in event-handlers :collect
-                      (if (eq type :quit)
-                          (expand-quit-handler sdl-event forms quit)
-                          (expand-handler sdl-event type params forms))
-                      :into results
-                      :finally (return (remove nil results)))))
-            (unless ,quit
-              (funcall ,idle-func)))))))
+         (loop :until ,quit
+               :do (loop :as ,rc = (next-event ,sdl-event ,method ,timeout)
+                         ,@(if (eq :poll method)
+                               `(:until (= 0 ,rc))
+                               `(:until ,quit))
+                         :do (case (get-event-type ,sdl-event)
+                               ,@(loop :for (type params . forms) :in event-handlers
+                                       :collect
+                                       (if (eq type :quit)
+                                           (expand-quit-handler sdl-event forms quit)
+                                           (expand-handler sdl-event type params forms))
+                                         :into results
+                                       :finally (return (remove nil results)))))
+                   (unless ,quit
+                     (funcall ,idle-func)))))))
