@@ -108,3 +108,6 @@ returning an SDL_true into CL's boolean type system."
      (unwind-protect
           (progn ,@body)
        (quit))))
+
+(defun niy (message)
+  (error "SDL2 Error: Construct Not Implemented Yet: ~A" message))
