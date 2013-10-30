@@ -9,7 +9,8 @@
                    "/usr/include/(?!stdint.h|bits/types.h|sys/types.h).*")
  :exclude-definitions ("SDL_LogMessageV"
                        "SDL_vsnprintf"
-                       "_inline$")
+                       "_inline$"
+                       "^_mm_")
  :symbol-exceptions (("SDL_Log" . "SDL-LOGGER")
                      ("SDL_log" . "SDL-LOGN")
                      ("SDL_RWops" . "SDL-RWOPS")
