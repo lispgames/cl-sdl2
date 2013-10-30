@@ -34,7 +34,9 @@
    (:file "haptic")
    (:file "timer")
    (:file "rect")
-   (:file "platform")))
+   (:file "platform")
+   (:file "pixels")
+   (:file "render")))
 
 (asdf:defsystem #:sdl2-examples
   :description "simple examples to demonstrate common usage of sdl2."
