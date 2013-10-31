@@ -5,7 +5,7 @@
 (defpackage #:sdl2-ffi.functions)
 
 (defpackage #:sdl2
-  (:use #:cl #:alexandria #:autowrap.minimal
+  (:use #:cl #:alexandria #:autowrap.minimal #:plus-c
         #:sdl2-ffi.accessors #:sdl2-ffi.functions)
   (:import-from :cffi
                 #:mem-ref #:with-foreign-objects #:with-foreign-object
@@ -123,6 +123,23 @@
            #:intersect-rect
            #:union-rect
 
+           ;; render.lisp
+           #:get-num-render-drivers
+           #:get-render-driver-info
+           #:create-window-and-renderer
+           #:create-renderer
+           #:create-software-renderer
+           #:destroy-renderer
+           #:get-renderer
+           #:get-renderer-info
+           ;#:get-renderer-output-size
+           #:create-texture
+           #:destroy-texture
+           #:lock-texture
+           #:unlock-texture
+           #:gl-bind-texture
+           #:gl-unbind-texture
+
            ;; haptic.lisp
            #:joystick-is-haptic-p
            #:mouse-is-haptic-p
@@ -136,6 +153,11 @@
            #:rumble-init
            #:rumble-play
            #:rumble-stop
+
+           ;; surface.lisp
+           #:create-rgb-surface
+           #:create-rgb-surface-from
+           #:free-surface
 
            ;; timer.lisp
            #:delay

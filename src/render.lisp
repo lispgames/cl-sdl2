@@ -40,15 +40,11 @@ SDL_RendererInfo allocating loops."
 (autowrap:define-bitmask-from-enum
     (sdl-renderer-flip sdl2-ffi:sdl-renderer-flip))
 
-;; (autowrap:mask-apply 'sdl-renderer-flags '(:software :accelerated))
-
-;; export
 (defun get-num-render-drivers ()
   "Return the number of 2D rendering drivers available for the current
 display."
   (sdl-get-num-render-drivers))
 
-;; export
 (defun get-render-driver-info (index)
   "Allocate and return a new SDL_RendererInfo structure and fill it
 with information relating to the specific 2D rendering driver
@@ -57,25 +53,40 @@ specified in the index."
     (check-rc (sdl-get-render-driver-info index rinfo))
     rinfo))
 
-;; export
-;; TODO SDL_CreateWindowAndRenderer
-;; Do the same trick as in create-render once I figure this out.
 (defun create-window-and-renderer (width height flags)
-  (niy "SDL_CreateWindowAndRenderer()"))
+  (c-let ((winptr :pointer :free t)
+          (rendptr :pointer :free t))
+    (check-rc (sdl-create-window-and-renderer
+               width height
+               (mask-apply 'sdl-window-flags flags)
+               (winptr &) (rendptr &)))
+    (let ((window
+            (sdl-collect
+             (sdl2-ffi::make-sdl-window :ptr winptr)
+             (lambda (w) (sdl-destroy-window w))))
+          (renderer
+            (sdl-collect
+             (sdl2-ffi::make-sdl-renderer :ptr rendptr)
+             (lambda (r) (sdl-destroy-renderer r)))))
+      (values window renderer))))
 
-;; export
 (defun create-renderer (window index &optional (flags 0))
   "Create a 2D rendering context for a window."
   (sdl-collect
-   (check-null (sdl-create-renderer window index flags))
+   (check-null (sdl-create-renderer
+                window index
+                (mask-apply 'sdl-renderer-flags flags)))
    (lambda (r) (sdl-destroy-renderer r))))
 
-;; export
 (defun create-software-renderer (surface)
   "Create and return a 2D software rendering context for the surface."
-  (check-null (sdl-create-softeware-renderer surface)))
+  (check-null (sdl-create-software-renderer surface)))
 
-;; export
+(defun destroy-renderer (r)
+  (sdl-cancel-collect r)
+  (sdl-destroy-renderer r)
+  (invalidate r))
+
 (defun get-renderer (window)
   "Return NIL if there is no renderer associated with the window, or otherwise
 the SDL_Renderer structure."
@@ -84,7 +95,6 @@ the SDL_Renderer structure."
         nil
         renderer)))
 
-;; export
 (defun get-renderer-info (renderer)
   "Allocate a new SDL_RendererInfo structure, fill it in with information
 about the specified renderer, and return it."
@@ -92,18 +102,37 @@ about the specified renderer, and return it."
     (check-rc (sdl-get-renderer-info renderer rinfo))
     rinfo))
 
-;; export
 ;; TODO SDL_GetRendererOutputSize
 (defun get-renderer-output-size (renderer)
   (niy "SDL_GetRendererOutputSize()"))
 
-;; export
-(defun create-texture (renderer texture-format access width height)
-  (let ((texture (sdl-create-texture renderer texture-format access w h)))
-    (if (null-pointer-p (autowrap:ptr texture))
-        nil
-        texture)))
+(defun create-texture (renderer pixel-format access width height)
+  (sdl-collect
+   (check-null (sdl-create-texture renderer
+                                   (enum-value 'sdl-pixel-format pixel-format)
+                                   (enum-value 'sdl-texture-access access)
+                                   width height))
+   (lambda (tex) (sdl-destroy-texture tex))))
 
+(defun destroy-texture (texture)
+  (sdl-cancel-collect texture)
+  (sdl-destroy-texture texture)
+  (invalidate texture))
 
+(defun lock-texture (texture &optional rect)
+  (c-let ((pixels :pointer :free t)
+          (pitch :int :free t))
+    (check-rc (sdl-lock-texture texture rect (pixels &) (pitch &)))
+    (values pixels pitch)))
 
+(defun unlock-texture (texture)
+  (sdl-unlock-texture texture))
 
+(defun gl-bind-texture (texture)
+  (c-let ((texw :float :free t)
+          (texh :float :free t))
+    (check-rc (sdl-gl-bind-texture texture (texw &) (texh &)))
+    (values texw texh)))
+
+(defun gl-unbind-texture (texture)
+  (check-rc (sdl-gl-unbind-texture texture)))

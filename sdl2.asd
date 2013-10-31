@@ -8,6 +8,7 @@
 
   :depends-on (:alexandria
                :cl-autowrap
+               :cl-plus-c
                :cl-ppcre
                :trivial-garbage
                :cl-opengl
@@ -36,6 +37,7 @@
    (:file "rect")
    (:file "platform")
    (:file "pixels")
+   (:file "surface")
    (:file "render")))
 
 (asdf:defsystem #:sdl2-examples
