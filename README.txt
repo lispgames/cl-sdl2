@@ -30,13 +30,18 @@ Installation Instructions when using Quicklisp, SBCL, and Linux
     If you need to compile from source for your Linux platform:
 
     1. Download the source tar-ball.
-    2. tar zxf SDL2-2.0.1.tar.gz
+    2. tar zxf SDL2-2.0.0.tar.gz
     3. ./configure
     4. make
     5. sudo make install
 
-    This will install the SDL-2.0.1 C Library into your /usr/local location.
-    
+    This will install the SDL-2.0.0 C Library into your /usr/local location.
+
+    It is important to install exactly the C SDL version 2.0.0 with
+    this version of sdl2. This is due to the lisp wrapping of sdl2
+    expecting to prepare a lisp image based upon the header file
+    information for SDL 2.0.0.
+
     Quicklisp Install
     -----------------
 
