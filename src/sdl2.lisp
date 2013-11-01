@@ -116,3 +116,8 @@ returning an SDL_true into CL's boolean type system."
   (c-let ((ver sdl2-ffi:sdl-version :free t))
     (sdl-get-version (ver &))
     (values (ver :major) (ver :minor) (ver :patch))))
+
+(defun version-wrapped ()
+  (values sdl2-ffi:+sdl-major-version+
+          sdl2-ffi:+sdl-minor-version+
+          sdl2-ffi:+sdl-patchlevel+))
