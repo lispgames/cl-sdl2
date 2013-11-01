@@ -16,6 +16,7 @@
            #:quit
            #:with-init
            #:in-main-thread
+           #:version
 
            ;; video.lisp
            #:windowpos-underfined
