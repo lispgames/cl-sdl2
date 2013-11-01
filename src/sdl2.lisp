@@ -111,3 +111,8 @@ returning an SDL_true into CL's boolean type system."
 
 (defun niy (message)
   (error "SDL2 Error: Construct Not Implemented Yet: ~A" message))
+
+(defun version ()
+  (c-let ((ver sdl2-ffi:sdl-version :free t))
+    (sdl-get-version (ver &))
+    (values (ver :major) (ver :minor) (ver :patch))))
