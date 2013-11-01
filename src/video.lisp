@@ -36,8 +36,8 @@
   (values))
 
 (defmacro with-window ((win &key (title "SDL2 Window")
-                        (x :centered) (y :centered)
-                        (w 800) (h 600) flags)
+                            (x :centered) (y :centered)
+                            (w 800) (h 600) flags)
                        &body body)
   `(let ((,win (create-window :title ,title
                               :x ,x :y ,y :w ,w :h ,h
@@ -119,6 +119,12 @@
   (sdl-gl-delete-context gl-context)
   (autowrap:invalidate gl-context))
 
+(defmacro with-gl-context ((gl-context-sym win) &body body)
+  `(let ((,gl-context-sym (sdl2:gl-create-context ,win)))
+     (unwind-protect
+          (progn ,@body)
+       (sdl2:gl-delete-context ,gl-context-sym))))
+
 (defun gl-extension-supported-p (extension)
   (sdl-gl-extension-supported extension))
 
@@ -151,4 +157,4 @@
 
 (defun gl-set-attrs (&rest attr-plist)
   (loop for (attr value) on attr-plist by #'cddr
-        do (gl-set-attr attr value)))
+     do (gl-set-attr attr value)))

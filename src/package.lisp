@@ -44,6 +44,7 @@
            #:screensaver-enabled-p
            #:gl-create-context
            #:gl-delete-context
+           #:with-gl-context
            #:gl-extension-supported-p
            #:gl-make-current
            #:gl-get-swap-interval
