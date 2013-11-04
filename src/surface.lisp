@@ -19,6 +19,3 @@
   (sdl-cancel-collect surface)
   (sdl-free-surface surface)
   (invalidate surface))
-
-(c-let ((a :unsigned-char :count (* 128 128 4) :free t))
-  (a &))
