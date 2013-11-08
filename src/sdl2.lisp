@@ -65,48 +65,66 @@ returning an SDL_true into CL's boolean type system."
            (error 'sdl-rc-error :rc ,wrapper :string (sdl-get-error))
            ,wrapper))))
 
-(defmacro without-fp-traps (&body body)
-  #+:sbcl
-  `(sb-int:with-float-traps-masked (:underflow
-                                    :overflow
-                                    :inexact
-                                    :invalid
-                                    :divide-by-zero) ,@body)
-  #-:sbcl
-  `(progn ,@body))
+(defvar *main-thread-channel* nil)
 
 (defmacro in-main-thread (&body b)
-  #+ (and ccl darwin)
-  `(let ((thread (find 0 (ccl:all-processes) :key #'ccl:process-serial-number)))
-     (ccl:process-interrupt thread (lambda () (without-fp-traps ,@b))))
-  #+ (and sbcl darwin)
-  `(let ((thread (first (last (sb-thread:list-all-threads)))))
-     (sb-thread:interrupt-thread thread (lambda () (without-fp-traps ,@b))))
-  #-darwin
-  `(without-fp-traps ,@b))
+  (with-gensyms (channel)
+    `(let ((,channel (make-channel)))
+       (sendmsg *main-thread-channel*
+                (cons (lambda () ,@b) ,channel))
+       (let ((result (recvmsg ,channel)))
+         (etypecase result
+           (list (values-list result))
+           (error (error result)))))))
+
+(defun sdl-main-thread ()
+  (loop while *main-thread-channel* do
+    (let ((msg (recvmsg *main-thread-channel*)))
+      (let ((fun (car msg))
+            (chan (cdr msg)))
+        (handler-case
+            (sendmsg chan
+                     (multiple-value-list (funcall fun)))
+          (error (e)
+            (sendmsg chan e)))))))
 
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
-  ;; HACK! glutInit on OSX uses some magic undocumented API to
-  ;; correctly make the calling thread the primary thread. This
-  ;; allows cl-sdl2 to actually work. Nothing else seemed to
-  ;; work at all to be honest.
-  #+:darwin
-  (cl-glut:init)
-  #-:gamekit
-  (let ((init-flags (autowrap:mask-apply 'sdl-init-flags sdl-init-flags)))
-    (check-rc (sdl-init init-flags))))
+  (if *main-thread-channel*
+      (error "SDL already initialized; did you mean INIT-SUBSYSTEM?")
+      (setf *main-thread-channel* (make-channel)))
+  ;; On OSX, we need to run in the main thread; CCL allows us to
+  ;; safely do this.  On other platforms (mainly GLX?), we just need
+  ;; to run in a dedicated thread.
+  #+(and ccl darwin)
+  (let ((thread (find 0 (ccl:all-processes) :key #'ccl:process-serial-number)))
+    (ccl:process-interrupt thread (lambda ()
+                                    (without-fp-traps (sdl-main-thread)))))
+  #-(and ccl darwin)
+  (bt:make-thread #'sdl-main-thread)
+  (in-main-thread
+    ;; HACK! glutInit on OSX uses some magic undocumented API to
+    ;; correctly make the calling thread the primary thread. This
+    ;; allows cl-sdl2 to actually work. Nothing else seemed to
+    ;; work at all to be honest.
+    #+darwin
+    (cl-glut:init)
+    #-gamekit
+    (let ((init-flags (autowrap:mask-apply 'sdl-init-flags sdl-init-flags)))
+      (check-rc (sdl-init init-flags)))))
 
 (defun quit ()
   "Shuts down SDL2."
-  #-:gamekit
-  (sdl-quit))
+  #-gamekit
+  (in-main-thread
+    (sdl-quit)
+    (setf *main-thread-channel* nil)))
 
 (defmacro with-init ((&rest sdl-init-flags) &body body)
-  `(in-main-thread
+  `(progn
      (init ,@sdl-init-flags)
      (unwind-protect
-          (progn ,@body)
+          (in-main-thread ,@body)
        (quit))))
 
 (defun niy (message)
