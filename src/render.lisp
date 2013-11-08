@@ -129,8 +129,8 @@ about the specified renderer, and return it."
   (sdl-unlock-texture texture))
 
 (defun gl-bind-texture (texture)
-  (c-let ((texw :float :free t)
-          (texh :float :free t))
+  (c-with ((texw :float)
+           (texh :float))
     (check-rc (sdl-gl-bind-texture texture (texw &) (texh &)))
     (values texw texh)))
 
