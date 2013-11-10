@@ -9,4 +9,10 @@
   "cl-autowrap")
  (#:project-name . "cl-sdl2")
  (#:project-version . "0.0.1")
- (#:dependencies))
+ (#:dependencies
+  ((#:method . "git")
+   (#:url
+    .
+    "git://github.com/rpav/trivial-channels.git"))
+  ((#:method . "git")
+   (#:url . "git://github.com/rpav/cl-autowrap.git"))))
