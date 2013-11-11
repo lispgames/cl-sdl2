@@ -66,27 +66,32 @@ returning an SDL_true into CL's boolean type system."
            ,wrapper))))
 
 (defvar *main-thread-channel* nil)
+(defvar *main-thread* nil)
 
 (defmacro in-main-thread (&body b)
-  (with-gensyms (channel)
-    `(let ((,channel (make-channel)))
-       (sendmsg *main-thread-channel*
-                (cons (lambda () ,@b) ,channel))
-       (let ((result (recvmsg ,channel)))
-         (etypecase result
-           (list (values-list result))
-           (error (error result)))))))
+  (with-gensyms (fun channel)
+    `(let ((,fun (lambda () ,@b)))
+       (if *main-thread*
+           (funcall ,fun)
+           (let ((,channel (make-channel)))
+             (sendmsg *main-thread-channel*
+                      (cons ,fun ,channel))
+             (let ((result (recvmsg ,channel)))
+               (etypecase result
+                 (list (values-list result))
+                 (error (error result)))))))))
 
 (defun sdl-main-thread ()
-  (loop while *main-thread-channel* do
-    (let ((msg (recvmsg *main-thread-channel*)))
-      (let ((fun (car msg))
-            (chan (cdr msg)))
-        (handler-case
-            (sendmsg chan
-                     (multiple-value-list (funcall fun)))
-          (error (e)
-            (sendmsg chan e)))))))
+  (let ((*main-thread* (bt:current-thread)))
+    (loop while *main-thread-channel* do
+      (let ((msg (recvmsg *main-thread-channel*)))
+        (let ((fun (car msg))
+              (chan (cdr msg)))
+          (handler-case
+              (sendmsg chan
+                       (multiple-value-list (funcall fun)))
+            (error (e)
+              (sendmsg chan e))))))))
 
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
