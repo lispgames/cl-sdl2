@@ -42,6 +42,7 @@
            #:get-window-size
            #:get-window-position
            #:get-window-flags
+           #:get-window-id
            #:enable-screensaver
            #:disable-screensaver
            #:screensaver-enabled-p

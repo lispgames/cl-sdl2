@@ -91,19 +91,30 @@ returning an SDL_true into CL's boolean type system."
                            (error (error result)))))))
            (error "No main thread, did you call SDL_Init?")))))
 
+(defun handle-message (msg)
+  (let ((fun (car msg))
+        (chan (cdr msg)))
+    (handler-case
+        (if chan
+            (sendmsg chan (multiple-value-list (funcall fun)))
+            (funcall fun))
+      (error (e)
+        (when chan
+          (sendmsg chan e))))))
+
+(defun recv-and-handle-message ()
+  (let ((msg (recvmsg *main-thread-channel*)))
+    (handle-message msg)))
+
+(defun get-and-handle-messages ()
+  (loop as msg = (getmsg *main-thread-channel*)
+        while msg do
+          (handle-message msg)))
+
 (defun sdl-main-thread ()
   (let ((*main-thread* (bt:current-thread)))
     (loop while *main-thread-channel* do
-      (let ((msg (recvmsg *main-thread-channel*)))
-        (let ((fun (car msg))
-              (chan (cdr msg)))
-          (handler-case
-              (if chan
-                  (sendmsg chan (multiple-value-list (funcall fun)))
-                  (funcall fun))
-            (error (e)
-              (when chan
-                (sendmsg chan e)))))))))
+      (recv-and-handle-message))))
 
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."

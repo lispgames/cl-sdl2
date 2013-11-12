@@ -100,6 +100,12 @@
   (let ((flags (sdl-get-window-flags win)))
     (autowrap:mask-keywords 'sdl-window-flags flags)))
 
+(declaim (inline get-window-id))
+(defun get-window-id (win)
+  (sdl-get-window-id win))
+
+ ;; Screensaver
+
 (defun enable-screensaver ()
   (sdl-enable-screen-saver))
 
@@ -108,6 +114,8 @@
 
 (defun screensaver-enabled-p ()
   (sdl-is-screen-saver-enabled))
+
+ ;; OpenGL
 
 (defun gl-create-context (win)
   (sdl-collect

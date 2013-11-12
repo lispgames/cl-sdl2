@@ -20,7 +20,10 @@
        (free-event ,event))))
 
 (defun get-event-type (event)
-  (enum-key 'sdl2-ffi:sdl-event-type (sdl-event.type event)))
+  (c-let ((event sdl2-ffi:sdl-event :from event))
+    (if (eq (event :type) *lisp-message-event*)
+        :lisp-message
+        (enum-key 'sdl2-ffi:sdl-event-type (sdl-event.type event)))))
 
 (defun pump-events ()
   (sdl-pump-events))
@@ -91,6 +94,7 @@
     (:textediting . :edit)
     (:textinput . :text)
     (:userevent . :user)
+    (:lisp-message . :user)
     (:windowevent . :window)))
 
 (defun unpack-event-params (event-var event-type params)
@@ -113,27 +117,30 @@
         ,@forms))))
 
 ;; TODO you should be able to specify a target framerate
-(defmacro with-event-loop ((&key (method :poll) (timeout nil)) &rest event-handlers)
+(defmacro with-event-loop ((&key background (method :poll) (timeout nil))
+                           &rest event-handlers)
   (let ((quit (gensym "QUIT-"))
         (sdl-event (gensym "SDL-EVENT-"))
         (idle-func (gensym "IDLE-FUNC-"))
         (rc (gensym "RC-")))
-    `(let ((,quit nil)
-           (,idle-func nil))
-       (with-sdl-event (,sdl-event)
-         (setf ,idle-func #'(lambda () ,@(expand-idle-handler event-handlers)))
-         (loop :until ,quit
-               :do (loop :as ,rc = (next-event ,sdl-event ,method ,timeout)
-                         ,@(if (eq :poll method)
-                               `(:until (= 0 ,rc))
-                               `(:until ,quit))
-                         :do (case (get-event-type ,sdl-event)
-                               ,@(loop :for (type params . forms) :in event-handlers
-                                       :collect
-                                       (if (eq type :quit)
-                                           (expand-quit-handler sdl-event forms quit)
-                                           (expand-handler sdl-event type params forms))
-                                         :into results
-                                       :finally (return (remove nil results)))))
-                   (unless ,quit
-                     (funcall ,idle-func)))))))
+    `(in-main-thread (:background ,background)
+       (let ((,quit nil)
+             (,idle-func nil))
+         (with-sdl-event (,sdl-event)
+           (setf ,idle-func #'(lambda () ,@(expand-idle-handler event-handlers)))
+           (loop :until ,quit
+                 :do (loop :as ,rc = (next-event ,sdl-event ,method ,timeout)
+                           ,@(if (eq :poll method)
+                                 `(:until (= 0 ,rc))
+                                 `(:until ,quit))
+                           :do (case (get-event-type ,sdl-event)
+                                 (:lisp-message () (get-and-handle-messages))
+                                 ,@(loop :for (type params . forms) :in event-handlers
+                                         :collect
+                                         (if (eq type :quit)
+                                             (expand-quit-handler sdl-event forms quit)
+                                             (expand-handler sdl-event type params forms))
+                                           :into results
+                                         :finally (return (remove nil results)))))
+                     (unless ,quit
+                       (funcall ,idle-func))))))))
