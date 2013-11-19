@@ -23,7 +23,8 @@
   (c-let ((event sdl2-ffi:sdl-event :from event))
     (if (eq (event :type) *lisp-message-event*)
         :lisp-message
-        (enum-key 'sdl2-ffi:sdl-event-type (sdl-event.type event)))))
+        (or (enum-key 'sdl2-ffi:sdl-event-type (event :type))
+            (event :type)))))
 
 (defun pump-events ()
   (sdl-pump-events))
@@ -101,7 +102,8 @@
   (mapcar (lambda (param)
             (let* ((keyword (first param))
                    (binding (second param))
-                   (ref (cdr (assoc event-type *event-type-to-accessor*))))
+                   (ref (or (cdr (assoc event-type *event-type-to-accessor*))
+                            :user)))
               `(,binding (c-ref ,event-var sdl2-ffi:sdl-event ,ref ,keyword))))
           params))
 
@@ -116,31 +118,38 @@
       (let (,@(unpack-event-params sdl-event event-type parameter-pairs))
         ,@forms))))
 
+(defvar *event-loop* nil)
+
 ;; TODO you should be able to specify a target framerate
-(defmacro with-event-loop ((&key background (method :poll) (timeout nil))
+(defmacro with-event-loop ((&key background (method :poll) (timeout nil) recursive)
                            &rest event-handlers)
   (let ((quit (gensym "QUIT-"))
         (sdl-event (gensym "SDL-EVENT-"))
         (idle-func (gensym "IDLE-FUNC-"))
         (rc (gensym "RC-")))
-    `(in-main-thread (:background ,background)
-       (let ((,quit nil)
-             (,idle-func nil))
-         (with-sdl-event (,sdl-event)
-           (setf ,idle-func #'(lambda () ,@(expand-idle-handler event-handlers)))
-           (loop :until ,quit
-                 :do (loop :as ,rc = (next-event ,sdl-event ,method ,timeout)
-                           ,@(if (eq :poll method)
-                                 `(:until (= 0 ,rc))
-                                 `(:until ,quit))
-                           :do (case (get-event-type ,sdl-event)
-                                 (:lisp-message () (get-and-handle-messages))
-                                 ,@(loop :for (type params . forms) :in event-handlers
-                                         :collect
-                                         (if (eq type :quit)
-                                             (expand-quit-handler sdl-event forms quit)
-                                             (expand-handler sdl-event type params forms))
-                                           :into results
-                                         :finally (return (remove nil results)))))
-                     (unless ,quit
-                       (funcall ,idle-func))))))))
+    `(when (or ,recursive (not *event-loop*))
+       (setf *event-loop* t)
+       (in-main-thread (:background ,background)
+         (let ((,quit nil)
+               (,idle-func nil))
+           (prog1
+               (with-sdl-event (,sdl-event)
+                 (setf ,idle-func #'(lambda () ,@(expand-idle-handler event-handlers)))
+                 (progn ,@(cddr (find :initialize event-handlers :key #'first)))
+                 (loop :until ,quit
+                       :do (loop :as ,rc = (next-event ,sdl-event ,method ,timeout)
+                                 ,@(if (eq :poll method)
+                                       `(:until (= 0 ,rc))
+                                       `(:until ,quit))
+                                 :do (case (get-event-type ,sdl-event)
+                                       (:lisp-message () (get-and-handle-messages))
+                                       ,@(loop :for (type params . forms) :in event-handlers
+                                               :collect
+                                               (if (eq type :quit)
+                                                   (expand-quit-handler sdl-event forms quit)
+                                                   (expand-handler sdl-event type params forms))
+                                                 :into results
+                                               :finally (return (remove nil results)))))
+                           (unless ,quit
+                             (funcall ,idle-func))))
+             (setf *event-loop* nil)))))))
