@@ -99,8 +99,9 @@ returning an SDL_true into CL's boolean type system."
             (sendmsg chan (multiple-value-list (funcall fun)))
             (funcall fun))
       (error (e)
-        (when chan
-          (sendmsg chan e))))))
+        (if chan
+            (sendmsg chan e)
+            (format *error-output* "SDL main-thread error:~%~A~%" e))))))
 
 (defun recv-and-handle-message ()
   (let ((msg (recvmsg *main-thread-channel*)))
