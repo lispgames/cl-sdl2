@@ -6,7 +6,8 @@
 
 (defpackage #:sdl2
   (:use #:cl #:alexandria #:autowrap.minimal #:plus-c
-        #:sdl2-ffi.accessors #:sdl2-ffi.functions)
+        #:sdl2-ffi.accessors #:sdl2-ffi.functions
+        #:trivial-channels)
   (:import-from :cffi
                 #:mem-ref #:with-foreign-objects #:with-foreign-object
                 #:foreign-alloc #:foreign-free #:null-pointer-p)
@@ -41,6 +42,7 @@
            #:get-window-size
            #:get-window-position
            #:get-window-flags
+           #:get-window-id
            #:enable-screensaver
            #:disable-screensaver
            #:screensaver-enabled-p
