@@ -6,7 +6,8 @@
   "trivial-garbage"
   "cl-opengl"
   "optima"
-  "cl-autowrap")
+  "cl-autowrap"
+  "trivial-channels")
  (#:project-name . "cl-sdl2")
  (#:project-version . "0.0.1")
  (#:dependencies

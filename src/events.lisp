@@ -137,19 +137,19 @@
                   (setf ,idle-func #'(lambda () ,@(expand-idle-handler event-handlers)))
                   (progn ,@(cddr (find :initialize event-handlers :key #'first)))
                   (loop :until ,quit
-                        :do (loop :as ,rc = (next-event ,sdl-event ,method ,timeout)
-                                  ,@(if (eq :poll method)
-                                        `(:until (= 0 ,rc))
-                                        `(:until ,quit))
-                                  :do (case (get-event-type ,sdl-event)
-                                        (:lisp-message () (get-and-handle-messages))
-                                        ,@(loop :for (type params . forms) :in event-handlers
-                                                :collect
-                                                (if (eq type :quit)
-                                                    (expand-quit-handler sdl-event forms quit)
-                                                    (expand-handler sdl-event type params forms))
-                                                  :into results
-                                                :finally (return (remove nil results)))))
-                            (unless ,quit
-                              (funcall ,idle-func))))
+                     :do (loop :as ,rc = (next-event ,sdl-event ,method ,timeout)
+                            ,@(if (eq :poll method)
+                                  `(:until (= 0 ,rc))
+                                  `(:until ,quit))
+                            :do (case (get-event-type ,sdl-event)
+                                  (:lisp-message () (get-and-handle-messages))
+                                  ,@(loop :for (type params . forms) :in event-handlers
+                                       :collect
+                                       (if (eq type :quit)
+                                           (expand-quit-handler sdl-event forms quit)
+                                           (expand-handler sdl-event type params forms))
+                                       :into results
+                                       :finally (return (remove nil results)))))
+                     (unless ,quit
+                       (funcall ,idle-func))))
              (setf *event-loop* nil)))))))

@@ -1,5 +1,7 @@
 ;;;; package.lisp
 
+(push :sdl2 *features*)
+
 (defpackage #:sdl2-ffi)
 (defpackage #:sdl2-ffi.accessors)
 (defpackage #:sdl2-ffi.functions)
