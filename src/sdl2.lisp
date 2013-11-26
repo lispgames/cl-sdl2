@@ -70,7 +70,7 @@ returning an SDL_true into CL's boolean type system."
 (defvar *lisp-message-event* nil)
 (defvar *wakeup-event* (alloc 'sdl2-ffi:sdl-event))
 
-(defmacro in-main-thread ((&key background) &body b)
+(defmacro in-main-thread ((&key background no-event) &body b)
   (with-gensyms (fun channel)
     `(let ((,fun (lambda () ,@b)))
        (if *main-thread-channel*
@@ -84,7 +84,8 @@ returning an SDL_true into CL's boolean type system."
                     `(let ((,channel (make-channel)))
                        (sendmsg *main-thread-channel*
                                 (cons ,fun ,channel))
-                       (push-event *wakeup-event*)
+                       ,(unless no-event
+                          '(push-event *wakeup-event*))
                        (let ((result (recvmsg ,channel)))
                          (etypecase result
                            (list (values-list result))
@@ -119,9 +120,10 @@ returning an SDL_true into CL's boolean type system."
 
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
-  (if *main-thread-channel*
-      (error "SDL already initialized; did you mean INIT-SUBSYSTEM?")
-      (setf *main-thread-channel* (make-channel)))
+  (unless *main-thread-channel*
+    (setf *main-thread-channel* (make-channel))
+    #-(and ccl darwin)
+    (bt:make-thread #'sdl-main-thread))
   (unless *lisp-message-event*
     (setf *lisp-message-event* (sdl-register-events 1))
     (setf (c-ref *wakeup-event* sdl2-ffi:sdl-event :type) *lisp-message-event*))
@@ -132,9 +134,7 @@ returning an SDL_true into CL's boolean type system."
   (let ((thread (find 0 (ccl:all-processes) :key #'ccl:process-serial-number)))
     (ccl:process-interrupt thread (lambda ()
                                     (without-fp-traps (sdl-main-thread)))))
-  #-(and ccl darwin)
-  (bt:make-thread #'sdl-main-thread)
-  (in-main-thread ()
+  (in-main-thread (:no-event t)
     ;; HACK! glutInit on OSX uses some magic undocumented API to
     ;; correctly make the calling thread the primary thread. This
     ;; allows cl-sdl2 to actually work. Nothing else seemed to
@@ -148,7 +148,6 @@ returning an SDL_true into CL's boolean type system."
   "Shuts down SDL2."
   (in-main-thread ()
     (sdl-quit)
-    (setf *main-thread-channel* nil)
     (setf *lisp-message-event* nil)))
 
 (defmacro with-init ((&rest sdl-init-flags) &body body)
