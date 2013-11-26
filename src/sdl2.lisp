@@ -141,13 +141,11 @@ returning an SDL_true into CL's boolean type system."
     ;; work at all to be honest.
     #+darwin
     (cl-glut:init)
-    #-gamekit
     (let ((init-flags (autowrap:mask-apply 'sdl-init-flags sdl-init-flags)))
       (check-rc (sdl-init init-flags)))))
 
 (defun quit ()
   "Shuts down SDL2."
-  #-gamekit
   (in-main-thread ()
     (sdl-quit)
     (setf *main-thread-channel* nil)
