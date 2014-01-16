@@ -90,6 +90,7 @@
     (:mousebuttondown . :button)
     (:mousebuttonup . :button)
     (:mousemotion . :motion)
+    (:mousewheel . :wheel)
     (:multigesture . :mgesture)
     (:syswmevent . :syswm)
     (:textediting . :edit)
