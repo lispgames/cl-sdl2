@@ -3,7 +3,7 @@
 (defmacro delay (ms)
   "This function waits a specified number of milliseconds before returning. 
 It waits at least the specified time, but possibly longer due to OS scheduling"
-  `(sdl-delay ms))
+  `(sdl-delay ,ms))
 
 (defmacro get-ticks ()
   "Returns an unsigned 32-bit value representing the number of 
