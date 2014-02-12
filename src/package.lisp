@@ -60,6 +60,7 @@
            #:gl-get-attrs
            #:gl-set-attr
            #:gl-set-attrs
+           #:with-everything
 
            ;; events.lisp
            #:new-event

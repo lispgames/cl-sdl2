@@ -45,6 +45,20 @@
      (unwind-protect (progn ,@body)
        (destroy-window ,win))))
 
+(defmacro with-everything ((&key window gl) &body body)
+  (assert (and window gl))
+  (let ((window (if (symbolp window) (list window) window)))
+    (destructuring-bind (win &key (title "SDL2 Window")
+                         (x :centered) (y :centered)
+                         (w 800) (h 600) (flags ''(:shown :opengl))
+                         (fullscreen nil)) window
+      `(with-init (:everything)
+         (with-window (,win :title ,title :x ,x :y ,y :w ,w :h ,h
+                            :flags ,flags)
+           (with-gl-context (,gl ,win)
+             (set-window-fullscreen ,win ,fullscreen)
+             ,@body))))))
+
 (defun hide-window (win)
   (sdl-hide-window win))
 
