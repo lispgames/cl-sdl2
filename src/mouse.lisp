@@ -3,7 +3,7 @@
 
 (defmacro warp-mouse-in-window (win x y)
   "Use this function to move the mouse to the given position within the window."
-  `(sdl-warp-mouse-in-window win x y))
+  `(sdl-warp-mouse-in-window ,win ,x ,y))
 
 (defun hide-cursor ()
   (sdl-true-p (check-rc (sdl-show-cursor sdl2-ffi:+sdl-disable+))))
