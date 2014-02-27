@@ -124,9 +124,6 @@ returning an SDL_true into CL's boolean type system."
     (setf *main-thread-channel* (make-channel))
     #-(and ccl darwin)
     (bt:make-thread #'sdl-main-thread))
-  (unless *lisp-message-event*
-    (setf *lisp-message-event* (sdl-register-events 1))
-    (setf (c-ref *wakeup-event* sdl2-ffi:sdl-event :type) *lisp-message-event*))
   ;; On OSX, we need to run in the main thread; CCL allows us to
   ;; safely do this.  On other platforms (mainly GLX?), we just need
   ;; to run in a dedicated thread.
@@ -142,7 +139,10 @@ returning an SDL_true into CL's boolean type system."
     #+darwin
     (cl-glut:init)
     (let ((init-flags (autowrap:mask-apply 'sdl-init-flags sdl-init-flags)))
-      (check-rc (sdl-init init-flags)))))
+      (check-rc (sdl-init init-flags))
+      (unless *lisp-message-event*
+        (setf *lisp-message-event* (sdl-register-events 1))
+        (setf (c-ref *wakeup-event* sdl2-ffi:sdl-event :type) *lisp-message-event*)))))
 
 (defun quit ()
   "Shuts down SDL2."
