@@ -6,7 +6,7 @@
    #:*event*
 
    ;; main-loop
-   #:start
+   #:start #:quit
 
    ;; window
    #:window #:gl-window
@@ -24,4 +24,13 @@
 
    #:render #:idle-render #:close-window
    #:other-event
+
+   ;; shaders
+   #:compile-and-check-shader
+   #:compile-and-link-program
+   #:program #:shader-dictionary
+   #:find-program #:find-uniform
+   #:compile-shader-dictionary
+   #:use-program
+   #:uniformi #:uniformf #:uniformfv #:uniform-matrix
    ))

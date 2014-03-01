@@ -11,5 +11,6 @@
   :components
   ((:file "package")
    (:file "window")
+   (:file "shaders")
    (:file "main")))
 
