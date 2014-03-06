@@ -66,8 +66,10 @@
     (gl:end)))
 
 (defmethod close-window ((window test-window))
-  ;; Closing the GL context and window are done in :AFTER
-  (format t "Bye!~%"))
+  (format t "Bye!~%")
+  ;; You MUST call-next-method.  But do it last, because everything
+  ;; goes away when you do (your window, gl-context, etc)!
+  (call-next-method))
 
 (defmethod mousewheel-event ((window test-window) ts x y)
   (with-slots (rotation) window
@@ -93,5 +95,4 @@
   (when (> mask 0)
     (format t "Mouse motion, button-mask = ~A at ~A, ~A~%" mask x y)))
 
-;;; (sdl2.kit:start)
-;;; (make-instance 'test-window)
+;; (make-instance 'test-window)
