@@ -59,6 +59,9 @@
             window)
       (remhash (sdl-window-id window) *idle-render-windows*)))
 
+(defmethod render (window))
+(defmethod close-window (window))
+
 ;;;; WINDOW
 
 (defmethod initialize-instance :around ((window window) &key &allow-other-keys)
@@ -99,7 +102,7 @@
 (defmethod close-window :around ((window window))
   (sdl2:in-main-thread () (call-next-method)))
 
-(defmethod close-window ((window window))
+(defmethod close-window :after ((window window))
   (with-slots (sdl-window) window
     (let ((id (sdl-window-id window)))
       (remhash id *idle-render-windows*)
@@ -123,10 +126,9 @@
     (sdl2:gl-make-current (sdl-window window) gl-context)))
 
 ;;; Protocol
-(defmethod close-window ((window gl-window))
+(defmethod close-window :after ((window gl-window))
   (with-slots (gl-context) window
-    (sdl2:gl-delete-context gl-context))
-  (call-next-method))
+    (sdl2:gl-delete-context gl-context)))
 
 (defmethod render :before ((window gl-window))
   (with-slots (gl-context) window
