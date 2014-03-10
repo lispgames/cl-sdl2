@@ -96,6 +96,8 @@
 (defmethod render :around ((window window))
   (sdl2:in-main-thread () (call-next-method)))
 
+(defmethod render (window))
+
 (defmethod close-window :around ((window window))
   (sdl2:in-main-thread () (call-next-method)))
 
