@@ -21,6 +21,7 @@
            #:in-main-thread
            #:version
            #:version-wrapped
+           #:make-this-thread-main
 
            ;; video.lisp
            #:windowpos-underfined
