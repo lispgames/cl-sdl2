@@ -118,25 +118,51 @@ returning an SDL_true into CL's boolean type system."
     (loop while *main-thread-channel* do
       (recv-and-handle-message))))
 
+(defun ensure-main-channel ()
+  (unless *main-thread-channel*
+    (setf *main-thread-channel* (make-channel))))
+
+(defun make-this-thread-main (&optional function)
+  "Designate the current thread as the SDL2 main thread.  This
+function will not return until `SDL2:QUIT` is handled.  Users of this
+function will need to start other threads before this call, or specify
+`FUNCTION`.
+
+If `FUNCTION` is specified, it will be called when the main thread
+channel is ensured.  This is like calling `IN-MAIN-THREAD`, except it
+allows for a potentially single-threaded application.  This function
+does **not** return just because `FUNCTION` returns; it still requires
+`SDL2:QUIT` be processed.
+
+This does **not** call `SDL2:INIT` by itself.  Do this either with
+`FUNCTION`, or from a separate thread."
+  (ensure-main-channel)
+  (sendmsg *main-thread-channel* (cons function nil))
+  (sdl-main-thread))
+
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
   (unless *main-thread-channel*
-    (setf *main-thread-channel* (make-channel))
+    (ensure-main-channel)
+
+    ;; If we did not have a main-thread channel, make a default main
+    ;; thread.
     #-(and ccl darwin)
-    (bt:make-thread #'sdl-main-thread))
-  ;; On OSX, we need to run in the main thread; CCL allows us to
-  ;; safely do this.  On other platforms (mainly GLX?), we just need
-  ;; to run in a dedicated thread.
-  #+(and ccl darwin)
-  (let ((thread (find 0 (ccl:all-processes) :key #'ccl:process-serial-number)))
-    (ccl:process-interrupt thread (lambda ()
-                                    (without-fp-traps (sdl-main-thread)))))
+    (bt:make-thread #'sdl-main-thread)
+
+    ;; On OSX, we need to run in the main thread; CCL allows us to
+    ;; safely do this.  On other platforms (mainly GLX?), we just need
+    ;; to run in a dedicated thread.
+    #+(and ccl darwin)
+    (let ((thread (find 0 (ccl:all-processes) :key #'ccl:process-serial-number)))
+      (ccl:process-interrupt thread (lambda ()
+                                      (without-fp-traps (sdl-main-thread))))))
   (in-main-thread (:no-event t)
     ;; HACK! glutInit on OSX uses some magic undocumented API to
     ;; correctly make the calling thread the primary thread. This
     ;; allows cl-sdl2 to actually work. Nothing else seemed to
     ;; work at all to be honest.
-    #+darwin
+    #+(and ccl darwin)
     (cl-glut:init)
     (let ((init-flags (autowrap:mask-apply 'sdl-init-flags sdl-init-flags)))
       (check-rc (sdl-init init-flags))
@@ -148,6 +174,7 @@ returning an SDL_true into CL's boolean type system."
   "Shuts down SDL2."
   (in-main-thread ()
     (sdl-quit)
+    (setf *main-thread-channel* nil)
     (setf *lisp-message-event* nil)))
 
 (defmacro with-init ((&rest sdl-init-flags) &body body)
