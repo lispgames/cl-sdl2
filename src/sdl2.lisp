@@ -137,7 +137,8 @@ does **not** return just because `FUNCTION` returns; it still requires
 This does **not** call `SDL2:INIT` by itself.  Do this either with
 `FUNCTION`, or from a separate thread."
   (ensure-main-channel)
-  (sendmsg *main-thread-channel* (cons function nil))
+  (when (functionp function)
+    (sendmsg *main-thread-channel* (cons function nil)))
   (sdl-main-thread))
 
 (defun init (&rest sdl-init-flags)
