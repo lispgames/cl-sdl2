@@ -156,8 +156,7 @@ This does **not** call `SDL2:INIT` by itself.  Do this either with
     ;; to run in a dedicated thread.
     #+(and ccl darwin)
     (let ((thread (find 0 (ccl:all-processes) :key #'ccl:process-serial-number)))
-      (ccl:process-interrupt thread (lambda ()
-                                      (without-fp-traps (sdl-main-thread))))))
+      (ccl:process-interrupt thread #'sdl-main-thread)))
   (in-main-thread (:no-event t)
     ;; HACK! glutInit on OSX uses some magic undocumented API to
     ;; correctly make the calling thread the primary thread. This
