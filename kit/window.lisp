@@ -135,5 +135,6 @@
     (sdl2:gl-make-current (sdl-window window) gl-context)))
 
 (defmethod render :after ((window gl-window))
-  (gl:flush)
-  (sdl2:gl-swap-window (sdl-window window)))
+  (when (autowrap:valid-p (sdl-window window))
+    (gl:flush)
+    (sdl2:gl-swap-window (sdl-window window))))
