@@ -172,7 +172,7 @@ This does **not** call `SDL2:INIT` by itself.  Do this either with
 
 (defun quit ()
   "Shuts down SDL2."
-  (in-main-thread ()
+  (in-main-thread (:no-event t)
     (sdl-quit)
     (setf *main-thread-channel* nil)
     (setf *lisp-message-event* nil)))
