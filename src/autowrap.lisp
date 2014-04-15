@@ -5,8 +5,8 @@
   :accessor-package :sdl2-ffi.accessors
   :function-package :sdl2-ffi.functions
   :spec-path '(sdl2 autowrap-spec)
-  :exclude-sources ("/usr/local/lib/clang/3.3/include/(?!stddef.h)"
-                    "/usr/include/(?!stdint.h|bits/types.h|sys/types.h).*")
+  :exclude-sources ("/usr/local/lib/clang/3.4/include/(?!stddef.h)"
+                    "/usr/include/(?!stdint.h|bits/types.h|sys/types.h|SDL2).*")
   :exclude-definitions ("SDL_LogMessageV"
                         "SDL_vsnprintf"
                         "_inline$"
