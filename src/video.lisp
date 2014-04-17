@@ -139,7 +139,8 @@
 (defun gl-delete-context (gl-context)
   (sdl-cancel-collect gl-context)
   (sdl-gl-delete-context gl-context)
-  (autowrap:invalidate gl-context))
+  (autowrap:invalidate gl-context)
+  (values))
 
 (defmacro with-gl-context ((gl-context-sym win) &body body)
   `(let ((,gl-context-sym (sdl2:gl-create-context ,win)))

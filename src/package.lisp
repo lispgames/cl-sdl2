@@ -67,6 +67,7 @@
            #:new-event
            #:free-event
            #:with-sdl-event
+           #:get-event-type
            #:pump-events
            #:push-event
            #:push-quit-event
