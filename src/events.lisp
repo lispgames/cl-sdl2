@@ -1,16 +1,39 @@
 (in-package #:sdl2)
 
+(defvar *user-event-types* (make-hash-table))
+(defvar *user-event-codes* (make-hash-table))
+(defvar *user-events* (make-hash-table))
+(defvar *user-event-id* (let ((new-atomic (alloc 'sdl2-ffi:sdl-atomic-t)))
+                          (setf (sdl-atomic-t.value new-atomic) 0)
+                          new-atomic))
+
 (defun new-event (&optional (event-type :firstevent))
   (let ((event (alloc 'sdl2-ffi:sdl-event)))
     (sdl-collect event)
     (setf (sdl-event.type event)
-          (enum-value 'sdl2-ffi:sdl-event-type event-type))
+          (get-event-code event-type))
     event))
 
 (defun free-event (event)
   (sdl-cancel-collect event)
   (foreign-free (ptr event))
   (invalidate event))
+
+(defun register-user-event-type (user-event-type)
+  "Register a new sdl event-type if it doesn't already exist"
+  (when (not (keywordp user-event-type))
+    (error "Event types must be given as keywords"))
+  (multiple-value-bind (event-type-code event-type-found)
+      (gethash user-event-type *user-event-codes*)
+    (if event-type-found
+        event-type-code
+        (let ((new-event-code (sdl2-ffi.functions::sdl-register-events 1)))
+          (if (not (= new-event-code 4294967295))
+              (progn
+                (setf (gethash user-event-type *user-event-codes*) new-event-code)
+                (setf (gethash new-event-code *user-event-types*) user-event-type)
+                new-event-code)
+              (error (format nil "Failed to register new user-event type: ~a" user-event-type)))))))
 
 (defmacro with-sdl-event ((event &optional (event-type :firstevent))
                           &body body)
@@ -19,12 +42,48 @@
      (unwind-protect (progn ,@body)
        (free-event ,event))))
 
+(defun add-user-data (user-data)
+  (let* ((event-id (sdl-atomic-add *user-event-id* 1))
+         (id-in-use (nth-value 1 (gethash event-id *user-events*))))
+    (when id-in-use
+      (error "Event ID already in use"))
+    (setf (gethash event-id *user-events*) user-data)
+    event-id))
+
+(defun free-user-data (event-id)
+  (remhash event-id *user-events*))
+
+(defun get-user-data (event-id)
+  "Returns the user-data attached to an event-id
+and if the event-id was found"
+  (gethash event-id *user-events*))
+
+(defun get-event-code (event-type)
+  (multiple-value-bind (user-event-code is-user-event)
+      (gethash event-type *user-event-codes*)
+    (cond
+      (is-user-event
+       user-event-code)
+      ((eq :lisp-message event-type)
+       *lisp-message-event*)
+      (t
+       (enum-value 'sdl2-ffi:sdl-event-type event-type)))))
+
 (defun get-event-type (event)
   (c-let ((event sdl2-ffi:sdl-event :from event))
-    (if (eq (event :type) *lisp-message-event*)
-        :lisp-message
-        (or (enum-key 'sdl2-ffi:sdl-event-type (event :type))
-            (event :type)))))
+    (multiple-value-bind (user-event-type is-user-event)
+        (gethash (event :type) *user-event-types*)
+      (cond
+        (is-user-event
+         user-event-type)
+        ((eq (event :type) *lisp-message-event*)
+         :lisp-message)
+        (t
+         (or (enum-key 'sdl2-ffi:sdl-event-type (event :type))
+             (event :type)))))))
+
+(defun user-event-type-p (event-type)
+  (nth-value 1 (gethash event-type *user-event-codes*)))
 
 (defun pump-events ()
   (sdl-pump-events))
@@ -35,10 +94,22 @@
     (symbol
      (with-sdl-event (ev event)
        (setf (sdl-event.type ev)
-             (enum-value 'sdl2-ffi:sdl-event-type event))
+             (get-event-code event))
        (check-rc (sdl-push-event ev))))
     (sdl2-ffi:sdl-event
+     (check-rc (sdl-push-event event)))
+    (sdl2-ffi:sdl-user-event
      (check-rc (sdl-push-event event)))))
+
+(defun push-user-event (user-event &optional user-data)
+  "Allocates a new user-defined sdl event struct of the specified type and pushes it into the queue.
+Stores the optional user-data in sdl2::*user-events*"
+  (if (user-event-type-p user-event)
+      (with-sdl-event (event user-event)
+        (let ((event-id (add-user-data user-data)))
+          (setf (sdl-event.user.code event) event-id)
+          (push-event event)))
+      (error "Not a known user-event type")))
 
 (defun push-quit-event ()
   (push-event :quit))
@@ -105,7 +176,9 @@
                    (binding (second param))
                    (ref (or (cdr (assoc event-type *event-type-to-accessor*))
                             :user)))
-              `(,binding (c-ref ,event-var sdl2-ffi:sdl-event ,ref ,keyword))))
+              (if (eql keyword :user-data)
+                  `(,binding (get-user-data (c-ref ,event-var sdl2-ffi:sdl-event ,ref :code)))
+                  `(,binding (c-ref ,event-var sdl2-ffi:sdl-event ,ref ,keyword)))))
           params))
 
 (defun expand-handler (sdl-event event-type params forms)
@@ -126,6 +199,8 @@
                            &rest event-handlers)
   (let ((quit (gensym "QUIT-"))
         (sdl-event (gensym "SDL-EVENT-"))
+        (sdl-event-type (gensym "SDL-EVENT-TYPE"))
+        (sdl-event-id (gensym "SDL-EVENT-ID"))
         (idle-func (gensym "IDLE-FUNC-"))
         (rc (gensym "RC-")))
     `(when (or ,recursive (not *event-loop*))
@@ -142,15 +217,21 @@
                             ,@(if (eq :poll method)
                                   `(:until (= 0 ,rc))
                                   `(:until ,quit))
-                            :do (case (get-event-type ,sdl-event)
-                                  (:lisp-message () (get-and-handle-messages))
-                                  ,@(loop :for (type params . forms) :in event-handlers
-                                       :collect
-                                       (if (eq type :quit)
-                                           (expand-quit-handler sdl-event forms quit)
-                                           (expand-handler sdl-event type params forms))
-                                       :into results
-                                       :finally (return (remove nil results)))))
+                            :do
+                            (let* ((,sdl-event-type (get-event-type ,sdl-event))
+                                   (,sdl-event-id (and (user-event-type-p ,sdl-event-type)
+                                                       (sdl-event.user.code ,sdl-event))))
+                              (case ,sdl-event-type
+                                (:lisp-message () (get-and-handle-messages))
+                                ,@(loop :for (type params . forms) :in event-handlers
+                                     :collect
+                                     (if (eq type :quit)
+                                         (expand-quit-handler sdl-event forms quit)
+                                         (expand-handler sdl-event type params forms))
+                                     :into results
+                                     :finally (return (remove nil results))))
+                              (when (and ,sdl-event-id (not (eq ,sdl-event-type :lisp-message)))
+                                (free-user-data ,sdl-event-id))))
                      (unless ,quit
                        (funcall ,idle-func))))
              (setf *event-loop* nil)))))))

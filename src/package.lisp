@@ -66,10 +66,12 @@
            ;; events.lisp
            #:new-event
            #:free-event
+           #:register-user-event-type
            #:with-sdl-event
            #:get-event-type
            #:pump-events
            #:push-event
+           #:push-user-event
            #:push-quit-event
            #:next-event
            #:with-event-loop
