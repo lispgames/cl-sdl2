@@ -33,7 +33,7 @@
   "Allocates a new sdl event struct of the specified type and pushes it into the queue."
   (etypecase event
     (symbol
-     (with-alloc (ev 'sdl2-ffi:sdl-event)
+     (with-sdl-event (ev event)
        (setf (sdl-event.type ev)
              (enum-value 'sdl2-ffi:sdl-event-type event))
        (check-rc (sdl-push-event ev))))
