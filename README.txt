@@ -71,6 +71,7 @@ Installation Instructions when using Quicklisp, SBCL, and Linux
     (ql:quickload "cl-autowrap")
     (ql:quickload "cl-ppcre")
     (ql:quickload "trivial-garbage")
+    (ql:quickload "trivial-channels")
     (ql:quickload "cl-opengl")
 
     Then, to load the sdl2 system into the REPL:
