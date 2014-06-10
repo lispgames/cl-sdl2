@@ -18,6 +18,8 @@
               (haptic ()))
 
           ;; basic window/gl setup
+          (format t "Setting up window/gl.~%")
+          (finish-output)
           (sdl2:gl-make-current win gl-context)
           (gl:viewport 0 0 800 600)
           (gl:matrix-mode :projection)
@@ -27,6 +29,8 @@
           (gl:clear-color 0.0 0.0 1.0 1.0)
           (gl:clear :color-buffer)
 
+          (format t "Opening game controllers.~%")
+          (finish-output)
           ;; open any game controllers
           (loop for i from 0 upto (- (sdl2:joystick-count) 1)
              do (when (sdl2:game-controller-p i)
@@ -41,6 +45,8 @@
                         (sdl2:rumble-init h))))))
 
           ;; main loop
+          (format t "Beginning main loop.~%")
+          (finish-output)
           (sdl2:with-event-loop (:method :poll)
             (:keydown
              (:keysym keysym)
@@ -91,6 +97,8 @@
 
             (:quit () t))
 
+          (format t "Closing opened game controllers.~%")
+          (finish-output)
           ;; close any game controllers that were opened
           ;; as well as any haptics
           (loop for (i . controller) in controllers
