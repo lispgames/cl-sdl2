@@ -36,6 +36,7 @@
    (:file "haptic")
    (:file "timer")
    (:file "rect")
+   (:file "audio")
    (:file "platform")
    (:file "pixels")
    (:file "surface")
@@ -50,4 +51,3 @@
   :serial t
 
   :components ((:file "basic")))
-
