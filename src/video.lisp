@@ -181,3 +181,6 @@
 (defun gl-set-attrs (&rest attr-plist)
   (loop for (attr value) on attr-plist by #'cddr
      do (gl-set-attr attr value)))
+
+(defun gl-get-proc-address (proc-name)
+  (sdl-gl-get-proc-address proc-name))
