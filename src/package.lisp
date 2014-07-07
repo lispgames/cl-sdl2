@@ -61,6 +61,7 @@
            #:gl-get-attrs
            #:gl-set-attr
            #:gl-set-attrs
+	   #:gl-get-proc-address
            #:with-everything
 
            ;; events.lisp
