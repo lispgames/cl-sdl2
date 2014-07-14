@@ -3,15 +3,15 @@
 (defvar *user-event-types* (make-hash-table))
 (defvar *user-event-codes* (make-hash-table))
 (defvar *user-events* (make-hash-table))
-(defvar *user-event-id* (let ((new-atomic (alloc 'sdl2-ffi:sdl-atomic-t)))
-                          (setf (sdl-atomic-t.value new-atomic) 0)
-                          new-atomic))
+(defvar *user-event-id*
+  (c-let ((new-atomic sdl2-ffi:sdl-atomic-t))
+    (setf (new-atomic :value) 0)
+    new-atomic))
 
 (defun new-event (&optional (event-type :firstevent))
-  (let ((event (alloc 'sdl2-ffi:sdl-event)))
+  (c-let ((event sdl2-ffi:sdl-event))
     (sdl-collect event)
-    (setf (sdl-event.type event)
-          (get-event-code event-type))
+    (setf (event :type) (get-event-code event-type))
     event))
 
 (defun free-event (event)
@@ -38,7 +38,7 @@
 (defmacro with-sdl-event ((event &optional (event-type :firstevent))
                           &body body)
   "Allocate and automatically free an sdl event struct."
-  `(let ((,event (new-event ,event-type)))
+  `(c-let ((,event sdl2-ffi:sdl-event :from (new-event ,event-type)))
      (unwind-protect (progn ,@body)
        (free-event ,event))))
 
@@ -93,8 +93,7 @@ and if the event-id was found"
   (etypecase event
     (symbol
      (with-sdl-event (ev event)
-       (setf (sdl-event.type ev)
-             (get-event-code event))
+       (setf (ev :type) (get-event-code event))
        (check-rc (sdl-push-event ev))))
     (sdl2-ffi:sdl-event
      (check-rc (sdl-push-event event)))
@@ -107,7 +106,7 @@ Stores the optional user-data in sdl2::*user-events*"
   (if (user-event-type-p user-event)
       (with-sdl-event (event user-event)
         (let ((event-id (add-user-data user-data)))
-          (setf (sdl-event.user.code event) event-id)
+          (setf (event :user :code) event-id)
           (push-event event)))
       (error "Not a known user-event type")))
 
@@ -220,7 +219,7 @@ Stores the optional user-data in sdl2::*user-events*"
                             :do
                             (let* ((,sdl-event-type (get-event-type ,sdl-event))
                                    (,sdl-event-id (and (user-event-type-p ,sdl-event-type)
-                                                       (sdl-event.user.code ,sdl-event))))
+                                                       (,sdl-event :user :code))))
                               (case ,sdl-event-type
                                 (:lisp-message () (get-and-handle-messages))
                                 ,@(loop :for (type params . forms) :in event-handlers

@@ -9,27 +9,40 @@
 (defun make-point (x y)
   "Return an SDL_Point filled in with the arguments. It will be garbage
 collected as needed."
-  (let* ((point (sdl-collect (autowrap:alloc 'sdl2-ffi:sdl-point))))
-    (setf (sdl-point.x point) x
-          (sdl-point.y point) y)
+  (c-let ((point sdl2-ffi:sdl-point))
+    (sdl-collect point)
+    (setf (point :x) x
+          (point :y) y)
     point))
 
+(defmacro c-point ((wrapper-var) &body body)
+  `(c-let ((,wrapper-var sdl2-ffi:sdl-point :from ,wrapper-var))
+     ,@body))
+
+(defmacro c-points ((&rest wrappers) &body body)
+  (if wrappers
+      `(c-point (,(car wrappers))
+         (c-points (,@(cdr wrappers)) ,@body))
+      `(progn ,@body)))
+
 (defmethod print-object ((point sdl2-ffi:sdl-point) stream)
-  (print-unreadable-object (point stream :type t :identity t)
-    (format stream "x ~A y ~A"
-            (sdl-point.x point) (sdl-point.y point))))
+  (c-point (point)
+    (print-unreadable-object (point stream :type t :identity t)
+      (format stream "x ~A y ~A" (point :x) (point :y)))))
 
 (defun copy-point (point)
   "Allocate and return a new SDL_Point and make its slots be equal to
 the passed in SDL_Point."
-  (make-point (sdl-point.x point) (sdl-point.y point)))
+  (c-point (point)
+    (make-point (point :x) (point :y))))
 
 (defun copy-into-point (dest-point src-point)
   "Copy the information from the SDL_Point src-point into the SDL_Point
 dest-point. Return the dest-point."
-  (setf
-   (sdl-point.x dest-point) (sdl-point.x src-point)
-   (sdl-point.y dest-point) (sdl-point.x src-point))
+  (c-points (dest-point src-point)
+    (setf
+     (dest-point :x) (src-point :x)
+     (dest-point :y) (src-point :y)))
   dest-point)
 
 (defun free-point (point)
@@ -68,44 +81,53 @@ structures. Raw symbols are bound to (make-point 0 0).
   -> (#<SDL-FFI:SDL-POINT x 0 y 0>
       #<SDL-FFI:SDL-POINT x 5 y 10>
       #<SDL-FFI:SDL-POINT x 2 y 2>)"
-  (if (null bindings)
-      `(progn ,@body)
+  (if bindings
       `(%with-point (,(car bindings))
-         (with-points ,(cdr bindings) ,@body))))
+         (with-points ,(cdr bindings) ,@body))
+      `(progn ,@body)))
 
+(defmacro c-rect ((r) &body body)
+  `(c-let ((,r sdl2-ffi:sdl-rect :from ,r))
+     ,@body))
+
+(defmacro c-rects ((&rest wrappers) &body body)
+  (if wrappers
+      `(c-rect (,(car wrappers))
+         (c-rects (,@(cdr wrappers)) ,@body))
+      `(progn ,@body)))
 
 (defun make-rect (x y w h)
   "Allocate and return a new SDL_Rect filled in with the arguments. It
 will be garbage collected as needed."
-  (let* ((rect (sdl-collect (alloc 'sdl2-ffi:sdl-rect))))
-    (setf (sdl-rect.x rect) x
-          (sdl-rect.y rect) y
-          (sdl-rect.w rect) w
-          (sdl-rect.h rect) h)
+  (c-let ((rect sdl2-ffi:sdl-rect))
+     (sdl-collect rect)
+    (setf (rect :x) x
+          (rect :y) y
+          (rect :w) w
+          (rect :h) h)
     rect))
 
 (defmethod print-object ((rect sdl2-ffi:sdl-rect) stream)
-  (print-unreadable-object (rect stream :type t :identity t)
-    (format stream "x ~A y ~A w ~A h ~A"
-            (sdl-rect.x rect) (sdl-rect.y rect)
-            (sdl-rect.w rect) (sdl-rect.h rect))))
+  (c-rect (rect)
+    (print-unreadable-object (rect stream :type t :identity t)
+      (format stream "x ~A y ~A w ~A h ~A"
+              (rect :x) (rect :y) (rect :w) (rect :h)))))
 
 (defun copy-rect (rect)
   "Allocate and return a new SDL_Rect and make its slots be equal to the
 passed in SDL_Rect."
-  (make-rect (sdl-rect.x rect)
-             (sdl-rect.y rect)
-             (sdl-rect.w rect)
-             (sdl-rect.h rect)))
+  (c-rect (rect)
+    (make-rect (rect :x) (rect :y) (rect :w) (rect :h))))
 
 (defun copy-into-rect (dest-rect src-rect)
   "Copy the information from the SDL_Rect src-rect into the SDL_Rect
 dest-rect. Return the dest-rect."
-  (setf
-   (sdl-rect.x dest-rect) (sdl-rect.x src-rect)
-   (sdl-rect.y dest-rect) (sdl-rect.y src-rect)
-   (sdl-rect.w dest-rect) (sdl-rect.w src-rect)
-   (sdl-rect.h dest-rect) (sdl-rect.h src-rect))
+  (c-rects (dest-rect src-rect)
+    (setf
+     (dest-rect :x) (src-rect :x)
+     (dest-rect :y) (src-rect :y)
+     (dest-rect :w) (src-rect :w)
+     (dest-rect :h) (src-rect :h)))
   dest-rect)
 
 (defun free-rect (rect)
@@ -147,26 +169,28 @@ structures. Raw symbols are bound to (make-rect 0 0 0 0).
       #<SDL-FFI:SDL-RECT x 5 y 10 w 15 h 20>
       #<SDL-FFI:SDL-RECT x 2 y 2 w 3 d 40>)"
   (if (null bindings)
-      `(progn ,@body)
       `(%with-rect (,(car bindings))
-         (with-rects ,(cdr bindings) ,@body))))
+         (with-rects ,(cdr bindings) ,@body))
+      `(progn ,@body)))
 
 ;;; The implementation of the SDL_rect.h methods.
 
 (defun rect-empty (&rest rects)
   "Return T if the rectangle has no width or height."
   (every (lambda (rect)
-           (and (not (null-pointer-p (ptr rect)))
-                (or (<= (sdl-rect.w rect) 0)
-                    (<= (sdl-rect.h rect) 0))))
+           (c-rect (rect)
+            (and (not (null-pointer-p (ptr rect)))
+                 (or (<= (rect :w) 0)
+                     (<= (rect :h) 0)))))
          rects))
 
 (defun %rect-equal (a b)
   "Return T if the two rectanges are valid and the slots are equal"
-  (and (= (sdl-rect.x a) (sdl-rect.x b))
-       (= (sdl-rect.y a) (sdl-rect.y b))
-       (= (sdl-rect.w a) (sdl-rect.w b))
-       (= (sdl-rect.h a) (sdl-rect.h b))))
+  (c-rects (a b)
+    (and (= (a :x) (b :x))
+         (= (a :y) (b :y))
+         (= (a :w) (b :w))
+         (= (a :h) (b :h)))))
 
 (defun rect-equals (first-rect &rest rects)
   "Return T if the passed in SDL_Rect structures are valid and all

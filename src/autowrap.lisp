@@ -19,5 +19,6 @@
                       ("SDL_GLattr" . "SDL-GLATTR")
                       ("SDL_GLprofile" . "SDL-GLPROFILE")
                       ("SDL_GLcontextFlag" . "SDL-GLCONTEXT-FLAG"))
+  :no-accessors cl:t
   :release-p cl:t)
 

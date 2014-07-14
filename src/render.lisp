@@ -9,13 +9,14 @@
   (sdl-collect (autowrap:alloc 'sdl2-ffi:sdl-renderer-info)))
 
 (defmethod print-object ((rinfo sdl2-ffi:sdl-renderer-info) stream)
-  (print-unreadable-object (rinfo stream :type t :identity t)
-    (format stream "name ~S flags ~A num-texture-formats ~A texture-formats TBD max-texture-width ~A max-texture-height ~A"
-            (cffi:foreign-string-to-lisp (sdl-renderer-info.name rinfo))
-            (sdl-renderer-info.flags rinfo)
-            (sdl-renderer-info.num-texture-formats rinfo)
-            (sdl-renderer-info.max-texture-width rinfo)
-            (sdl-renderer-info.max-texture-height rinfo))))
+  (c-let ((rinfo sdl2-ffi:sdl-renderer-info :from rinfo))
+    (print-unreadable-object (rinfo stream :type t :identity t)
+      (format stream "name ~S flags ~A num-texture-formats ~A texture-formats TBD max-texture-width ~A max-texture-height ~A"
+              (rinfo :name)
+              (rinfo :flags)
+              (rinfo :num-texture-formats)
+              (rinfo :max-texture-width)
+              (rinfo :max-texture-height)))))
 
 (defun free-render-info (rinfo)
   "Specifically free the SDL_RendererInfo structure which will do the right
