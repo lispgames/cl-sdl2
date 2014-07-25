@@ -22,7 +22,9 @@
                       ("SDL_GLContext" . "SDL-GLCONTEXT")
                       ("SDL_GLattr" . "SDL-GLATTR")
                       ("SDL_GLprofile" . "SDL-GLPROFILE")
-                      ("SDL_GLcontextFlag" . "SDL-GLCONTEXT-FLAG"))
+                      ("SDL_GLcontextFlag" . "SDL-GLCONTEXT-FLAG")
+                      ("SDL_TRUE" . "TRUE")
+                      ("SDL_FALSE" . "FALSE"))
   :no-accessors cl:t
   :release-p cl:t)
 
