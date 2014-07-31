@@ -71,7 +71,7 @@ specified in the index."
              (lambda (r) (sdl-destroy-renderer r)))))
       (values window renderer))))
 
-(defun create-renderer (window index &optional (flags 0))
+(defun create-renderer (window index &optional flags)
   "Create a 2D rendering context for a window."
   (sdl-collect
    (check-null (sdl-create-renderer
