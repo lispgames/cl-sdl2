@@ -68,7 +68,7 @@ returning an SDL_true into CL's boolean type system."
 (defvar *main-thread-channel* nil)
 (defvar *main-thread* nil)
 (defvar *lisp-message-event* nil)
-(defvar *wakeup-event* (alloc 'sdl2-ffi:sdl-event))
+(defvar *wakeup-event* nil)
 
 (defmacro in-main-thread ((&key background no-event) &body b)
   (with-gensyms (fun channel)
@@ -143,6 +143,8 @@ This does **not** call `SDL2:INIT` by itself.  Do this either with
 
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
+  (unless *wakeup-event*
+    (setf *wakeup-event* (alloc 'sdl2-ffi:sdl-event)))
   (unless *main-thread-channel*
     (ensure-main-channel)
 
