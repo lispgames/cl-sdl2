@@ -5,7 +5,7 @@
   :accessor-package :sdl2-ffi.accessors
   :function-package :sdl2-ffi.functions
   :spec-path '(sdl2 autowrap-spec)
-  :exclude-sources ("/usr/local/lib/clang/3.4([^/]*)/include/(?!stddef.h)"
+  :exclude-sources ("/usr/local/lib/clang/([^/]*)/include/(?!stddef.h)"
                     "/usr/include/"
                     "/usr/include/arm-linux-gnueabihf")
   :include-sources ("stdint.h"
