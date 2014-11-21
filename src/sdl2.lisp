@@ -94,15 +94,23 @@ returning an SDL_true into CL's boolean type system."
 
 (defun handle-message (msg)
   (let ((fun (car msg))
-        (chan (cdr msg)))
-    (handler-case
-        (if chan
-            (sendmsg chan (multiple-value-list (funcall fun)))
-            (funcall fun))
-      (error (e)
-        (if chan
-            (sendmsg chan e)
-            (format *error-output* "SDL main-thread error:~%~A~%" e))))))
+        (chan (cdr msg))
+        (condition))
+    (restart-case
+        (handler-bind ((error (lambda (e) (setf condition e))))
+          (if chan
+              (sendmsg chan (multiple-value-list (funcall fun)))
+              (funcall fun)))
+      (continue (&optional v)
+        :report "Continue, ignoring the error."
+        (declare (ignore v))
+        (sendmsg chan nil)
+        (return-from handle-message))
+      (continue-pass (&optional v)
+        :report "Continue, passing the error back to the caller"
+        (declare (ignore v))
+        (sendmsg chan condition)
+        (return-from handle-message)))))
 
 (defun recv-and-handle-message ()
   (let ((msg (recvmsg *main-thread-channel*)))
@@ -114,7 +122,11 @@ returning an SDL_true into CL's boolean type system."
           (handle-message msg)))
 
 (defun sdl-main-thread ()
-  (let ((*main-thread* (bt:current-thread)))
+  (let ((*main-thread* (bt:current-thread))
+        #+swank
+        (swank:*sldb-quit-restart* 'continue)
+        #+slynk
+        (swank:*sly-db-quit-restart* 'continue))
     (loop while *main-thread-channel* do
       (recv-and-handle-message))))
 
@@ -151,7 +163,7 @@ This does **not** call `SDL2:INIT` by itself.  Do this either with
     ;; If we did not have a main-thread channel, make a default main
     ;; thread.
     #-(and ccl darwin)
-    (bt:make-thread #'sdl-main-thread)
+    (bt:make-thread #'sdl-main-thread :name "SDL2 Main Thread")
 
     ;; On OSX, we need to run in the main thread; CCL allows us to
     ;; safely do this.  On other platforms (mainly GLX?), we just need
