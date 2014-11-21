@@ -96,6 +96,14 @@ the SDL_Renderer structure."
         nil
         renderer)))
 
+(defun render-copy (renderer texture &key source-rect dest-rect)
+  "Use this function to copy a portion of the texture to the current rendering target."
+  (check-rc (sdl2-ffi.functions:sdl-render-copy renderer texture source-rect dest-rect)))
+
+(defun render-present (renderer)
+  "Use this function to update the screen with rendering performed."
+  (sdl2-ffi.functions:sdl-render-present renderer))
+
 (defun get-renderer-info (renderer)
   "Allocate a new SDL_RendererInfo structure, fill it in with information
 about the specified renderer, and return it."
@@ -107,7 +115,16 @@ about the specified renderer, and return it."
 (defun get-renderer-output-size (renderer)
   (niy "SDL_GetRendererOutputSize()"))
 
+
+(defun update-texture (texture pixels &key rect width)
+  "Use this function to update the given texture rectangle with new pixel data."
+  (check-rc (sdl2-ffi.functions:sdl-update-texture texture
+                                                        rect
+                                                        pixels
+                                                        width)))
+
 (defun create-texture (renderer pixel-format access width height)
+  "Use this function to create a texture for a rendering context."
   (sdl-collect
    (check-null (sdl-create-texture renderer
                                    (enum-value 'sdl-pixel-format pixel-format)
@@ -116,17 +133,20 @@ about the specified renderer, and return it."
    (lambda (tex) (sdl-destroy-texture tex))))
 
 (defun destroy-texture (texture)
+  "Use this function to destroy the specified texture."
   (sdl-cancel-collect texture)
   (sdl-destroy-texture texture)
   (invalidate texture))
 
 (defun lock-texture (texture &optional rect)
+  "Use this function to lock a portion of the texture for write-only pixel access."
   (c-let ((pixels :pointer :free t)
           (pitch :int :free t))
     (check-rc (sdl-lock-texture texture rect (pixels &) (pitch &)))
     (values pixels pitch)))
 
 (defun unlock-texture (texture)
+  "Use this function to unlock a texture, uploading the changes to video memory, if needed. Warning: See Bug No. 1586 before using this function!"
   (sdl-unlock-texture texture))
 
 (defun gl-bind-texture (texture)
