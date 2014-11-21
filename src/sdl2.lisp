@@ -13,6 +13,9 @@
              (with-slots (code string) c
                (format s "SDL Error (~A): ~A" code string)))))
 
+(define-condition sdl-abort (condition) ())
+(define-condition sdl-abort-pass (sdl-abort) ())
+
 (defun sdl-collect (wrapped-ptr &optional (free-fun #'foreign-free))
   (let ((ptr (autowrap:ptr wrapped-ptr)))
     (tg:finalize wrapped-ptr (lambda () (funcall free-fun ptr)))
@@ -96,21 +99,19 @@ returning an SDL_true into CL's boolean type system."
   (let ((fun (car msg))
         (chan (cdr msg))
         (condition))
-    (restart-case
-        (handler-bind ((error (lambda (e) (setf condition e))))
-          (if chan
-              (sendmsg chan (multiple-value-list (funcall fun)))
-              (funcall fun)))
-      (continue (&optional v)
-        :report "Continue, ignoring the error."
-        (declare (ignore v))
-        (sendmsg chan nil)
-        (return-from handle-message))
-      (continue-pass (&optional v)
-        :report "Continue, passing the error back to the caller"
-        (declare (ignore v))
-        (sendmsg chan condition)
-        (return-from handle-message)))))
+    (handler-bind ((sdl-abort-pass
+                     (lambda (c)
+                       (declare (ignore c))
+                       (when chan (sendmsg chan condition))))
+                   (sdl-abort
+                     (lambda (c)
+                       (declare (ignore c))
+                       (when chan (sendmsg chan nil))
+                       (return-from handle-message))))
+      (handler-bind ((error (lambda (e) (setf condition e))))
+        (if chan
+            (sendmsg chan (multiple-value-list (funcall fun)))
+            (funcall fun))))))
 
 (defun recv-and-handle-message ()
   (let ((msg (recvmsg *main-thread-channel*)))
@@ -123,12 +124,23 @@ returning an SDL_true into CL's boolean type system."
 
 (defun sdl-main-thread ()
   (let ((*main-thread* (bt:current-thread))
-        #+swank
-        (swank:*sldb-quit-restart* 'continue)
-        #+slynk
-        (swank:*sly-db-quit-restart* 'continue))
+        #+swank (swank:*sldb-quit-restart* 'abort)
+        #+slynk (slynk:*sly-db-quit-restart* 'abort))
     (loop while *main-thread-channel* do
-      (recv-and-handle-message))))
+      (block loop-block
+        (restart-bind ((abort (lambda (&optional v)
+                                (declare (ignore v))
+                                (signal 'sdl-abort))
+                              :report-function
+                              (lambda (stream)
+                                (format stream "Abort the call, ignoring the error.")))
+                       (abort-pass (lambda (&optional v)
+                                     (declare (ignore v))
+                                     (signal 'sdl-abort-pass))
+                                   :report-function
+                                   (lambda (stream)
+                                     (format stream "Abort the call, passing the error back to the caller"))))
+          (recv-and-handle-message))))))
 
 (defun ensure-main-channel ()
   (unless *main-thread-channel*

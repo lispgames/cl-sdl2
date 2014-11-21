@@ -192,6 +192,7 @@
            #:sdl-ptr
 
            ;; Conditions
+           #:sdl-abort
            #:sdl-error))
 
 (defpackage #:sdl2-examples
