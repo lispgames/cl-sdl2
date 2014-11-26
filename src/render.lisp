@@ -71,11 +71,11 @@ specified in the index."
              (lambda (r) (sdl-destroy-renderer r)))))
       (values window renderer))))
 
-(defun create-renderer (window index &optional flags)
+(defun create-renderer (window &optional index flags)
   "Create a 2D rendering context for a window."
   (sdl-collect
    (check-null (sdl-create-renderer
-                window index
+                window (or index -1)
                 (mask-apply 'sdl-renderer-flags flags)))
    (lambda (r) (sdl-destroy-renderer r))))
 
@@ -87,6 +87,12 @@ specified in the index."
   (sdl-cancel-collect r)
   (sdl-destroy-renderer r)
   (invalidate r))
+
+(defmacro with-renderer ((renderer-sym window &key index flags) &body body)
+  `(let ((,renderer-sym (sdl2:create-renderer ,window ,index ,flags)))
+     (unwind-protect
+          (progn ,@body)
+       (sdl2:destroy-renderer ,renderer-sym))))
 
 (defun get-renderer (window)
   "Return NIL if there is no renderer associated with the window, or otherwise

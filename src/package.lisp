@@ -155,6 +155,7 @@
            #:unlock-texture
            #:gl-bind-texture
            #:gl-unbind-texture
+           #:with-renderer
 
            ;; haptic.lisp
            #:joystick-is-haptic-p
