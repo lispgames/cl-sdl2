@@ -137,6 +137,9 @@
            #:union-rect
 
            ;; render.lisp
+           #:render-copy
+           #:render-present
+           #:update-texture
            #:get-num-render-drivers
            #:get-render-driver-info
            #:create-window-and-renderer
