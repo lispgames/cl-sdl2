@@ -4,7 +4,8 @@
 
 (defpackage #:sdl2-ffi)
 (defpackage #:sdl2-ffi.accessors)
-(defpackage #:sdl2-ffi.functions)
+(defpackage #:sdl2-ffi.functions
+  (:export #:sdl-quit))
 
 (defpackage #:sdl2
   (:use #:cl #:alexandria #:autowrap.minimal #:plus-c
@@ -196,8 +197,8 @@
            #:sdl-ptr
 
            ;; Conditions
-           #:sdl-abort
-           #:sdl-error))
+           #:sdl-continue
+           #:sdl-quit))
 
 (defpackage #:sdl2-examples
   (:use #:cl #:alexandria #:cffi)

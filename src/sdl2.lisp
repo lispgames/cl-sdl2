@@ -13,7 +13,7 @@
              (with-slots (code string) c
                (format s "SDL Error (~A): ~A" code string)))))
 
-(define-condition sdl-abort (condition) ())
+(define-condition sdl-continue (condition) ())
 (define-condition sdl-quit (condition) ())
 
 (defun sdl-collect (wrapped-ptr &optional (free-fun #'foreign-free))
@@ -99,7 +99,7 @@ returning an SDL_true into CL's boolean type system."
   (let ((fun (car msg))
         (chan (cdr msg))
         (condition))
-    (handler-bind ((sdl-abort
+    (handler-bind ((sdl-continue
                      (lambda (c)
                        (declare (ignore c))
                        (when chan (sendmsg chan nil))
@@ -125,22 +125,22 @@ returning an SDL_true into CL's boolean type system."
 
 (defun sdl-main-thread ()
   (let ((*main-thread* (bt:current-thread))
-        #+swank (swank:*sldb-quit-restart* 'abort)
-        #+slynk (slynk:*sly-db-quit-restart* 'abort))
+        #+swank (swank:*sldb-quit-restart* 'continue)
+        #+slynk (slynk:*sly-db-quit-restart* 'continue))
     (loop while *main-thread-channel* do
       (block loop-block
-        (restart-bind ((abort (lambda (&optional v)
-                                (declare (ignore v))
-                                (signal 'sdl-abort))
-                              :report-function
-                              (lambda (stream)
-                                (format stream "Abort, returning to the SDL2 main loop.")))
-                       (quit-sdl (lambda (&optional v)
+        (restart-bind ((continue (lambda (&optional v)
                                    (declare (ignore v))
-                                   (signal 'sdl-quit))
+                                   (signal 'sdl-continue))
                                  :report-function
                                  (lambda (stream)
-                                   (format stream "Quit SDL entirely, calling SDL_Quit()"))))
+                                   (format stream "Abort, returning to the SDL2 main loop.")))
+                       (abort (lambda (&optional v)
+                                (declare (ignore v))
+                                (signal 'sdl-quit))
+                              :report-function
+                              (lambda (stream)
+                                (format stream "Abort, quitting SDL2 entirely."))))
           (recv-and-handle-message))))))
 
 (defun ensure-main-channel ()
