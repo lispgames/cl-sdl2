@@ -134,7 +134,7 @@ returning an SDL_true into CL's boolean type system."
                                    (signal 'sdl-continue))
                                  :report-function
                                  (lambda (stream)
-                                   (format stream "Abort, returning to the SDL2 main loop.")))
+                                   (format stream "Return to the SDL2 main loop.")))
                        (abort (lambda (&optional v)
                                 (declare (ignore v))
                                 (signal 'sdl-quit))
