@@ -1,7 +1,5 @@
 (in-package :sdl2)
 
-;;;; TODO
-;;;; SDL_CreateWindowAndRenderer
 ;;;; SDL_GetRendererOutputSize
 
 (defun make-renderer-info ()
@@ -105,6 +103,18 @@ the SDL_Renderer structure."
 (defun render-copy (renderer texture &key source-rect dest-rect)
   "Use this function to copy a portion of the texture to the current rendering target."
   (check-rc (sdl2-ffi.functions:sdl-render-copy renderer texture source-rect dest-rect)))
+
+(defun set-render-draw-color (renderer r g b a)
+  "Use this function to set the color used for drawing operations (Rect, Line and Clear)."
+  (check-rc (sdl2-ffi.functions:sdl-set-render-draw-color renderer r g b a)))
+
+(defun render-draw-line (renderer x1 y1 x2 y2)
+  "Use this function to draw a line on the current rendering target."
+  (check-rc (sdl2-ffi.functions:sdl-render-draw-line renderer x1 y1 x2 y2)))
+
+(defun render-clear (renderer)
+  "Use this function to clear the current rendering target with the drawing color."
+  (check-rc (sdl2-ffi.functions:sdl-render-clear renderer)))
 
 (defun render-present (renderer)
   "Use this function to update the screen with rendering performed."

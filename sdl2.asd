@@ -50,4 +50,5 @@
   :pathname "examples"
   :serial t
 
-  :components ((:file "basic")))
+  :components ((:file "basic")
+               (:file "renderer")))

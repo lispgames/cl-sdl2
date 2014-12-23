@@ -138,6 +138,9 @@
            #:union-rect
 
            ;; render.lisp
+           #:render-clear
+           #:render-draw-line
+           #:set-render-draw-color
            #:render-copy
            #:render-present
            #:update-texture
@@ -202,4 +205,4 @@
 
 (defpackage #:sdl2-examples
   (:use #:cl #:alexandria #:cffi)
-  (:export #:basic-test))
+  (:export #:basic-test #:renderer-test))
