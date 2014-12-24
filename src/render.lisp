@@ -112,6 +112,18 @@ the SDL_Renderer structure."
   "Use this function to draw a line on the current rendering target."
   (check-rc (sdl2-ffi.functions:sdl-render-draw-line renderer x1 y1 x2 y2)))
 
+(defun render-draw-lines (renderer &rest points)
+  "Use this function to draw a series of connected lines on the current
+rendering target."
+  (let ((num-points (length points)))
+    (c-with ((c-points sdl2-ffi:sdl-point :count num-points))
+      (loop for i from 0 for point in points
+         do (copy-into-point (c-points i) point))
+      (check-rc
+       (sdl2-ffi.functions:sdl-render-draw-lines renderer
+                                                 (c-points &)
+                                                 num-points)))))
+
 (defun render-clear (renderer)
   "Use this function to clear the current rendering target with the drawing color."
   (check-rc (sdl2-ffi.functions:sdl-render-clear renderer)))

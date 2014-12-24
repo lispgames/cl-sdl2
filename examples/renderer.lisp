@@ -31,6 +31,13 @@
          (sdl2:render-draw-line renderer 260 20 300 20)
          ))
 
+(defun test-render-lines (renderer)
+  (sdl2:with-points ((a 200 200)
+                     (b 300 400)
+                     (c 400 200))
+    (sdl2:set-render-draw-color renderer 0 255 0 255)
+    (sdl2:render-draw-lines renderer a b c)))
+
 (defun renderer-test ()
   "Test the SDL_render.h API"
   (sdl2:with-init (:everything)
@@ -46,5 +53,6 @@
            ()
            (test-render-clear renderer)
            (test-render-hello renderer)
+           (test-render-lines renderer)
            (sdl2:render-present renderer))
           (:quit () t))))))

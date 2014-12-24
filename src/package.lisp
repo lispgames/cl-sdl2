@@ -140,6 +140,7 @@
            ;; render.lisp
            #:render-clear
            #:render-draw-line
+           #:render-draw-lines
            #:set-render-draw-color
            #:render-copy
            #:render-present
