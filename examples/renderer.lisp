@@ -35,8 +35,15 @@
   (sdl2:with-points ((a 200 200)
                      (b 300 400)
                      (c 400 200))
-    (sdl2:set-render-draw-color renderer 0 255 0 255)
+    (sdl2:set-render-draw-color renderer 0 0 255 255)
     (sdl2:render-draw-lines renderer a b c)))
+
+(defun test-render-points (renderer)
+  (sdl2:with-points ((a (random 800) (random 800))
+                     (b (random 800) (random 800))
+                     (c (random 800) (random 800)))
+    (sdl2:set-render-draw-color renderer 0 255 0 255)
+    (sdl2:render-draw-points renderer a b c)))
 
 (defun renderer-test ()
   "Test the SDL_render.h API"
@@ -54,5 +61,6 @@
            (test-render-clear renderer)
            (test-render-hello renderer)
            (test-render-lines renderer)
+           (test-render-points renderer)
            (sdl2:render-present renderer))
           (:quit () t))))))

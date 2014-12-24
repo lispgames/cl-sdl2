@@ -141,6 +141,7 @@
            #:render-clear
            #:render-draw-line
            #:render-draw-lines
+           #:render-draw-points
            #:set-render-draw-color
            #:render-copy
            #:render-present

@@ -124,6 +124,17 @@ rendering target."
                                                  (c-points &)
                                                  num-points)))))
 
+(defun render-draw-points (renderer &rest points)
+  "Use this function to draw multiple points on the current rendering target."
+  (let ((num-points (length points)))
+    (c-with ((c-points sdl2-ffi:sdl-point :count num-points))
+      (loop for i from 0 for point in points
+         do (copy-into-point (c-points i) point))
+      (check-rc
+       (sdl2-ffi.functions:sdl-render-draw-points renderer
+                                                  (c-points &)
+                                                  num-points)))))
+
 (defun render-clear (renderer)
   "Use this function to clear the current rendering target with the drawing color."
   (check-rc (sdl2-ffi.functions:sdl-render-clear renderer)))
