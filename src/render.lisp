@@ -135,6 +135,10 @@ rendering target."
                                                   (c-points &)
                                                   num-points)))))
 
+(defun render-draw-rect (renderer sdl-rect)
+  "Use this function to draw a rectangle on the current rendering target."
+  (check-rc (sdl2-ffi.functions:sdl-render-draw-rect renderer sdl-rect)))
+
 (defun render-clear (renderer)
   "Use this function to clear the current rendering target with the drawing color."
   (check-rc (sdl2-ffi.functions:sdl-render-clear renderer)))

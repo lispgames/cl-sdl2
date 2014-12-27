@@ -45,10 +45,13 @@
     (sdl2:set-render-draw-color renderer 0 255 0 255)
     (sdl2:render-draw-points renderer a b c)))
 
+(defun test-render-rect (renderer)
+  (sdl2:render-draw-rect renderer (sdl2:make-rect 400 400 35 35)))
+
 (defun renderer-test ()
   "Test the SDL_render.h API"
   (sdl2:with-init (:everything)
-    (sdl2:with-window (win :flags '(:shown))
+    (sdl2:with-window (win :title "SDL2 Renderer API Demo" :flags '(:shown))
       (sdl2:with-renderer (renderer win :flags '(:renderer-accelerated))
 
         (sdl2:with-event-loop (:method :poll)
@@ -62,5 +65,6 @@
            (test-render-hello renderer)
            (test-render-lines renderer)
            (test-render-points renderer)
+           (test-render-rect renderer)
            (sdl2:render-present renderer))
           (:quit () t))))))
