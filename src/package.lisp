@@ -143,6 +143,7 @@
            #:render-draw-lines
            #:render-draw-points
            #:render-draw-rect
+           #:render-draw-rects
            #:set-render-draw-color
            #:render-copy
            #:render-present

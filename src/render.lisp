@@ -139,6 +139,17 @@ rendering target."
   "Use this function to draw a rectangle on the current rendering target."
   (check-rc (sdl2-ffi.functions:sdl-render-draw-rect renderer sdl-rect)))
 
+(defun render-draw-rects (renderer &rest rects)
+  "Use this function to draw some number of rectangles on the current rendering target."
+  (let ((num-rects (length rects)))
+    (c-with ((c-rects sdl2-ffi:sdl-rect :count num-rects))
+      (loop for i from 0 for rect in rects
+         do (copy-into-rect (c-rects i) rect))
+      (check-rc
+       (sdl2-ffi.functions:sdl-render-draw-rects renderer
+                                                 (c-rects &)
+                                                 num-rects)))))
+
 (defun render-clear (renderer)
   "Use this function to clear the current rendering target with the drawing color."
   (check-rc (sdl2-ffi.functions:sdl-render-clear renderer)))
