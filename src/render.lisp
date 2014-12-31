@@ -155,6 +155,18 @@ rendering target."
 the drawing color. "
   (check-rc (sdl2-ffi.functions:sdl-render-fill-rect renderer sdl-rect)))
 
+(defun render-fill-rects (renderer &rest rects)
+  "Use this function to fill some number of rectangles on the current rendering target
+with the drawing color."
+  (let ((num-rects (length rects)))
+    (c-with ((c-rects sdl2-ffi:sdl-rect :count num-rects))
+      (loop for i from 0 for rect in rects
+         do (copy-into-rect (c-rects i) rect))
+      (check-rc
+       (sdl2-ffi.functions:sdl-render-fill-rects renderer
+                                                 (c-rects &)
+                                                 num-rects)))))
+
 (defun render-clear (renderer)
   "Use this function to clear the current rendering target with the drawing color."
   (check-rc (sdl2-ffi.functions:sdl-render-clear renderer)))

@@ -145,6 +145,7 @@
            #:render-draw-rect
            #:render-draw-rects
            #:render-fill-rect
+           #:render-fill-rects
            #:set-render-draw-color
            #:render-copy
            #:render-present
