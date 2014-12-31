@@ -56,6 +56,9 @@
                                           8 8))))
     (apply #'sdl2:render-draw-rects (cons renderer rects))))
 
+(defun test-render-fill-rect (renderer)
+  (sdl2:render-fill-rect renderer (sdl2:make-rect 445 400 35 35)))
+
 (defun renderer-test ()
   "Test the SDL_render.h API"
   (sdl2:with-init (:everything)
@@ -75,5 +78,6 @@
            (test-render-points renderer)
            (test-render-rect renderer)
            (test-render-rects renderer)
+           (test-render-fill-rect renderer)
            (sdl2:render-present renderer))
           (:quit () t))))))

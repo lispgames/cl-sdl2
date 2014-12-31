@@ -150,6 +150,11 @@ rendering target."
                                                  (c-rects &)
                                                  num-rects)))))
 
+(defun render-fill-rect (renderer sdl-rect)
+  "Use this function to fill a rectangle on the current rendering target with
+the drawing color. "
+  (check-rc (sdl2-ffi.functions:sdl-render-fill-rect renderer sdl-rect)))
+
 (defun render-clear (renderer)
   "Use this function to clear the current rendering target with the drawing color."
   (check-rc (sdl2-ffi.functions:sdl-render-clear renderer)))
