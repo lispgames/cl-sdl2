@@ -89,6 +89,7 @@
            #:scancode=
            #:mod-keywords
            #:mod-value-p
+           #:keyboard-state-p
 
            ;; mouse.lisp
            #:warp-mouse-in-window
@@ -97,6 +98,8 @@
            #:set-relative-mouse-mode
            #:relative-mouse-mode-p
            #:toggle-relative-mouse-mode
+           #:mouse-state
+           #:mouse-state-p
 
            ;; joystick.lisp
            #:joystick-update
