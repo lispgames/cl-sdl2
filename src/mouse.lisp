@@ -19,3 +19,14 @@
 
 (defun toggle-relative-mouse-mode ()
   (set-relative-mouse-mode (not (relative-mouse-mode-p))))
+
+(defun mouse-state ()
+  (c-with ((x :int) (y :int))
+    (let ((buttons (sdl2-ffi.functions:sdl-get-mouse-state (x &) (y &))))
+      (values x y buttons))))
+
+(defun mouse-state-p (button)
+  (let ((buttons (sdl2-ffi.functions:sdl-get-mouse-state nil nil))
+        (mask (ash 1 (1- button))))
+    (plusp (logand buttons mask))))
+
