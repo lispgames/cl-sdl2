@@ -179,6 +179,8 @@
            #:create-rgb-surface
            #:create-rgb-surface-from
            #:free-surface
+           #:load-bmp
+           #:convert-surface-format
 
            ;; timer.lisp
            #:delay
