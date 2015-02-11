@@ -90,6 +90,9 @@
            #:mod-keywords
            #:mod-value-p
            #:keyboard-state-p
+           #:get-key-from-scancode
+           #:get-key-name
+           #:scancode-name
 
            ;; mouse.lisp
            #:warp-mouse-in-window
