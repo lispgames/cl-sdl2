@@ -112,60 +112,44 @@ the SDL_Renderer structure."
   "Use this function to draw a line on the current rendering target."
   (check-rc (sdl2-ffi.functions:sdl-render-draw-line renderer x1 y1 x2 y2)))
 
-(defun render-draw-lines (renderer &rest points)
-  "Use this function to draw a series of connected lines on the current
-rendering target."
-  (let ((num-points (length points)))
-    (c-with ((c-points sdl2-ffi:sdl-point :count num-points))
-      (loop for i from 0 for point in points
-         do (copy-into-point (c-points i) point))
-      (check-rc
-       (sdl2-ffi.functions:sdl-render-draw-lines renderer
-                                                 (c-points &)
-                                                 num-points)))))
+(defun render-draw-lines (renderer points num-points)
+  "Pass a pointer to SDL_Point to render connected lines on the
+  current rendering target."
+  (check-rc
+   (sdl2-ffi.functions:sdl-render-draw-lines renderer
+                                             points
+                                             num-points)))
 
-(defun render-draw-points (renderer &rest points)
+(defun render-draw-points (renderer points num-points)
   "Use this function to draw multiple points on the current rendering target."
-  (let ((num-points (length points)))
-    (c-with ((c-points sdl2-ffi:sdl-point :count num-points))
-      (loop for i from 0 for point in points
-         do (copy-into-point (c-points i) point))
-      (check-rc
-       (sdl2-ffi.functions:sdl-render-draw-points renderer
-                                                  (c-points &)
-                                                  num-points)))))
+  (check-rc
+   (sdl2-ffi.functions:sdl-render-draw-points renderer
+                                              points
+                                              num-points)))
 
 (defun render-draw-rect (renderer sdl-rect)
   "Use this function to draw a rectangle on the current rendering target."
   (check-rc (sdl2-ffi.functions:sdl-render-draw-rect renderer sdl-rect)))
 
-(defun render-draw-rects (renderer &rest rects)
+(defun render-draw-rects (renderer rects num-rects)
   "Use this function to draw some number of rectangles on the current rendering target."
-  (let ((num-rects (length rects)))
-    (c-with ((c-rects sdl2-ffi:sdl-rect :count num-rects))
-      (loop for i from 0 for rect in rects
-         do (copy-into-rect (c-rects i) rect))
-      (check-rc
-       (sdl2-ffi.functions:sdl-render-draw-rects renderer
-                                                 (c-rects &)
-                                                 num-rects)))))
+  (check-rc
+   (sdl2-ffi.functions:sdl-render-draw-rects renderer
+                                             rects
+                                             num-rects)))
 
 (defun render-fill-rect (renderer sdl-rect)
   "Use this function to fill a rectangle on the current rendering target with
 the drawing color. "
   (check-rc (sdl2-ffi.functions:sdl-render-fill-rect renderer sdl-rect)))
 
-(defun render-fill-rects (renderer &rest rects)
-  "Use this function to fill some number of rectangles on the current rendering target
-with the drawing color."
-  (let ((num-rects (length rects)))
-    (c-with ((c-rects sdl2-ffi:sdl-rect :count num-rects))
-      (loop for i from 0 for rect in rects
-         do (copy-into-rect (c-rects i) rect))
-      (check-rc
-       (sdl2-ffi.functions:sdl-render-fill-rects renderer
-                                                 (c-rects &)
-                                                 num-rects)))))
+(defun render-fill-rects (renderer rects num-rects)
+  "Use this function to fill some number of rectangles on the current
+rendering target with the drawing color."
+  (check-rc
+   (sdl2-ffi.functions:sdl-render-fill-rects renderer
+                                             rects
+                                             num-rects)))
 
 (defun render-clear (renderer)
   "Use this function to clear the current rendering target with the drawing color."

@@ -129,11 +129,13 @@
            #:copy-into-point
            #:free-point
            #:with-points
+           #:points*
            #:make-rect
            #:copy-rect
            #:copy-into-rect
            #:free-rect
            #:with-rects
+           #:rects*
            #:rect-empty
            #:rect-equals
            #:has-intersect

@@ -36,36 +36,44 @@
                      (b 300 400)
                      (c 400 200))
     (sdl2:set-render-draw-color renderer 0 0 255 255)
-    (sdl2:render-draw-lines renderer a b c)))
+    (multiple-value-bind (points num)
+        (sdl2:points* a b c)
+      (sdl2:render-draw-lines renderer points num))))
 
 (defun test-render-points (renderer)
   (sdl2:with-points ((a (random 800) (random 800))
                      (b (random 800) (random 800))
                      (c (random 800) (random 800)))
     (sdl2:set-render-draw-color renderer 0 255 0 255)
-    (sdl2:render-draw-points renderer a b c)))
+    (multiple-value-bind (points num)
+        (sdl2:points* a b c)
+      (sdl2:render-draw-points renderer points num))))
 
 (defun test-render-rect (renderer)
   (sdl2:render-draw-rect renderer (sdl2:make-rect 400 400 35 35)))
 
 (defun test-render-rects (renderer)
-  (let ((rects (loop for x from 0 upto 5
-                  for y from 0 upto 5
-                  collect (sdl2:make-rect (+ 400 (* x 10))
-                                          (+ 200 (* y 10))
-                                          8 8))))
-    (apply #'sdl2:render-draw-rects (cons renderer rects))))
+  (multiple-value-bind (rects num)
+      (apply #'sdl2:rects*
+             (loop for x from 0 upto 5
+                for y from 0 upto 5
+                collect (sdl2:make-rect (+ 400 (* x 10))
+                                        (+ 200 (* y 10))
+                                        8 8)))
+    (sdl2:render-draw-rects renderer rects num)))
 
 (defun test-render-fill-rect (renderer)
   (sdl2:render-fill-rect renderer (sdl2:make-rect 445 400 35 35)))
 
 (defun test-render-fill-rects (renderer)
-  (let ((rects (loop for x from 0 upto 5
-                  collect (sdl2:make-rect (+ 500 (* x 10))
-                                          400
-                                          8 8))))
-    (sdl2:set-render-draw-color renderer 0 0 255 255)
-    (apply #'sdl2:render-fill-rects (cons renderer rects))))
+  (multiple-value-bind (rects num)
+      (apply #'sdl2:rects*
+             (loop for x from 0 upto 5
+                collect (sdl2:make-rect (+ 500 (* x 10))
+                                        400
+                                        8 8)))
+    (sdl2:set-render-draw-color renderer 255 0 255 255)
+    (sdl2:render-fill-rects renderer rects num)))
 
 (defun renderer-test ()
   "Test the SDL_render.h API"
