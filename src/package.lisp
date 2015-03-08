@@ -25,6 +25,13 @@
            #:make-this-thread-main
 
            ;; video.lisp
+           #:get-num-video-drivers
+           #:get-video-driver
+           #:get-current-video-driver
+           #:get-num-video-displays
+           #:get-display-name
+           #:get-num-display-modes
+           #:get-display-mode
            #:windowpos-underfined
            #:windowpos-centered
            #:windowpos-from-coord

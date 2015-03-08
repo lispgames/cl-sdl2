@@ -1,5 +1,31 @@
 (in-package #:sdl2)
 
+(defun get-num-video-drivers ()
+  (sdl-get-num-video-drivers))
+
+(defun get-video-driver (driver-index)
+  (sdl-get-video-driver driver-index))
+
+(defun get-current-video-driver ()
+  (sdl-get-current-video-driver))
+
+(defun get-num-video-displays ()
+  (sdl-get-num-video-displays))
+
+(defun get-display-name (display-index)
+  (sdl-get-display-name display-index))
+
+(defun get-num-display-modes (display-index)
+  (sdl-get-num-display-modes display-index))
+
+(defun get-display-mode (display-index mode-index)
+  (c-let ((display-mode sdl2-ffi:sdl-display-mode :free t))
+         (sdl-get-display-mode display-index mode-index (display-mode &))
+         (values (display-mode :format)
+                 (display-mode :w)
+                 (display-mode :h)
+                 (display-mode :refresh-rate))))
+
 (autowrap:define-bitmask-from-enum
     (sdl-window-flags sdl2-ffi:sdl-window-flags)
   '(:centered . #x0))
