@@ -139,11 +139,13 @@
            #:copy-into-point
            #:free-point
            #:with-points
+           #:points*
            #:make-rect
            #:copy-rect
            #:copy-into-rect
            #:free-rect
            #:with-rects
+           #:rects*
            #:rect-empty
            #:rect-equals
            #:has-intersect
@@ -151,6 +153,15 @@
            #:union-rect
 
            ;; render.lisp
+           #:render-clear
+           #:render-draw-line
+           #:render-draw-lines
+           #:render-draw-points
+           #:render-draw-rect
+           #:render-draw-rects
+           #:render-fill-rect
+           #:render-fill-rects
+           #:set-render-draw-color
            #:render-copy
            #:render-present
            #:update-texture
@@ -217,4 +228,4 @@
 
 (defpackage #:sdl2-examples
   (:use #:cl #:alexandria #:cffi)
-  (:export #:basic-test))
+  (:export #:basic-test #:renderer-test))

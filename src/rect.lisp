@@ -86,6 +86,15 @@ structures. Raw symbols are bound to (make-point 0 0).
          (with-points ,(cdr bindings) ,@body))
       `(progn ,@body)))
 
+(defun points* (&rest points)
+  "Return a pointer to SDL_Point and the number of elements in it."
+  (let ((num-points (length points)))
+    (c-let ((c-points sdl2-ffi:sdl-point :count num-points))
+      (sdl-collect c-points)
+      (loop for i from 0 for point in points
+         do (copy-into-point (c-points i) point))
+      (values (c-points &) num-points))))
+
 (defmacro c-rect ((r) &body body)
   `(c-let ((,r sdl2-ffi:sdl-rect :from ,r))
      ,@body))
@@ -172,6 +181,15 @@ structures. Raw symbols are bound to (make-rect 0 0 0 0).
       `(%with-rect (,(car bindings))
          (with-rects ,(cdr bindings) ,@body))
       `(progn ,@body)))
+
+(defun rects* (&rest rects)
+  "Return a pointer to SDL_Rect and the number of elements in it."
+  (let ((num-rects (length rects)))
+    (c-let ((c-rects sdl2-ffi:sdl-rect :count num-rects))
+      (sdl-collect c-rects)
+      (loop for i from 0 for rect in rects
+         do (copy-into-rect (c-rects i) rect))
+      (values (c-rects &) num-rects))))
 
 ;;; The implementation of the SDL_rect.h methods.
 

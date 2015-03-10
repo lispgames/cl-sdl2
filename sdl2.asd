@@ -40,7 +40,8 @@
    (:file "platform")
    (:file "pixels")
    (:file "surface")
-   (:file "render")))
+   (:file "render"
+          :depends-on ("rect"))))
 
 (asdf:defsystem #:sdl2-examples
   :description "simple examples to demonstrate common usage of sdl2."
@@ -50,4 +51,5 @@
   :pathname "examples"
   :serial t
 
-  :components ((:file "basic")))
+  :components ((:file "basic")
+               (:file "renderer")))

@@ -49,7 +49,6 @@
     (c-let ((state :unsigned-char :ptr state))
       (= (state scancode-num) 1))))
 
-
 (defun get-key-from-scancode (scancode)
   (sdl-get-key-from-scancode scancode))
 
@@ -58,4 +57,3 @@
 
 (defun scancode-name (scancode)
   (get-key-name (get-key-from-scancode scancode)))
-
