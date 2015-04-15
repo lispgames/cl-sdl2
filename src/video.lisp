@@ -18,6 +18,14 @@
 (defun get-num-display-modes (display-index)
   (sdl-get-num-display-modes display-index))
 
+(defun get-current-display-mode (display-index)
+  (c-let ((display-mode sdl2-ffi:sdl-display-mode :free t))
+         (sdl-get-current-display-mode display-index (display-mode &))
+         (values (display-mode :format)
+                 (display-mode :w)
+                 (display-mode :h)
+                 (display-mode :refresh-rate))))
+
 (defun get-display-mode (display-index mode-index)
   (c-let ((display-mode sdl2-ffi:sdl-display-mode :free t))
          (sdl-get-display-mode display-index mode-index (display-mode &))

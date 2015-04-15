@@ -31,6 +31,7 @@
            #:get-num-video-displays
            #:get-display-name
            #:get-num-display-modes
+           #:get-current-display-mode
            #:get-display-mode
            #:windowpos-underfined
            #:windowpos-centered
