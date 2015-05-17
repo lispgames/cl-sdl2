@@ -202,6 +202,8 @@
            #:rumble-stop
 
            ;; surface.lisp
+	   #:surface-width
+	   #:surface-height
            #:create-rgb-surface
            #:create-rgb-surface-from
            #:free-surface

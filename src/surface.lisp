@@ -1,5 +1,11 @@
 (in-package :sdl2)
 
+(defun surface-width (surface)
+  (c-ref surface sdl2-ffi:sdl-surface :w))
+
+(defun surface-height (surface)
+  (c-ref surface sdl2-ffi:sdl-surface :h))
+
 (defun create-rgb-surface (width height depth
                            &key (r-mask 0) (g-mask 0) (b-mask 0) (a-mask 0)
                            (flags 0))
