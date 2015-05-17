@@ -176,6 +176,10 @@
            #:get-renderer-info
            ;#:get-renderer-output-size
            #:create-texture
+	   #:create-texture-from-surface
+	   #:query-texture
+	   #:texture-width
+	   #:texture-height
            #:destroy-texture
            #:lock-texture
            #:unlock-texture
