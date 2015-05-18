@@ -170,35 +170,26 @@ about the specified renderer, and return it."
 (defun get-renderer-output-size (renderer)
   (niy "SDL_GetRendererOutputSize()"))
 
-(defun query-texture (texture &key format access width heigth)
-  (with-foreign-objects ((format-ptr :uint32)
-			 (access-ptr :int)
-			 (width-ptr  :int)
-			 (heigth-ptr :int))
-    (check-rc (sdl-query-texture texture format-ptr access-ptr width-ptr heigth-ptr))
-    (values (mem-ref format-ptr :uint32)
-	    (mem-ref access-ptr :int)
-	    (mem-ref width-ptr  :int)
-	    (mem-ref heigth-ptr :int))))
+(defun query-texture (texture)
+  (c-with ((texture-format :uint32)
+           (access :int)
+           (width  :int)
+           (height :int))
+    (check-rc (sdl-query-texture texture (texture-format &) (access &) (width &) (height &)))
+    (values texture-format access width height)))
 
 ;;; Convenience functions to query only textures width and height
 (defun texture-width (texture)
-  (with-foreign-object (width-ptr :int)
-    (check-rc (sdl-query-texture texture
-				 (cffi:null-pointer)
-				 (cffi:null-pointer)
-				 width-ptr
-				 (cffi:null-pointer)))
-    (mem-ref width-ptr :int)))
+  (c-with ((width :int))
+    (check-rc
+     (sdl-query-texture texture nil nil (width &) nil))
+    width))
 
 (defun texture-height (texture)
-  (with-foreign-object (height-ptr :int)
-    (check-rc (sdl-query-texture texture
-				 (cffi:null-pointer)
-				 (cffi:null-pointer)
-				 (cffi:null-pointer)
-				 height-ptr))
-    (mem-ref height-ptr :int)))
+  (c-with ((height :int))
+    (check-rc
+     (sdl-query-texture texture nil nil nil (height &)))
+    height))
 
 (defun update-texture (texture pixels &key rect width)
   "Use this function to update the given texture rectangle with new pixel data."
