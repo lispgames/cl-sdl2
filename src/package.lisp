@@ -33,7 +33,7 @@
            #:get-num-display-modes
            #:get-current-display-mode
            #:get-display-mode
-           #:windowpos-underfined
+           #:windowpos-undefined
            #:windowpos-centered
            #:windowpos-from-coord
            #:create-window
