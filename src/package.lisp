@@ -176,6 +176,10 @@
            #:get-renderer-info
            ;#:get-renderer-output-size
            #:create-texture
+	   #:create-texture-from-surface
+	   #:query-texture
+	   #:texture-width
+	   #:texture-height
            #:destroy-texture
            #:lock-texture
            #:unlock-texture
@@ -198,6 +202,8 @@
            #:rumble-stop
 
            ;; surface.lisp
+	   #:surface-width
+	   #:surface-height
            #:create-rgb-surface
            #:create-rgb-surface-from
            #:free-surface

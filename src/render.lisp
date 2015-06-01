@@ -170,6 +170,26 @@ about the specified renderer, and return it."
 (defun get-renderer-output-size (renderer)
   (niy "SDL_GetRendererOutputSize()"))
 
+(defun query-texture (texture)
+  (c-with ((texture-format :uint32)
+           (access :int)
+           (width  :int)
+           (height :int))
+    (check-rc (sdl-query-texture texture (texture-format &) (access &) (width &) (height &)))
+    (values texture-format access width height)))
+
+;;; Convenience functions to query only textures width and height
+(defun texture-width (texture)
+  (c-with ((width :int))
+    (check-rc
+     (sdl-query-texture texture nil nil (width &) nil))
+    width))
+
+(defun texture-height (texture)
+  (c-with ((height :int))
+    (check-rc
+     (sdl-query-texture texture nil nil nil (height &)))
+    height))
 
 (defun update-texture (texture pixels &key rect width)
   "Use this function to update the given texture rectangle with new pixel data."
@@ -185,6 +205,13 @@ about the specified renderer, and return it."
                                    (enum-value 'sdl-pixel-format pixel-format)
                                    (enum-value 'sdl-texture-access access)
                                    width height))
+   (lambda (tex) (sdl-destroy-texture tex))))
+
+(defun create-texture-from-surface (renderer surface)
+  "Use this function to create a texture from sdl2 surface for a rendering context."
+  (sdl-collect
+   (check-null (sdl-create-texture-from-surface renderer
+						surface))
    (lambda (tex) (sdl-destroy-texture tex))))
 
 (defun destroy-texture (texture)
