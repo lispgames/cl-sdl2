@@ -163,6 +163,8 @@
            #:render-fill-rect
            #:render-fill-rects
            #:set-render-draw-color
+           #:set-texture-blend-mode
+           #:set-render-draw-blend-mode
            #:render-copy
            #:render-present
            #:update-texture

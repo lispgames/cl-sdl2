@@ -108,6 +108,14 @@ the SDL_Renderer structure."
   "Use this function to set the color used for drawing operations (Rect, Line and Clear)."
   (check-rc (sdl2-ffi.functions:sdl-set-render-draw-color renderer r g b a)))
 
+(defun set-texture-blend-mode (renderer texture blend-mode)
+  "Use this function to set the blend mode for a texture, used by SDL_RenderCopy()."
+  (check-rc (sdl2-ffi.functions:sdl-set-texture-blend-mode texture blend-mode)))
+
+(defun set-render-draw-blend-mode (renderer blend-mode)
+  "Use this function to set the blend mode used for drawing operations (Fill and Line)."
+  (check-rc (sdl2-ffi.functions:sdl-set-render-draw-blend-mode renderer blend-mode)))
+
 (defun render-draw-line (renderer x1 y1 x2 y2)
   "Use this function to draw a line on the current rendering target."
   (check-rc (sdl2-ffi.functions:sdl-render-draw-line renderer x1 y1 x2 y2)))
