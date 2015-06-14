@@ -6,6 +6,10 @@
 (defun surface-height (surface)
   (c-ref surface sdl2-ffi:sdl-surface :h))
 
+(defun surface-pixels (surface)
+  "Access raw pixel data from a surface object"
+  (c-ref surface sdl2-ffi:sdl-surface :pixels))
+
 (defun create-rgb-surface (width height depth
                            &key (r-mask 0) (g-mask 0) (b-mask 0) (a-mask 0)
                            (flags 0))
