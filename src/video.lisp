@@ -144,6 +144,10 @@
     (sdl-get-window-size win width height)
     (values (mem-ref width :int) (mem-ref height :int))))
 
+(defun get-window-surface (win)
+  ;; Do NOT free the returned surface.
+  (sdl-get-window-surface win))
+
 (defun get-window-flags (win)
   (let ((flags (sdl-get-window-flags win)))
     (autowrap:mask-keywords 'sdl-window-flags flags)))

@@ -52,6 +52,7 @@
            #:set-window-position
            #:get-window-title
            #:get-window-size
+           #:get-window-surface
            #:get-window-position
            #:get-window-flags
            #:get-window-id
@@ -207,10 +208,12 @@
            #:surface-width
            #:surface-height
            #:surface-pixels
+           #:surface-format
            #:create-rgb-surface
            #:create-rgb-surface-from
            #:free-surface
            #:load-bmp
+           #:convert-surface
            #:convert-surface-format
 
            ;; timer.lisp
