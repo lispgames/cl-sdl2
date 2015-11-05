@@ -52,3 +52,12 @@
                                 (enum-value '(:enum (sdl-pixel-format)) pixel-format-enum)
                                 flags))
    (lambda (s) (sdl-free-surface s))))
+
+(defun blit-surface (surface-src src-rect surface-dst dst-rect)
+  (sdl-upper-blit surface-src src-rect surface-dst dst-rect))
+
+(defun blit-scaled (surface-src src-rect surface-dst dst-rect)
+  (sdl-upper-blit-scaled surface-src src-rect surface-dst dst-rect))
+
+(defun fill-rect (surface-dst rect color)
+  (sdl-fill-rect surface-dst rect color))

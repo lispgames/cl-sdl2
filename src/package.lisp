@@ -215,6 +215,9 @@
            #:load-bmp
            #:convert-surface
            #:convert-surface-format
+           #:blit-surface
+           #:blit-scaled
+           #:fill-rect
 
            ;; timer.lisp
            #:delay
