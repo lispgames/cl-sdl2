@@ -204,6 +204,9 @@
            #:rumble-play
            #:rumble-stop
 
+           ;; pixels.lisp
+           #:map-rgb
+
            ;; surface.lisp
            #:surface-width
            #:surface-height
