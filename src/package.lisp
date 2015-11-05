@@ -212,6 +212,7 @@
            #:surface-height
            #:surface-pixels
            #:surface-format
+           #:surface-format-format
            #:create-rgb-surface
            #:create-rgb-surface-from
            #:free-surface

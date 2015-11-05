@@ -11,8 +11,12 @@
   (c-ref surface sdl2-ffi:sdl-surface :pixels))
 
 (defun surface-format (surface)
+  (c-ref surface sdl2-ffi:sdl-surface :format))
+
+(defun surface-format-format (surface)
   (enum-key '(:enum (sdl-pixel-format))
-            (c-ref surface sdl2-ffi:sdl-surface :format :format)))
+            (c-ref (c-ref surface sdl2-ffi::sdl-surface :format)
+                   sdl2-ffi::sdl-pixel-format :format)))
 
 (defun create-rgb-surface (width height depth
                            &key (r-mask 0) (g-mask 0) (b-mask 0) (a-mask 0)
