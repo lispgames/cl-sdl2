@@ -125,6 +125,7 @@
            #:joystick-axis-count
            #:joystick-ball-count
            #:joystick-button-count
+           #:joystick-instance-id
 
            ;; gamecontroller.lisp
            #:game-controller-p
@@ -134,6 +135,7 @@
            #:game-controller-attached-p
            #:game-controller-add-mapping
            #:game-controller-get-joystick
+           #:game-controller-instance-id
 
            ;; rect.lisp
            #:make-point

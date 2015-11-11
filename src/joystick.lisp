@@ -44,6 +44,5 @@ events are enabled."
 (defun joystick-button-count (joystick)
   (joystick-caps-query sdl-joystick-num-buttons joystick))
 
-
-
-
+(defun joystick-instance-id (joystick)
+  (sdl-joystick-instance-id joystick))
