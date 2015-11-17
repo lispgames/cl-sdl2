@@ -1,4 +1,4 @@
-# sdl2
+# cl-sdl2
 
 `cl-sdl2` is a Common Lisp wrapper for the SDL 2.0 C Library, with [many contributors](https://github.com/lispgames/cl-sdl2/graphs/contributors), maintained primarily by the following:
 
