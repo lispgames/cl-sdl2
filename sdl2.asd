@@ -13,6 +13,7 @@
                :trivial-garbage
                :cl-opengl
                :trivial-channels
+               :trivial-features
                #+darwin :cl-glut)
   :pathname "src"
   :serial t
