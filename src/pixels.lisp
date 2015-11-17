@@ -100,3 +100,6 @@
     (sdl-texture-access "SDL-TEXTUREACCESS-")
   sdl2-ffi:+sdl-textureaccess-static+
   sdl2-ffi:+sdl-textureaccess-streaming+)
+
+(defun map-rgb (pixel-format r g b)
+  (sdl-map-rgb pixel-format r g b))

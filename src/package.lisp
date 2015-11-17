@@ -206,17 +206,24 @@
            #:rumble-play
            #:rumble-stop
 
+           ;; pixels.lisp
+           #:map-rgb
+
            ;; surface.lisp
            #:surface-width
            #:surface-height
            #:surface-pixels
            #:surface-format
+           #:surface-format-format
            #:create-rgb-surface
            #:create-rgb-surface-from
            #:free-surface
            #:load-bmp
            #:convert-surface
            #:convert-surface-format
+           #:blit-surface
+           #:blit-scaled
+           #:fill-rect
 
            ;; timer.lisp
            #:delay
