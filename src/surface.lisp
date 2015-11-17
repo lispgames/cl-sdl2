@@ -11,6 +11,9 @@
   (c-ref surface sdl2-ffi:sdl-surface :pixels))
 
 (defun surface-format (surface)
+  (c-ref surface sdl2-ffi:sdl-surface :format))
+
+(defun surface-format-format (surface)
   (enum-key '(:enum (sdl-pixel-format))
             (c-ref surface sdl2-ffi:sdl-surface :format :format)))
 
@@ -52,3 +55,12 @@
                                 (enum-value '(:enum (sdl-pixel-format)) pixel-format-enum)
                                 flags))
    (lambda (s) (sdl-free-surface s))))
+
+(defun blit-surface (surface-src src-rect surface-dst dst-rect)
+  (sdl-upper-blit surface-src src-rect surface-dst dst-rect))
+
+(defun blit-scaled (surface-src src-rect surface-dst dst-rect)
+  (sdl-upper-blit-scaled surface-src src-rect surface-dst dst-rect))
+
+(defun fill-rect (surface-dst rect color)
+  (sdl-fill-rect surface-dst rect color))
