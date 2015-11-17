@@ -65,29 +65,18 @@ Installation Instructions when using Quicklisp, SBCL, and Linux
 
     Then, use quicklisp to install the libraries required by cl-sdl2:
 
-    Start your lisp. You will only have to do this once for Quicklisp to
-    download the required libraries.
+    Start your lisp. Then, just:
 
-    (ql:quickload "alexandria")
-    (ql:quickload "cl-autowrap")
-    (ql:quickload "cl-ppcre")
-    (ql:quickload "trivial-garbage")
-    (ql:quickload "trivial-channels")
-    (ql:quickload "cl-opengl")
-
-    Then, to load the sdl2 system into the REPL:
-
-    (asdf:load-system :sdl2)
+      (ql:quickload "sdl2")
 
 Running the sdl2 examples
 =========================
 
     Start your lisp:
 
-    (asdf:load-system :sdl2)
     (asdf:load-system :sdl2-examples)
 
-    (sdl2-examples::basic-test)
+    (sdl2-examples:basic-test)
 
     This example will open a window with an opengl primitive in it. Any mouse
     movements or keystrokes are recorded in the terminal (or emacs SLIME output
