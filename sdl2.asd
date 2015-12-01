@@ -45,7 +45,7 @@
    (:file "render"
           :depends-on ("rect"))))
 
-(asdf:defsystem #:sdl2-examples
+(asdf:defsystem #:sdl2/examples
   :description "simple examples to demonstrate common usage of sdl2."
   :author "Chip Collier <photex@lofidelitygames.com>"
   :license "MIT"
