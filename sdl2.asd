@@ -23,6 +23,7 @@
     :pathname "spec"
     :components
     ((:static-file "SDL2.h")))
+   (:file "optional-deps")
    (:file "package")
    (:file "library")
    (:file "autowrap")
