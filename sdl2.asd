@@ -1,6 +1,6 @@
 ;;;; sdl2.asd
 
-(asdf:defsystem #:sdl2
+(defsystem #:sdl2
   :serial t
   :description "Bindings for SDL2 using c2ffi."
   :author "Chip Collier <photex@lofidelitygames.com>, Ryan Pavlik <rpavlik@gmail.com>, Peter Keller <psilord@cs.wisc.edu>"
@@ -9,9 +9,7 @@
   :depends-on (:alexandria
                :cl-autowrap
                :cl-plus-c
-               :cl-ppcre
                :trivial-garbage
-               :cl-opengl
                :trivial-channels
                :trivial-features
                #+darwin :cl-glut)
@@ -45,11 +43,13 @@
    (:file "render"
           :depends-on ("rect"))))
 
-(asdf:defsystem #:sdl2-examples
+(defsystem #:sdl2/examples
   :description "simple examples to demonstrate common usage of sdl2."
   :author "Chip Collier <photex@lofidelitygames.com>"
   :license "MIT"
-  :depends-on (:sdl2)
+  :depends-on (:sdl2
+               :cl-opengl
+               :cl-ppcre)
   :pathname "examples"
   :serial t
 
