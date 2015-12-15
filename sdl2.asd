@@ -42,6 +42,7 @@
    (:file "platform")
    (:file "pixels")
    (:file "surface")
+   (:file "rwops")
    (:file "render"
           :depends-on ("rect"))))
 
