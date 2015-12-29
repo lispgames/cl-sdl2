@@ -208,6 +208,7 @@
 
            ;; pixels.lisp
            #:map-rgb
+           #:get-pixel-format-name
 
            ;; surface.lisp
            #:surface-width
