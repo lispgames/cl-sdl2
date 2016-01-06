@@ -13,6 +13,9 @@
 (defun surface-format (surface)
   (c-ref surface sdl2-ffi:sdl-surface :format))
 
+(defun surface-pitch (surface)
+  (c-ref surface sdl2-ffi:sdl-surface :pitch))
+
 (defun surface-format-format (surface)
   (enum-key '(:enum (sdl-pixel-format))
             (c-ref surface sdl2-ffi:sdl-surface :format :format)))

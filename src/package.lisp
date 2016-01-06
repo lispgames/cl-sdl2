@@ -214,6 +214,7 @@
            #:surface-width
            #:surface-height
            #:surface-pixels
+           #:surface-pitch
            #:surface-format
            #:surface-format-format
            #:create-rgb-surface
