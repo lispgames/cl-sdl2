@@ -104,6 +104,11 @@ the SDL_Renderer structure."
   "Use this function to copy a portion of the texture to the current rendering target."
   (check-rc (sdl2-ffi.functions:sdl-render-copy renderer texture source-rect dest-rect)))
 
+(defun render-copy-ex (renderer texture &key source-rect dest-rect angle center flip)
+  (check-rc (sdl2-ffi.functions:sdl-render-copy-ex
+             renderer texture source-rect dest-rect angle center
+             (mask-apply 'sdl-renderer-flip flip))))
+
 (defun set-render-draw-color (renderer r g b a)
   "Use this function to set the color used for drawing operations (Rect, Line and Clear)."
   (check-rc (sdl2-ffi.functions:sdl-set-render-draw-color renderer r g b a)))

@@ -169,6 +169,7 @@
            #:set-texture-blend-mode
            #:set-render-draw-blend-mode
            #:render-copy
+           #:render-copy-ex
            #:render-present
            #:update-texture
            #:get-num-render-drivers
@@ -214,6 +215,7 @@
            #:surface-width
            #:surface-height
            #:surface-pixels
+           #:surface-pitch
            #:surface-format
            #:surface-format-format
            #:create-rgb-surface
