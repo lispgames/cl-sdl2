@@ -117,9 +117,19 @@
 (defun set-window-title (win title)
   (sdl-set-window-title win title))
 
-(defun set-window-fullscreen (win fullscreen-p)
-  (let ((fs (if fullscreen-p 1 0)))
-    (check-rc (sdl-set-window-fullscreen win fs))))
+(autowrap:define-enum-from-constants (sdl-window-fullscreen "SDL-WINDOW-")
+  sdl2-ffi:+sdl-window-fullscreen+
+  sdl2-ffi:+sdl-window-fullscreen-desktop+)
+
+(defun set-window-fullscreen (win fullscreen-value)
+  "`FULLSCREEN-VALUE` of `t` or `:fullscreen` is \"regular\" fullscreen,
+`SDL_WINDOW_FULLSCREEN`.  Specifying `:windowed` or `:desktop` is
+\"windowed\" fullscreen, using `SDL_WINDOW_FULLSCREEN_DESKTOP`."
+  (let ((flag (case fullscreen-value
+                ((:desktop :windowed) :fullscreen-desktop)
+                ((t :fullscreen) :fullscreen))))
+    (check-rc (sdl-set-window-fullscreen
+               win (enum-value 'sdl-window-fullscreen flag)))))
 
 (defun set-window-size (win w h)
   (sdl-set-window-size win w h))
