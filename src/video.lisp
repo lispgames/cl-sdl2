@@ -156,7 +156,7 @@
 
 (defun get-window-surface (win)
   ;; Do NOT free the returned surface.
-  (sdl-get-window-surface win))
+  (check-null (sdl-get-window-surface win)))
 
 (defun get-window-flags (win)
   (let ((flags (sdl-get-window-flags win)))
