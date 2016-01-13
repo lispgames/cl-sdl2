@@ -34,6 +34,13 @@
                  (display-mode :h)
                  (display-mode :refresh-rate))))
 
+(defun get-display-bounds (display-index)
+  "Use this function to get the desktop area represented by a display, with the primary display located at 0,0."
+  (let-rect rect
+    (check-rc
+     (sdl2-ffi.functions:sdl-get-display-bounds display-index (rect &)))
+    rect))
+
 (autowrap:define-bitmask-from-enum
     (sdl-window-flags sdl2-ffi:sdl-window-flags)
   '(:centered . #x0))

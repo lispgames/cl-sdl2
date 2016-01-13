@@ -150,6 +150,11 @@ SDL_Rect allocating loops."
 
 ;; I hope trivial-garbage deals with these things correctly...
 
+(defmacro let-rect (rect &body body)
+  `(c-let ((,rect sdl2-ffi:sdl-rect))
+    (sdl-collect ,rect)
+    ,@body))
+
 ;; used as a helper for with-rects
 (defmacro %with-rect ((binding) &body body)
   (cond
