@@ -160,6 +160,7 @@
            #:render-clear
            #:render-draw-line
            #:render-draw-lines
+           #:render-draw-point
            #:render-draw-points
            #:render-draw-rect
            #:render-draw-rects
