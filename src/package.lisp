@@ -157,6 +157,8 @@
            #:union-rect
 
            ;; render.lisp
+           #:render-set-viewport
+           #:render-get-viewport
            #:render-clear
            #:render-draw-line
            #:render-draw-lines

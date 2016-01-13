@@ -134,7 +134,7 @@ the SDL_Renderer structure."
                                              num-points)))
 
 (defun render-draw-point (renderer x y)
-  "Use this function to draw point on the current rendering target."
+  "Use this function to draw a point on the current rendering target."
   (check-rc
    (sdl2-ffi.functions:sdl-render-draw-point renderer
                                              x
@@ -170,6 +170,17 @@ rendering target with the drawing color."
    (sdl2-ffi.functions:sdl-render-fill-rects renderer
                                              rects
                                              num-rects)))
+
+(defun render-set-viewport (renderer sdl-rect)
+  "Use this function to set the drawing area for rendering on the current target."
+  (check-rc (sdl2-ffi.functions:sdl-render-set-viewport renderer sdl-rect)))
+
+(defun render-get-viewport (renderer)
+  "Use this function to get the drawing area for the current target."
+  (c-let ((rect sdl2-ffi:sdl-rect))
+    (sdl-collect rect)
+    (sdl2-ffi.functions:sdl-render-get-viewport renderer (rect &))
+    rect))
 
 (defun render-clear (renderer)
   "Use this function to clear the current rendering target with the drawing color."
