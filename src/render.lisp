@@ -133,6 +133,13 @@ the SDL_Renderer structure."
                                              points
                                              num-points)))
 
+(defun render-draw-point (renderer x y)
+  "Use this function to draw point on the current rendering target."
+  (check-rc
+   (sdl2-ffi.functions:sdl-render-draw-point renderer
+                                             x
+                                             y)))
+
 (defun render-draw-points (renderer points num-points)
   "Use this function to draw multiple points on the current rendering target."
   (check-rc
