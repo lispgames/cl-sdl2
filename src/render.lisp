@@ -177,7 +177,7 @@ rendering target with the drawing color."
 
 (defun render-get-viewport (renderer)
   "Use this function to get the drawing area for the current target."
-  (let-rect rect
+  (let-rects (rect)
     (sdl2-ffi.functions:sdl-render-get-viewport renderer (rect &))
     rect))
 

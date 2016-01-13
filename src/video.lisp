@@ -36,7 +36,7 @@
 
 (defun get-display-bounds (display-index)
   "Use this function to get the desktop area represented by a display, with the primary display located at 0,0."
-  (let-rect rect
+  (let-rects (rect)
     (check-rc
      (sdl2-ffi.functions:sdl-get-display-bounds display-index (rect &)))
     rect))
