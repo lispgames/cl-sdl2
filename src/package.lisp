@@ -217,6 +217,7 @@
 
            ;; pixels.lisp
            #:map-rgb
+           #:get-pixel-format-name
 
            ;; surface.lisp
            #:surface-width
@@ -252,6 +253,10 @@
            #:mmx-p #:alti-vec-p #:rdtsc-p
            #:sse-p #:sse2-p #:sse3-p #:sse41-p #:sse42-p
            #:power-info
+
+           ;;rwops.lisp
+           :rw-from-file
+           :rw-close
 
            ;; Utility
            #:sdl-ptr
