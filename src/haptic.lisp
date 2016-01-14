@@ -37,8 +37,8 @@
   (sdl-haptic-close haptic)
   (sdl-cancel-collect haptic))
 
-(defmacro haptic-index (haptic)
-  `(sdl-haptic-index haptic))
+(defun haptic-index (haptic)
+  (sdl-haptic-index haptic))
 
 (defun haptic-opened-p (haptic)
   (sdl-true-p (sdl-haptic-opened (haptic-index haptic))))

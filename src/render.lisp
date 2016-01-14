@@ -113,7 +113,7 @@ the SDL_Renderer structure."
   "Use this function to set the color used for drawing operations (Rect, Line and Clear)."
   (check-rc (sdl2-ffi.functions:sdl-set-render-draw-color renderer r g b a)))
 
-(defun set-texture-blend-mode (renderer texture blend-mode)
+(defun set-texture-blend-mode (texture blend-mode)
   "Use this function to set the blend mode for a texture, used by SDL_RenderCopy()."
   (check-rc (sdl2-ffi.functions:sdl-set-texture-blend-mode texture blend-mode)))
 
@@ -198,7 +198,10 @@ about the specified renderer, and return it."
 
 ;; TODO SDL_GetRendererOutputSize
 (defun get-renderer-output-size (renderer)
-  (niy "SDL_GetRendererOutputSize()"))
+  (c-with ((x :int)
+           (y :int))
+    (sdl-get-renderer-output-size renderer (x &) (y &))
+    (values x y)))
 
 (defun query-texture (texture)
   (c-with ((texture-format :uint32)
