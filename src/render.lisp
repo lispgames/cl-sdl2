@@ -244,6 +244,18 @@ about the specified renderer, and return it."
 						surface))
    (lambda (tex) (sdl-destroy-texture tex))))
 
+(defun set-texture-color-mode (texture r g b)
+  "Use this function to set an additional color value multiplied into render copy operations."
+  (check-rc (sdl-set-texture-color-mod texture r g b)))
+
+(defun get-texture-color-mode (texture)
+  "Use this function to get the additional color value multiplied into render copy operations."
+  (c-with ((r :uint8)
+           (g :uint8)
+           (b :uint8))
+    (check-rc (sdl-get-texture-color-mod texture (r &) (g &) (b &)))
+    (values r g b)))
+
 (defun destroy-texture (texture)
   "Use this function to destroy the specified texture."
   (sdl-cancel-collect texture)
