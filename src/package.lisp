@@ -33,6 +33,7 @@
            #:get-num-display-modes
            #:get-current-display-mode
            #:get-display-mode
+           #:get-display-bounds
            #:windowpos-undefined
            #:windowpos-centered
            #:windowpos-from-coord
