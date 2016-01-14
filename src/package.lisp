@@ -190,12 +190,10 @@
            #:get-renderer-info
            ;#:get-renderer-output-size
            #:create-texture
-           #:create-texture-from-surface
-           #:set-texture-color-mode
-           #:get-texture-color-mode
-           #:query-texture
-           #:texture-width
-           #:texture-height
+	   #:create-texture-from-surface
+	   #:query-texture
+	   #:texture-width
+	   #:texture-height
            #:destroy-texture
            #:lock-texture
            #:unlock-texture
