@@ -191,8 +191,8 @@
            ;#:get-renderer-output-size
            #:create-texture
            #:create-texture-from-surface
-           #:set-texture-color-mode
-           #:get-texture-color-mode
+           #:set-texture-color-mod
+           #:get-texture-color-mod
            #:query-texture
            #:texture-width
            #:texture-height

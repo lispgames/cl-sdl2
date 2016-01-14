@@ -117,7 +117,7 @@ will be garbage collected as needed."
     rect))
 
 (define-struct-accessors (rect sdl2-ffi:sdl-rect)
-  :x :y :w :h)
+  :x :y (width :w) (height :h))
 
 (defmethod print-object ((rect sdl2-ffi:sdl-rect) stream)
   (c-rect (rect)
