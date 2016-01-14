@@ -230,6 +230,8 @@
            #:blit-surface
            #:blit-scaled
            #:fill-rect
+           #:set-color-key
+           #:get-color-key
 
            ;; timer.lisp
            #:delay

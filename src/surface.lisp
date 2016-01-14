@@ -67,3 +67,13 @@
 
 (defun fill-rect (surface-dst rect color)
   (sdl-fill-rect surface-dst rect color))
+
+(defun set-color-key (surface flag key)
+  "Use this function to set the color key (transparent pixel) in a surface."
+  (check-rc (sdl-set-color-key surface (autowrap:enum-value 'sdl2-ffi:sdl-bool flag) key)))
+
+(defun get-color-key (surface)
+  "Use this function to get the color key (transparent pixel) for a surface."
+  (c-let ((key :uint32))
+    (check-rc (sdl-get-color-key surface (key &)))
+    key))
