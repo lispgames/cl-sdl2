@@ -116,6 +116,30 @@ will be garbage collected as needed."
           (rect :h) h)
     rect))
 
+(defun rect-x (rect)
+  (c-ref rect sdl2-ffi:sdl-rect :x))
+
+(defun (setf rect-x) (v rect)
+  (setf (c-ref rect sdl2-ffi:sdl-rect :x) v))
+
+(defun rect-y (rect)
+  (c-ref rect sdl2-ffi:sdl-rect :y))
+
+(defun (setf rect-y) (v rect)
+  (setf (c-ref rect sdl2-ffi:sdl-rect :y) v))
+
+(defun rect-width (rect)
+  (c-ref rect sdl2-ffi:sdl-rect :w))
+
+(defun (setf rect-width) (v rect)
+  (setf (c-ref rect sdl2-ffi:sdl-rect :w) v))
+
+(defun rect-height (rect)
+  (c-ref rect sdl2-ffi:sdl-rect :h))
+
+(defun (setf rect-height) (v rect)
+  (setf (c-ref rect sdl2-ffi:sdl-rect :h) v))
+
 (defmethod print-object ((rect sdl2-ffi:sdl-rect) stream)
   (c-rect (rect)
     (print-unreadable-object (rect stream :type t :identity t)

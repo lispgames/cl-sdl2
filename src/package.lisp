@@ -146,6 +146,10 @@
            #:with-points
            #:points*
            #:make-rect
+           #:rect-x
+           #:rect-y
+           #:rect-width
+           #:rect-height
            #:copy-rect
            #:copy-into-rect
            #:free-rect
