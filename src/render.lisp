@@ -250,9 +250,9 @@ about the specified renderer, and return it."
 
 (defun get-texture-color-mod (texture)
   "Use this function to get the additional color value multiplied into render copy operations."
-  (c-with ((r :uint8)
-           (g :uint8)
-           (b :uint8))
+  (c-with ((r :unsigned-short)
+           (g :unsigned-short)
+           (b :unsigned-short))
     (check-rc (sdl-get-texture-color-mod texture (r &) (g &) (b &)))
     (values r g b)))
 
