@@ -133,6 +133,7 @@
 `SDL_WINDOW_FULLSCREEN`.  Specifying `:windowed` or `:desktop` is
 \"windowed\" fullscreen, using `SDL_WINDOW_FULLSCREEN_DESKTOP`."
   (let ((flag (case fullscreen-value
+                ((nil))
                 ((:desktop :windowed) :fullscreen-desktop)
                 ((t :fullscreen) :fullscreen))))
     (check-rc (sdl-set-window-fullscreen
