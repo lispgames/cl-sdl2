@@ -259,6 +259,16 @@ about the specified renderer, and return it."
     (check-rc (sdl-get-texture-color-mod texture (r &) (g &) (b &)))
     (values r g b)))
 
+(defun set-texture-alpha-mod (texture alpha)
+  "Use this function to set an additional alpha value multiplied into render copy operations."
+  (check-rc (sdl-set-texture-alpha-mod texture alpha)))
+
+(defun get-texture-alpha-mod (texture)
+  "Use this function to get the additional alpha value multiplied into render copy operations."
+  (c-with ((alpha :unsigned-short))
+    (check-rc (sdl-get-texture-alpha-mod texture (alpha &)))
+    alpha))
+
 (defun destroy-texture (texture)
   "Use this function to destroy the specified texture."
   (sdl-cancel-collect texture)
