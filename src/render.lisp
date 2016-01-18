@@ -105,8 +105,14 @@ the SDL_Renderer structure."
   (check-rc (sdl2-ffi.functions:sdl-render-copy renderer texture source-rect dest-rect)))
 
 (defun render-copy-ex (renderer texture &key source-rect dest-rect angle center flip)
+  "Use this function to copy a portion of the texture to the current rendering target, optionally rotating it by angle around the given center and also flipping it top-bottom and/or left-right."
   (check-rc (sdl2-ffi.functions:sdl-render-copy-ex
-             renderer texture source-rect dest-rect angle center
+             renderer
+             texture
+             source-rect
+             dest-rect
+             (coerce (or angle 0) 'double-float)
+             center
              (mask-apply 'sdl-renderer-flip flip))))
 
 (defun set-render-draw-color (renderer r g b a)
