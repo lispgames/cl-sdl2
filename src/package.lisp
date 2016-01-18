@@ -193,6 +193,8 @@
            #:create-texture-from-surface
            #:set-texture-color-mod
            #:get-texture-color-mod
+           #:set-texture-alpha-mod
+           #:get-texture-alpha-mod
            #:query-texture
            #:texture-width
            #:texture-height
