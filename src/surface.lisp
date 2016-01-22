@@ -74,6 +74,6 @@
 
 (defun get-color-key (surface)
   "Use this function to get the color key (transparent pixel) for a surface."
-  (c-let ((key :uint32))
+  (c-let ((key sdl2-ffi:uint32))
     (check-rc (sdl-get-color-key surface (key &)))
     key))
