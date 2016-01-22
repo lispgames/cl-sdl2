@@ -210,7 +210,7 @@ about the specified renderer, and return it."
     (values x y)))
 
 (defun query-texture (texture)
-  (c-with ((texture-format :uint32)
+  (c-with ((texture-format sdl2-ffi:uint32)
            (access :int)
            (width  :int)
            (height :int))
