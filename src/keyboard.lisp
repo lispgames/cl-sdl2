@@ -19,6 +19,9 @@
   (autowrap:enum-key 'sdl2-ffi:sdl-scancode
                      (scancode-value keysym)))
 
+(defun scancode-symbol (scancode)
+  (autowrap:enum-key 'sdl2-ffi:sdl-scancode scancode))
+
 (defun mod-value (keysym)
   (c-keysym (keysym) (keysym :mod)))
 
