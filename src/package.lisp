@@ -53,6 +53,7 @@
            #:set-window-position
            #:get-window-title
            #:get-window-size
+           #:get-window-aspect-ratio
            #:get-window-surface
            #:get-window-position
            #:get-window-flags
@@ -94,6 +95,7 @@
            #:key-up-p
            #:scancode-value
            #:scancode
+           #:scancode-symbol
            #:mod-value
            #:sym-value
            #:scancode=

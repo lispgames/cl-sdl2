@@ -162,6 +162,9 @@
     (sdl-get-window-size win width height)
     (values (mem-ref width :int) (mem-ref height :int))))
 
+(defun get-window-aspect-ratio (win)
+  (multiple-value-call #'/ (get-window-size win)))
+
 (defun get-window-surface (win)
   ;; Do NOT free the returned surface.
   (check-null (sdl-get-window-surface win)))
