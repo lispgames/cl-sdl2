@@ -173,6 +173,10 @@
   (let ((flags (sdl-get-window-flags win)))
     (autowrap:mask-keywords 'sdl-window-flags flags)))
 
+(defun get-window-pixel-format (win)
+  "Use this function to get the pixel format associated with the window."
+  (enum-key 'sdl-pixel-format (sdl-get-window-pixel-format win)))
+
 (declaim (inline get-window-id))
 (defun get-window-id (win)
   (sdl-get-window-id win))
