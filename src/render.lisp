@@ -242,7 +242,7 @@ about the specified renderer, and return it."
   (sdl-collect
    (check-null (sdl-create-texture renderer
                                    (enum-value 'sdl-pixel-format pixel-format)
-                                   (enum-value 'sdl-texture-access access)
+                                   (enum-value 'sdl2-ffi:sdl-texture-access access)
                                    width height))
    (lambda (tex) (sdl-destroy-texture tex))))
 
