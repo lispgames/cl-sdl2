@@ -40,7 +40,6 @@
   sdl2-ffi:+sdl-pixelformat-uyvy+
   sdl2-ffi:+sdl-pixelformat-yvyu+)
 
-
 (autowrap:define-enum-from-constants
     (sdl-pixel-type)
   sdl2-ffi:+sdl-pixeltype-unknown+
@@ -95,11 +94,6 @@
   sdl2-ffi:+sdl-packedlayout-8888+
   sdl2-ffi:+sdl-packedlayout-2101010+
   sdl2-ffi:+sdl-packedlayout-1010102+)
-
-(autowrap:define-enum-from-constants
-    (sdl-texture-access "SDL-TEXTUREACCESS-")
-  sdl2-ffi:+sdl-textureaccess-static+
-  sdl2-ffi:+sdl-textureaccess-streaming+)
 
 (defun map-rgb (pixel-format r g b)
   (sdl-map-rgb pixel-format r g b))
