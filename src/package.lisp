@@ -57,6 +57,7 @@
            #:get-window-surface
            #:get-window-position
            #:get-window-flags
+           #:get-window-pixel-format
            #:get-window-id
            #:enable-screensaver
            #:disable-screensaver
@@ -178,6 +179,7 @@
            #:set-render-draw-color
            #:set-texture-blend-mode
            #:set-render-draw-blend-mode
+           #:set-render-target
            #:render-copy
            #:render-copy-ex
            #:render-present

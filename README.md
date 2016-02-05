@@ -69,6 +69,6 @@ Start your lisp:
 
 This example will open a window with an opengl primitive in it. Any mouse
 movements or keystrokes are recorded in the terminal (or emacs SLIME output
-buffer). Hitting the ESCAPE key will terminate the example.
+buffer ```*inferior-lisp*```). Hitting the ESCAPE key will terminate the example.
 
 Thank you for using sdl2!
