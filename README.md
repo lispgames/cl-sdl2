@@ -63,7 +63,7 @@ Start your lisp. Then, just:
 Start your lisp:
 
 ```lisp
-(asdf:load-system :sdl2-examples)
+(asdf:load-system :sdl2/examples)
 (sdl2-examples:basic-test)
 ```
 
