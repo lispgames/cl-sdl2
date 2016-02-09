@@ -137,7 +137,7 @@
                 ((:desktop :windowed) :fullscreen-desktop)
                 ((t :fullscreen) :fullscreen))))
     (check-rc (sdl-set-window-fullscreen
-               win (enum-value 'sdl-window-fullscreen flag)))))
+               win (if flag (enum-value 'sdl-window-fullscreen flag) 0)))))
 
 (defun set-window-size (win w h)
   (sdl-set-window-size win w h))
