@@ -198,7 +198,7 @@ This does **not** call `SDL2:INIT` by itself.  Do this either with
         (setf (c-ref *wakeup-event* sdl2-ffi:sdl-event :type) *lisp-message-event*)))))
 
 (defun was-init (&rest flags)
-  (sdl-was-init (autowrap:mask-apply 'sdl-init-flags flags)))
+  (/= 0 (sdl-was-init (autowrap:mask-apply 'sdl-init-flags flags))))
 
 (defun quit ()
   "Shuts down SDL2."
