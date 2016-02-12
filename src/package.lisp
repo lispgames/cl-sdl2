@@ -18,6 +18,7 @@
   (:export ;; API
            #:init
            #:quit
+           #:was-init
            #:with-init
            #:in-main-thread
            #:version
