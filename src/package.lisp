@@ -263,6 +263,9 @@
            #:sse-p #:sse2-p #:sse3-p #:sse41-p #:sse42-p
            #:power-info
 
+           ;; syswm.lisp
+           #:get-window-wm-info
+
            ;;rwops.lisp
            :rw-from-file
            :rw-close
