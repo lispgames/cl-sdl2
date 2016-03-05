@@ -212,10 +212,10 @@ Stores the optional user-data in sdl2::*user-events*"
                   (setf ,idle-func #'(lambda () ,@(expand-idle-handler event-handlers)))
                   (progn ,@(cddr (find :initialize event-handlers :key #'first)))
                   (loop :until ,quit
-                     :do (loop :as ,rc = (next-event ,sdl-event ,method ,timeout)
-                            ,@(if (eq :poll method)
-                                  `(:until (= 0 ,rc))
-                                  `(:until ,quit))
+                     :do (loop
+                            ,@(if (not (eq :poll method)) `(:until ,quit))
+                            :as ,rc = (next-event ,sdl-event ,method ,timeout)
+                            ,@(if (eq :poll method) `(:until (= 0 ,rc)))
                             :do
                             (let* ((,sdl-event-type (get-event-type ,sdl-event))
                                    (,sdl-event-id (and (user-event-type-p ,sdl-event-type)
