@@ -13,20 +13,42 @@ It is licensed under the [MIT license](https://opensource.org/licenses/MIT).
 sdl2 is in Quicklisp, see below for instructions.
 
 ## SDL 2.0 C Library Install
+See https://wiki.libsdl.org/Installation
 
 On Linux, you can probably find SDL2 in your distribution's package
 set.  For other platforms, or for building manually, [download the
 source](http://www.libsdl.org/download-2.0.php).
 
+### Package
+* Debian based: Ubuntu, Mint etc
+```bash
+sudo apt-get install libsdl2-2.0
+```
+* Arch
+```bash
+sudo pacman -S sdl2
+```
+
+### Compilation
+
 If you need to compile from source for your Linux platform:
 
-  0. Download the source tar-ball.
-  0. tar zxf SDL2-0.0.0.tar.gz
-  0. ./configure
-  0. make
-  0. sudo make install
+1. Download [source code](https://www.libsdl.org/download-2.0.php) 
+2. Compile
+3. Install
+ 
+For example:
+```bash
+cd /tmp
+wget https://www.libsdl.org/release/SDL2-2.0.4.tar.gz
+tar -xzvf SDL2-2.?.?.tar.gz
+cd SDL2-2.?.?
+./configure
+make
+sudo make install
+```
 
-This will install the SDL-2.0.3 C Library into your /usr/local location.
+This will install the SDL-2.0.x C Library into your /usr/local location.
 
 It's generally a good idea to install at a minimum the version of SDL2
 that was wrapped; however, sub revisions should not introduce binary
@@ -45,10 +67,11 @@ you placed the Quicklisp repository in the default place as indicated
 by the directions and have added it to your lisp init file.
 
 ## github install
-
-  0. cd $HOME/quicklisp/local-projects
-  0. git clone https://github.com/rpav/cl-autowrap.git
-  0. git clone https://github.com/lispgames/cl-sdl2.git
+```bash
+cd $HOME/quicklisp/local-projects
+git clone https://github.com/rpav/cl-autowrap.git
+git clone https://github.com/lispgames/cl-sdl2.git
+```
 
 Then, use quicklisp to install the libraries required by cl-sdl2:
 
