@@ -11,7 +11,6 @@
                :cl-plus-c
                :cl-ppcre
                :trivial-garbage
-               :cl-opengl
                :trivial-channels
                :trivial-features
                #+darwin :cl-glut)
