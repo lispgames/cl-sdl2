@@ -58,7 +58,7 @@
   :description "simple examples to demonstrate common usage of sdl2."
   :author "Chip Collier <photex@lofidelitygames.com>"
   :license "MIT"
-  :depends-on (:sdl2)
+  :depends-on (:sdl2 :cl-opengl)
   :pathname "examples"
   :serial t
 
