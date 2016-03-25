@@ -68,12 +68,22 @@ returning an SDL_true into CL's boolean type system."
            (error 'sdl-rc-error :rc ,wrapper :string (sdl-get-error))
            ,wrapper))))
 
-(defvar *main-thread-channel* nil)
+(defvar *main-thread-channel* nil
+  "The connection by which we send lambdas to the *main-thread* for execution.")
+(defvar *thread-return-channel* nil
+  "The response from the *main-thread* after execution of a lambda.")
 (defvar *main-thread* nil)
 (defvar *lisp-message-event* nil)
 (defvar *wakeup-event* nil)
 
 (defmacro in-main-thread ((&key background no-event) &body b)
+  "Generate a lambda containing the body, then if called from the
+*main-thread*, funcall it.  Otherwise send the lambda to the main
+thread via the *main-thread-channel*.
+
+When :BACKGROUND is t, the lambda is sent with no response and no wakeup
+When :NO-EVENT is nil (default), an SDL *wakeup-event* is sent with
+the SDL event system."
   (with-gensyms (fun channel)
     `(let ((,fun (lambda () ,@b)))
        (if *main-thread-channel*
@@ -84,7 +94,10 @@ returning an SDL_true into CL's boolean type system."
                        (sendmsg *main-thread-channel*
                                 (cons ,fun nil))
                        (values))
-                    `(let ((,channel (make-channel)))
+		    ;; Instantiating a channel just to delete it
+		    ;; isn't all that efficient, instead let's use the
+		    ;; *thread-return-channel*. 
+                    `(let ((,channel *thread-return-channel*))
                        (sendmsg *main-thread-channel*
                                 (cons ,fun ,channel))
                        ,(unless no-event
@@ -124,28 +137,33 @@ returning an SDL_true into CL's boolean type system."
           (handle-message msg)))
 
 (defun sdl-main-thread ()
+  "The entry point for the main SDL thread."
   (let ((*main-thread* (bt:current-thread))
         #+swank (swank:*sldb-quit-restart* 'continue)
         #+slynk (slynk:*sly-db-quit-restart* 'continue))
     (loop while *main-thread-channel* do
-      (block loop-block
-        (restart-bind ((continue (lambda (&optional v)
-                                   (declare (ignore v))
-                                   (signal 'sdl-continue))
-                                 :report-function
-                                 (lambda (stream)
-                                   (format stream "Return to the SDL2 main loop.")))
-                       (abort (lambda (&optional v)
-                                (declare (ignore v))
-                                (signal 'sdl-quit))
-                              :report-function
-                              (lambda (stream)
-                                (format stream "Abort, quitting SDL2 entirely."))))
-          (recv-and-handle-message))))))
+	 (block loop-block
+	   (restart-bind ((continue (lambda (&optional v)
+				      (declare (ignore v))
+				      (signal 'sdl-continue))
+			    :report-function
+			    (lambda (stream)
+			      (format stream "Return to the SDL2 main loop.")))
+			  (abort (lambda (&optional v)
+				   (declare (ignore v))
+				   (signal 'sdl-quit))
+			    :report-function
+			    (lambda (stream)
+			      (format stream "Abort, quitting SDL2 entirely."))))
+	     (recv-and-handle-message))))))
 
+(defmacro ensure-channel (channel)
+  `(unless ,channel
+     (setf ,channel (make-channel))))
 (defun ensure-main-channel ()
-  (unless *main-thread-channel*
-    (setf *main-thread-channel* (make-channel))))
+  (ensure-channel *main-thread-channel*))
+(defun ensure-return-channel ()
+  (ensure-channel *thread-return-channel*))
 
 (defun make-this-thread-main (&optional function)
   "Designate the current thread as the SDL2 main thread.  This
@@ -162,16 +180,29 @@ does **not** return just because `FUNCTION` returns; it still requires
 This does **not** call `SDL2:INIT` by itself.  Do this either with
 `FUNCTION`, or from a separate thread."
   (ensure-main-channel)
+  (ensure-return-channel)
   (when (functionp function)
     (sendmsg *main-thread-channel* (cons function nil)))
   (sdl-main-thread))
 
 (defun init (&rest sdl-init-flags)
-  "Initialize SDL2 with the specified subsystems. Initializes everything by default."
+  "Initialize SDL2 with the specified subsystems. 
+SDL-INIT-FLAGS may be any of the following (:EVERYTHING is default):
+  :EVERYTHING
+  :TIMER
+  :AUDIO
+  :VIDEO
+  :JOYSTICK
+  :HAPTIC
+  :GAMECONTROLLER
+  :EVENTS"
+  ;; Sure, you could also send :NOPARACHUTE, but that's a
+  ;; compatibility flag which is ignored by SDL2.
   (unless *wakeup-event*
     (setf *wakeup-event* (alloc 'sdl2-ffi:sdl-event)))
   (unless *main-thread-channel*
     (ensure-main-channel)
+    (ensure-return-channel)
 
     ;; If we did not have a main-thread channel, make a default main
     ;; thread.
@@ -204,7 +235,8 @@ This does **not** call `SDL2:INIT` by itself.  Do this either with
   "Shuts down SDL2."
   (in-main-thread (:no-event t)
     (sdl-quit)
-    (setf *main-thread-channel* nil)
+    (setf *main-thread-channel* nil
+	  *thread-return-channel nil)
     (setf *lisp-message-event* nil)))
 
 (defmacro with-init ((&rest sdl-init-flags) &body body)
