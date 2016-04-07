@@ -190,9 +190,9 @@ structures. Raw symbols are bound to (make-rect 0 0 0 0).
       #<SDL-FFI:SDL-RECT x 5 y 10 w 15 h 20>
       #<SDL-FFI:SDL-RECT x 2 y 2 w 3 d 40>)"
   (if (null bindings)
+      `(progn ,@body)
       `(%with-rect (,(car bindings))
-         (with-rects ,(cdr bindings) ,@body))
-      `(progn ,@body)))
+         (with-rects ,(cdr bindings) ,@body))))
 
 (defun rects* (&rest rects)
   "Return a pointer to SDL_Rect and the number of elements in it."
