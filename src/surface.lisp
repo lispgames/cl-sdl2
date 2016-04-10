@@ -43,7 +43,7 @@
 (defun load-bmp (filename)
   (sdl-collect
    ;; Note, SDL_LoadBMP is a macro in SDL_surface.h that is exactly this
-   (check-null (sdl-load-bmp-rw (sdl-rw-from-file filename "rb") 1))
+   (check-null (sdl-load-bmp-rw (sdl-rw-from-file (namestring (merge-pathnames filename)) "rb") 1))
    (lambda (s) (sdl-free-surface s))))
 
 (defun convert-surface (surface format &key (flags 0))
