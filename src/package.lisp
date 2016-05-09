@@ -98,6 +98,7 @@
            #:scancode-value
            #:scancode
            #:scancode-symbol
+           #:scancode-key-to-value
            #:mod-value
            #:sym-value
            #:scancode=

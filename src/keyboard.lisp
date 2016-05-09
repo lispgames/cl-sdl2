@@ -13,14 +13,21 @@
   (= state sdl2-ffi:+sdl-released+))
 
 (defun scancode-value (keysym)
+  "Converts a keysym to the numerical value of its scancode."
   (c-keysym (keysym) (keysym :scancode)))
 
 (defun scancode (keysym)
+  "Converts a keysym to a scancode keyword."
   (autowrap:enum-key 'sdl2-ffi:sdl-scancode
                      (scancode-value keysym)))
 
 (defun scancode-symbol (scancode)
+  "Converts a scancode number to a scancode keyword."
   (autowrap:enum-key 'sdl2-ffi:sdl-scancode scancode))
+
+(defun scancode-key-to-value (scancode-key)
+  "Converts a scancode keyword to its numerical value."
+  (autowrap:enum-value 'sdl2-ffi:sdl-scancode scancode-key))
 
 (defun mod-value (keysym)
   (c-keysym (keysym) (keysym :mod)))
@@ -31,11 +38,10 @@
 (defgeneric scancode= (value scancode-key))
 
 (defmethod scancode= ((scancode integer) scancode-key)
-  (= scancode (autowrap:enum-value 'sdl2-ffi:sdl-scancode scancode-key)))
+  (= scancode (scancode-key-to-value scancode-key)))
 
 (defmethod scancode= ((keysym sdl2-ffi:sdl-keysym) scancode-key)
-  (= (scancode-value keysym)
-     (autowrap:enum-value 'sdl2-ffi:sdl-scancode scancode-key)))
+  (= (scancode-value keysym) (scancode-key-to-value scancode-key)))
 
 (defun mod-keywords (value)
   (autowrap:mask-keywords 'keymod value))
