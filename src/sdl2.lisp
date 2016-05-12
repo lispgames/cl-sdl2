@@ -77,7 +77,7 @@ returning an SDL_true into CL's boolean type system."
 (defmacro in-main-thread ((&key background no-event) &body b)
   (with-gensyms (fun channel)
     `(let ((,fun (lambda () ,@b)))
-       (if *main-thread-channel*
+       (if (or *main-thread-channel* *main-thread*)
            (if *main-thread*
                (funcall ,fun)
                ,(if background
@@ -221,7 +221,7 @@ This does **not** call `SDL2:INIT` by itself.  Do this either with
       (sdl-quit)
       (setf *main-thread-channel* nil)
       (setf *lisp-message-event* nil)
-      (sendmsg mtc nil)))
+      (when mtc (sendmsg mtc nil))))
   (when (and *the-main-thread*
              (not (eq *the-main-thread* (bt:current-thread))))
     (bt:join-thread *the-main-thread*)
