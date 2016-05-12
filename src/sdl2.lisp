@@ -68,6 +68,7 @@ returning an SDL_true into CL's boolean type system."
            (error 'sdl-rc-error :rc ,wrapper :string (sdl-get-error))
            ,wrapper))))
 
+(defvar *the-main-thread* nil)
 (defvar *main-thread-channel* nil)
 (defvar *main-thread* nil)
 (defvar *lisp-message-event* nil)
@@ -119,7 +120,8 @@ returning an SDL_true into CL's boolean type system."
     (handle-message msg)))
 
 (defun get-and-handle-messages ()
-  (loop as msg = (getmsg *main-thread-channel*)
+  (loop as msg = (and *main-thread-channel*
+                      (getmsg *main-thread-channel*))
         while msg do
           (handle-message msg)))
 
@@ -187,13 +189,14 @@ This does **not** call `SDL2:INIT` by itself.  Do this either with
     ;; If we did not have a main-thread channel, make a default main
     ;; thread.
     #-(and ccl darwin)
-    (bt:make-thread #'sdl-main-thread :name "SDL2 Main Thread")
+    (setf *the-main-thread* (bt:make-thread #'sdl-main-thread :name "SDL2 Main Thread"))
 
     ;; On OSX, we need to run in the main thread; CCL allows us to
     ;; safely do this.  On other platforms (mainly GLX?), we just need
     ;; to run in a dedicated thread.
     #+(and ccl darwin)
     (let ((thread (find 0 (ccl:all-processes) :key #'ccl:process-serial-number)))
+      (setf *the-main-thread* thread)
       (ccl:process-interrupt thread #'sdl-main-thread)))
   (in-main-thread (:no-event t)
     ;; HACK! glutInit on OSX uses some magic undocumented API to
@@ -213,10 +216,18 @@ This does **not** call `SDL2:INIT` by itself.  Do this either with
 
 (defun quit ()
   "Shuts down SDL2."
-  (in-main-thread (:no-event t)
-    (sdl-quit)
-    (setf *main-thread-channel* nil)
-    (setf *lisp-message-event* nil)))
+  (in-main-thread (:background t)
+    (let ((mtc *main-thread-channel*))
+      (sdl-quit)
+      (setf *main-thread-channel* nil)
+      (setf *lisp-message-event* nil)
+      (sendmsg mtc nil)))
+  (when (and *the-main-thread*
+             (not (eq *the-main-thread* (bt:current-thread))))
+    (bt:join-thread *the-main-thread*)
+    (setf *the-main-thread* nil))
+  (when *the-main-thread*
+    (setf *the-main-thread* nil)))
 
 (defmacro with-init ((&rest sdl-init-flags) &body body)
   `(progn
