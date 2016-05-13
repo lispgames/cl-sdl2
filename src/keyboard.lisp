@@ -62,7 +62,7 @@
   (sdl-get-key-from-scancode scancode))
 
 (defun get-key-name (key)
-  (sdl-get-key-name key))
+  (values (sdl-get-key-name key)))
 
 (defun scancode-name (scancode)
   (get-key-name (get-key-from-scancode scancode)))
