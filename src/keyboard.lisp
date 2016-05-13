@@ -66,3 +66,7 @@
 
 (defun scancode-name (scancode)
   (get-key-name (get-key-from-scancode scancode)))
+
+(defun scancode-key-name (scancode)
+  (let ((key (sdl-get-key-from-scancode scancode)))
+    (values (sdl-get-key-name key))))

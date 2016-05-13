@@ -108,6 +108,7 @@
            #:get-key-from-scancode
            #:get-key-name
            #:scancode-name
+           #:scancode-key-name
 
            ;; mouse.lisp
            #:warp-mouse-in-window
