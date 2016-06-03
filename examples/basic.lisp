@@ -83,8 +83,7 @@
                (when h
                  (sdl2:rumble-play h 1.0 100))))
 
-            (:idle
-             ()
+            (:idle ()
              (gl:clear :color-buffer)
              (gl:begin :triangles)
              (gl:color 1.0 0.0 0.0)
