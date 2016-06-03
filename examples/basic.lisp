@@ -48,8 +48,7 @@
           (format t "Beginning main loop.~%")
           (finish-output)
           (sdl2:with-event-loop (:method :poll)
-            (:keydown
-             (:keysym keysym)
+            (:keydown (:keysym keysym)
              (let ((scancode (sdl2:scancode-value keysym))
                    (sym (sdl2:sym-value keysym))
                    (mod-value (sdl2:mod-value keysym)))
@@ -62,23 +61,19 @@
                        scancode
                        mod-value)))
 
-            (:keyup
-             (:keysym keysym)
+            (:keyup (:keysym keysym)
              (when (sdl2:scancode= (sdl2:scancode-value keysym) :scancode-escape)
                (sdl2:push-event :quit)))
 
-            (:mousemotion
-             (:x x :y y :xrel xrel :yrel yrel :state state)
+            (:mousemotion (:x x :y y :xrel xrel :yrel yrel :state state)
              (format t "Mouse motion abs(rel): ~a (~a), ~a (~a)~%Mouse state: ~a~%"
                      x xrel y yrel state))
 
-            (:controlleraxismotion
-             (:which controller-id :axis axis-id :value value)
+            (:controlleraxismotion (:which controller-id :axis axis-id :value value)
              (format t "Controller axis motion: Controller: ~a, Axis: ~a, Value: ~a~%"
                      controller-id axis-id value))
 
-            (:controllerbuttondown
-             (:which controller-id)
+            (:controllerbuttondown (:which controller-id)
              (let ((h (cdr (assoc controller-id haptic))))
                (when h
                  (sdl2:rumble-play h 1.0 100))))
