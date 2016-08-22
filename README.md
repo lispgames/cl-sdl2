@@ -81,6 +81,23 @@ Start your lisp. Then, just:
 (ql:quickload "sdl2")
 ```
 
+## Swank/Slynk features
+
+sdl2 enables certain restarts for friendly interaction with SLIME or
+Sly if you have either properly installed.  "Proper installation" in
+this case means `swank.asd` or `slynk.asd` is linked such that ASDF
+can find and load it.
+
+Note this is easily achieved even if you have installed them from
+github or some other non-Quicklisp repository:
+
+* Symlink the directory to `$HOME/quicklisp/local-projects/`
+* Symlink the `.asd` to `$HOME/.local/common-lisp/sources/`
+
+Similarly you could just clone into `~/quicklisp/local-projects` as
+well; this should work on Windows as well.  There are numerous other
+options for configuring and managing ASDs, as well.
+
 # Running the sdl2 examples
 
 Start your lisp:
