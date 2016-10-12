@@ -11,6 +11,7 @@
                     "/usr/include/X11/")
   :include-sources ("stdint.h"
                     "bits/types.h"
+                    "machine/_types.h"
                     "sys/types.h"
                     "SDL2")
   :exclude-definitions ("SDL_LogMessageV"
