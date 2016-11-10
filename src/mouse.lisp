@@ -18,7 +18,7 @@
   (sdl-true-p (sdl-get-relative-mouse-mode)))
 
 (defun toggle-relative-mouse-mode ()
-  (set-relative-mouse-mode (not (relative-mouse-mode-p))))
+  (set-relative-mouse-mode (if (relative-mouse-mode-p) 0 1)))
 
 (defun mouse-state ()
   "Returns (VALUES X Y BITMASK) where X, Y give the mouse cursor position
