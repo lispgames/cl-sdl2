@@ -44,6 +44,7 @@
    (:file "events")
    (:file "keyboard")
    (:file "mouse")
+   (:file "syswm")
    (:file "joystick")
    (:file "gamecontroller")
    (:file "haptic")
