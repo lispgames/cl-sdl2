@@ -47,6 +47,13 @@ returning an SDL_true into CL's boolean type system."
          (error 'sdl-rc-error :rc ,rc :string (sdl-get-error)))
        ,rc)))
 
+(defmacro check-not-below (form lower-limit)
+  (with-gensyms (rc)
+    `(let ((,rc ,form))
+       (when (< ,rc ,lower-limit)
+         (error 'sdl-rc-error :rc ,rc :string (sdl-get-error)))
+       ,rc)))
+
 (defmacro check-non-zero (form)
   (with-gensyms (rc)
     `(let ((,rc ,form))
