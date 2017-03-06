@@ -72,7 +72,7 @@ joystick with a known gamecontroller mapping."
 
 (defun game-controller-open (device-index)
   (sdl-collect
-   (check-null (sdl-game-controller-open device-index))
+   (check-nullptr (sdl-game-controller-open device-index))
    (lambda (gc) (sdl-game-controller-close gc))))
 
 (defun game-controller-close (gamecontroller)

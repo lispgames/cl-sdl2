@@ -28,8 +28,8 @@ separate thread after the specified number of milliseconds has elapsed.
 The callback function is passed the current timer interval and the 
 user supplied parameter from the 'add-timer' call and returns the next timer interval. 
 If the returned value from the callback is 0, the timer is canceled."
-  (check-non-zero (sdl-add-timer interval fn args)))
+  (check-zero (sdl-add-timer interval fn args)))
 
 (defun remove-timer (timer)
   "Use this function to remove a timer created with 'add-timer'."
-  (check-true (sdl-remove-timer timer)))
+  (check-false (sdl-remove-timer timer)))

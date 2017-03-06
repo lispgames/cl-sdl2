@@ -4,11 +4,14 @@
 
 ;;; "sdl2" goes here. Hacks and glory await!
 
-(define-condition sdl-error (error) ())
+(define-condition sdl-error (error)
+  ((string :initarg :string :initform nil :accessor sdl-error-string))
+  (:report (lambda (c s)
+             (with-slots (string) c
+               (format s "SDL Error: ~A" string)))))
 
 (define-condition sdl-rc-error (sdl-error)
-  ((code :initarg :rc :initform nil :accessor sdl-error-code)
-   (string :initarg :string :initform nil :accessor sdl-error-string))
+  ((code :initarg :rc :initform nil :accessor sdl-error-code))
   (:report (lambda (c s)
              (with-slots (code string) c
                (format s "SDL Error (~A): ~A" code string)))))
@@ -40,6 +43,18 @@ returning an SDL_true into CL's boolean type system."
   sdl2-ffi:+sdl-init-noparachute+
   '(:everything . #x0000FFFF))
 
+;;;
+;;; NAMING CONVENTION: check-<foo>
+;;;
+;;; If <foo> names a specific value (true, false, zero, null, etc),
+;;; check-<foo> shall error `(when <foo> ...)`.  E.g., `(check-false
+;;; x)` will *error* when `x` is false.
+;;;
+;;; If <foo> names something that can have an error state (like a
+;;; return code), `(check-<foo> x)` shall error when `x` is in that
+;;; state.
+;;;
+
 (defmacro check-rc (form)
   (with-gensyms (rc)
     `(let ((,rc ,form))
@@ -47,26 +62,33 @@ returning an SDL_true into CL's boolean type system."
          (error 'sdl-rc-error :rc ,rc :string (sdl-get-error)))
        ,rc)))
 
-(defmacro check-non-zero (form)
+(defmacro check-zero (form)
   (with-gensyms (rc)
     `(let ((,rc ,form))
-       (unless (> ,rc 0)
+       (when (= ,rc 0)
          (error 'sdl-rc-error :rc ,rc :string (sdl-get-error)))
        ,rc)))
 
-(defmacro check-true (form)
+(defmacro check-false (form)
   (with-gensyms (rc)
     `(let ((,rc ,form))
-       (unless (sdl-true-p ,rc)
+       (when (not (sdl-true-p ,rc))
          (error 'sdl-rc-error :rc ,rc :string (sdl-get-error)))
        ,rc)))
 
-(defmacro check-null (form)
+(defmacro check-nullptr (form)
   (with-gensyms (wrapper)
     `(let ((,wrapper ,form))
        (if (null-pointer-p (autowrap:ptr ,wrapper))
-           (error 'sdl-rc-error :rc ,wrapper :string (sdl-get-error))
+           (error 'sdl-error :string (sdl-get-error))
            ,wrapper))))
+
+(defmacro check-nil (form)
+  (with-gensyms (v)
+    `(let ((,v ,form))
+       (if (null ,v)
+           (error 'sdl-error :string (sdl-get-error))
+           ,v))))
 
 (defvar *the-main-thread* nil)
 (defvar *main-thread-channel* nil)

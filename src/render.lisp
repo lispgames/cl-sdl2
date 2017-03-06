@@ -72,14 +72,14 @@ specified in the index."
 (defun create-renderer (window &optional index flags)
   "Create a 2D rendering context for a window."
   (sdl-collect
-   (check-null (sdl-create-renderer
-                window (or index -1)
-                (mask-apply 'sdl-renderer-flags flags)))
+   (check-nullptr (sdl-create-renderer
+                   window (or index -1)
+                   (mask-apply 'sdl-renderer-flags flags)))
    (lambda (r) (sdl-destroy-renderer r))))
 
 (defun create-software-renderer (surface)
   "Create and return a 2D software rendering context for the surface."
-  (check-null (sdl-create-software-renderer surface)))
+  (check-nullptr (sdl-create-software-renderer surface)))
 
 (defun destroy-renderer (r)
   (sdl-cancel-collect r)
@@ -244,17 +244,17 @@ about the specified renderer, and return it."
 (defun create-texture (renderer pixel-format access width height)
   "Use this function to create a texture for a rendering context."
   (sdl-collect
-   (check-null (sdl-create-texture renderer
-                                   (enum-value 'sdl-pixel-format pixel-format)
-                                   (enum-value 'sdl2-ffi:sdl-texture-access access)
-                                   width height))
+   (check-nullptr (sdl-create-texture renderer
+                                      (enum-value 'sdl-pixel-format pixel-format)
+                                      (enum-value 'sdl2-ffi:sdl-texture-access access)
+                                      width height))
    (lambda (tex) (sdl-destroy-texture tex))))
 
 (defun create-texture-from-surface (renderer surface)
   "Use this function to create a texture from sdl2 surface for a rendering context."
   (sdl-collect
-   (check-null (sdl-create-texture-from-surface renderer
-						surface))
+   (check-nullptr (sdl-create-texture-from-surface renderer
+                                                   surface))
    (lambda (tex) (sdl-destroy-texture tex))))
 
 (defun set-texture-color-mod (texture r g b)

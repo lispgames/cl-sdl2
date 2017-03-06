@@ -67,7 +67,7 @@
         (x (windowpos-from-coord x))
         (y (windowpos-from-coord y)))
     (sdl-collect
-     (check-null (sdl-create-window title x y w h window-flags))
+     (check-nullptr (sdl-create-window title x y w h window-flags))
      (lambda (w) (sdl-destroy-window w)))))
 
 (defun destroy-window (win)
@@ -167,7 +167,7 @@
 
 (defun get-window-surface (win)
   ;; Do NOT free the returned surface.
-  (check-null (sdl-get-window-surface win)))
+  (check-nullptr (sdl-get-window-surface win)))
 
 (defun get-window-flags (win)
   (let ((flags (sdl-get-window-flags win)))
@@ -196,7 +196,7 @@
 
 (defun gl-create-context (win)
   (sdl-collect
-   (check-null (sdl-gl-create-context win))
+   (check-nullptr (sdl-gl-create-context win))
    (lambda (x) (sdl-gl-delete-context x))))
 
 (defun gl-delete-context (gl-context)

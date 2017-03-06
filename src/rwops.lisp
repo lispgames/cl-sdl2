@@ -18,5 +18,5 @@
 (defun rw-from-file (file-name mode)
   "Create an RWops structure from a given file name in a given mode."
   (autowrap:autocollect (ptr)
-      (check-null (sdl-rw-from-file file-name mode))
+      (check-nullptr (sdl-rw-from-file file-name mode))
     (%sdl-rw-close ptr)))

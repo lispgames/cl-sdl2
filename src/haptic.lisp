@@ -10,26 +10,26 @@
 (defmacro %haptic-open (fn source)
   "Unused"
   `(sdl-collect
-    (check-null (,fn ,source))
+    (check-nullptr (,fn ,source))
     (lambda (h) (sdl-haptic-close h))))
 
 ;; TODO wth can't I use the macro above?
 (defun haptic-open (source)
   "Use this function to open the N'th haptic device for use."
   (sdl-collect
-   (check-null (sdl-haptic-open source))
+   (check-nullptr (sdl-haptic-open source))
    (lambda (h) (sdl-haptic-close h))))
 
 (defun haptic-open-from-joystick (source)
   "Use this function to open a joystick haptic device for use"
   (sdl-collect
-   (check-null (sdl-haptic-open-from-joystick source))
+   (check-nullptr (sdl-haptic-open-from-joystick source))
    (lambda (h) (sdl-haptic-close h))))
 
 (defun haptic-open-from-mouse ()
   "Use this function to open the mouses haptic device for use."
   (sdl-collect
-   (check-null (sdl-haptic-open-from-mouse))
+   (check-nullptr (sdl-haptic-open-from-mouse))
    (lambda (h) (sdl-haptic-close h))))
 
 (defun haptic-close (haptic)

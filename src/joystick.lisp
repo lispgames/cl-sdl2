@@ -11,7 +11,7 @@ events are enabled."
 
 (defun joystick-open (device-index)
   (sdl-collect
-   (check-null (sdl-joystick-open device-index))
+   (check-nullptr (sdl-joystick-open device-index))
    (lambda (j) (sdl-joystick-close j))))
 
 (defun joystick-close (joystick)
@@ -19,10 +19,10 @@ events are enabled."
   (sdl-cancel-collect joystick))
 
 (defun joystick-name-for-index (device-index)
-  (check-null (sdl-joystick-name-for-index device-index)))
+  (check-nil (sdl-joystick-name-for-index device-index)))
 
 (defun joystick-name (joystick)
-  (check-null (sdl-joystick-name joystick)))
+  (check-nil (sdl-joystick-name joystick)))
 
 (defmacro joystick-caps-query (fn joystick)
   `(check-rc (,fn ,joystick)))
