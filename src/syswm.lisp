@@ -11,9 +11,11 @@
       (list*
        :subsystem subsystem
        (ecase subsystem
+         #+(not (or windows darwin))
          (:x11
           (list :display (info :info :x11 :display)
                 :window (info :info :x11 :window)))
+         #+windows
          (:windows
           (list :window (info :info :win :window)
                 :hdc (info :info :win :hdc))))))))
