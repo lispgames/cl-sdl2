@@ -70,3 +70,10 @@
 (defun scancode-key-name (scancode)
   (let ((key (sdl-get-key-from-scancode scancode)))
     (values (sdl-get-key-name key))))
+
+(defun start-text-input ()
+  (sdl-start-text-input))
+
+(defun stop-text-input ()
+  (sdl-stop-text-input))
+
