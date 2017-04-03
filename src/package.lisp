@@ -109,7 +109,9 @@
            #:get-key-name
            #:scancode-name
            #:scancode-key-name
-
+	   #:start-text-input
+	   #:stop-text-input
+	   
            ;; mouse.lisp
            #:warp-mouse-in-window
            #:hide-cursor
