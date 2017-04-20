@@ -148,6 +148,8 @@
 
            ;; rect.lisp
            #:make-point
+	   #:point-x
+	   #:point-y
            #:copy-point
            #:copy-into-point
            #:free-point

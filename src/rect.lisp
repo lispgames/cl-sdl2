@@ -15,6 +15,9 @@ collected as needed."
           (point :y) y)
     point))
 
+(define-struct-accessors (point sdl2-ffi:sdl-point)
+  :x :y)
+
 (defmacro c-point ((wrapper-var) &body body)
   `(c-let ((,wrapper-var sdl2-ffi:sdl-point :from ,wrapper-var))
      ,@body))
