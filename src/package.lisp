@@ -250,6 +250,10 @@
            #:fill-rect
            #:set-color-key
            #:get-color-key
+           #:set-alpha-mod
+           #:get-alpha-mod
+           #:set-color-mod
+           #:get-color-mod
 
            ;; timer.lisp
            #:delay
