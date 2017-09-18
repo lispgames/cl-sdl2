@@ -77,3 +77,25 @@
   (c-let ((key sdl2-ffi:uint32))
     (check-rc (sdl-get-color-key surface (key &)))
     key))
+
+(defun set-alpha-mod (surface alpha)
+  "Use this function to set an additional alpha value used in blit operations."
+  (check-rc (sdl-set-surface-alpha-mod surface alpha)))
+
+(defun get-alpha-mod (surface)
+  "Use this function to get the additional alpha value used in blit operations."
+  (c-let ((alpha sdl2-ffi:uint8))
+    (check-rc (sdl-get-surface-alpha-mod surface (alpha &)))
+    alpha))
+
+(defun set-color-mod (surface r g b)
+  "Use this function to set an additional color value multiplied into blit operations."
+  (check-rc (sdl-set-surface-color-mod surface r g b)))
+
+(defun get-color-mod (surface)
+  "Use this function to get the additional color value multiplied into blit operations."
+  (c-let ((r sdl2-ffi:uint8)
+          (g sdl2-ffi:uint8)
+          (b sdl2-ffi:uint8))
+    (check-rc (sdl-get-surface-color-mod surface (r &) (g &) (b &)))
+    (values r g b)))
