@@ -104,7 +104,7 @@ Start your lisp:
 
 ```lisp
 (asdf:load-system :sdl2/examples)
-(sdl2-examples:basic-test)
+(sdl2:make-this-thread-main #'sdl2-examples:basic-test)
 ```
 
 This example will open a window with an opengl primitive in it. Any mouse
