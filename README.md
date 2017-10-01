@@ -103,8 +103,12 @@ options for configuring and managing ASDs, as well.
 Start your lisp:
 
 ```lisp
-(asdf:load-system :sdl2/examples)
-(sdl2:make-this-thread-main #'sdl2-examples:basic-test)
+(ql:quickload :sdl2/examples)
+
+#-sbcl (sdl2-examples:basic-test)
+
+;; SBCL requires that we initialise in the main thread
+#+sbcl (sdl2:make-this-thread-main #'sdl2-examples:basic-test)
 ```
 
 This example will open a window with an opengl primitive in it. Any mouse
