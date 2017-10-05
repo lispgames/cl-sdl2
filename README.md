@@ -33,10 +33,10 @@ sudo pacman -S sdl2
 
 If you need to compile from source for your Linux platform:
 
-1. Download [source code](https://www.libsdl.org/download-2.0.php) 
+1. Download [source code](https://www.libsdl.org/download-2.0.php)
 2. Compile
 3. Install
- 
+
 For example:
 ```bash
 cd /tmp
@@ -103,12 +103,31 @@ options for configuring and managing ASDs, as well.
 Start your lisp:
 
 ```lisp
-(asdf:load-system :sdl2/examples)
+(ql:quickload :sdl2/examples)
 (sdl2-examples:basic-test)
 ```
 
 This example will open a window with an opengl primitive in it. Any mouse
 movements or keystrokes are recorded in the terminal (or emacs SLIME output
 buffer ```*inferior-lisp*```). Hitting the ESCAPE key will terminate the example.
+
+## OSX
+
+Newer versions of OSX have had some difficulties as calls which require
+`nextEventMatchingMask` must be called from the main thread of your program.
+
+This is especially relevant to SBCL, although issues have also been noticed in CCL.
+
+Currently, initialisation must take place on your main thread:
+
+```lisp
+(ql:quickload :sdl2/examples)
+
+;; We should be able to run examples as normal on CCL
+#-sbcl (sdl2-examples:basic-test)
+
+;; SBCL requires that we initialise in the main thread
+#+sbcl (sdl2:make-this-thread-main #'sdl2-examples:basic-test)
+```
 
 Thank you for using sdl2!
