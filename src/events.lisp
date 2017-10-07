@@ -204,33 +204,34 @@ Stores the optional user-data in sdl2::*user-events*"
         (rc (gensym "RC-")))
     `(when (or ,recursive (not *event-loop*))
        (setf *event-loop* t)
-       (in-main-thread (:background ,background)
-         (let ((,quit nil)
-               (,idle-func nil))
+       (let ((,quit nil)
+             (,idle-func nil))
+         (with-body-in-main-thread (:blocking ,background)
            (unwind-protect
                 (with-sdl-event (,sdl-event)
                   (setf ,idle-func #'(lambda () ,@(expand-idle-handler event-handlers)))
+
                   (progn ,@(cddr (find :initialize event-handlers :key #'first)))
                   (loop :until ,quit
-                     :do (loop :as ,rc = (next-event ,sdl-event ,method ,timeout)
-                            ,@(if (eq :poll method)
-                                  `(:until (= 0 ,rc))
-                                  `(:until ,quit))
-                            :do
-                            (let* ((,sdl-event-type (get-event-type ,sdl-event))
-                                   (,sdl-event-id (and (user-event-type-p ,sdl-event-type)
-                                                       (,sdl-event :user :code))))
-                              (case ,sdl-event-type
-                                (:lisp-message () (get-and-handle-messages))
-                                ,@(loop :for (type params . forms) :in event-handlers
-                                     :collect
-                                     (if (eq type :quit)
-                                         (expand-quit-handler sdl-event forms quit)
-                                         (expand-handler sdl-event type params forms))
-                                     :into results
-                                     :finally (return (remove nil results))))
-                              (when (and ,sdl-event-id (not (eq ,sdl-event-type :lisp-message)))
-                                (free-user-data ,sdl-event-id))))
-                     (unless ,quit
-                       (funcall ,idle-func))))
+                        :do (loop :as ,rc = (next-event ,sdl-event ,method ,timeout)
+                                  ,@(if (eq :poll method)
+                                        `(:until (= 0 ,rc))
+                                        `(:until ,quit))
+                                  :do
+                                     (let* ((,sdl-event-type (get-event-type ,sdl-event))
+                                            (,sdl-event-id (and (user-event-type-p ,sdl-event-type)
+                                                                (,sdl-event :user :code))))
+                                       (case ,sdl-event-type
+                                         (:lisp-message () (get-and-handle-messages))
+                                         ,@(loop :for (type params . forms) :in event-handlers
+                                                 :collect
+                                                 (if (eq type :quit)
+                                                     (expand-quit-handler sdl-event forms quit)
+                                                     (expand-handler sdl-event type params forms))
+                                                   :into results
+                                                 :finally (return (remove nil results))))
+                                       (when (and ,sdl-event-id (not (eq ,sdl-event-type :lisp-message)))
+                                         (free-user-data ,sdl-event-id))))
+                            (unless ,quit
+                              (funcall ,idle-func))))
              (setf *event-loop* nil)))))))

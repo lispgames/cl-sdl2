@@ -18,12 +18,13 @@
   (:export ;; API
            #:init
            #:quit
+           #:version
            #:was-init
            #:with-init
            #:in-main-thread
-           #:version
            #:version-wrapped
            #:make-this-thread-main
+           #:with-body-in-main-thread
 
            ;; video.lisp
            #:get-num-video-drivers
@@ -111,7 +112,7 @@
            #:scancode-key-name
 	   #:start-text-input
 	   #:stop-text-input
-	   
+
            ;; mouse.lisp
            #:warp-mouse-in-window
            #:hide-cursor

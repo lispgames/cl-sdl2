@@ -12,7 +12,7 @@
                :cl-autowrap
                :trivial-garbage
                :trivial-channels
-               :trivial-features)
+               :trivial-main-thread)
 
   :pathname "src"
   :serial t
