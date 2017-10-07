@@ -205,11 +205,14 @@ returning an SDL_true into CL's boolean type system."
 
     ;; On OSX, we need to run in the main thread
     #+darwin
-    (setf *the-main-thread* (find-main-thread))))
+    (setf *the-main-thread* (find-main-thread))
 
-    ;; We'll interrupt this thread now in CCL and replace it with the sdl-main-loop
-    ;#+nil;(and darwin ccl)
-    ;(bt:interrupt-thread *the-main-thread* #'sdl-main-thread)))
+    ;; (setf *main-thread* *the-main-thread*)
+    ;; If the main process isn't the current thread
+    ;; Interrupt that thread with the sdl-main-loop
+    (if (equalp *the-main-thread* (bt:current-thread))
+        (setf *main-thread* *the-main-thread*) ;; We're already on the main thread
+        (bt:interrupt-thread *the-main-thread* #'sdl-main-thread))))
 
 (defmacro in-main-thread ((&key background no-event) &body b)
   (with-gensyms (fun channel)
@@ -247,7 +250,6 @@ does **not** return just because `FUNCTION` returns; it still requires
 
 This does **not** call `SDL2:INIT` by itself.  Do this either with
 `FUNCTION`, or from a separate thread."
-  (setup-main-thread)
   (ensure-main-channel)
   (when (functionp function)
     (sendmsg *main-thread-channel* (cons function nil)))
@@ -255,6 +257,8 @@ This does **not** call `SDL2:INIT` by itself.  Do this either with
 
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
+
+  (setup-main-thread)
 
   (in-main-thread (:no-event t)
     (let ((init-flags (autowrap:mask-apply 'sdl-init-flags sdl-init-flags)))
