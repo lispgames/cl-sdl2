@@ -6,14 +6,14 @@
   :author "Chip Collier <photex@lofidelitygames.com>, Ryan Pavlik <rpavlik@gmail.com>, Peter Keller <psilord@cs.wisc.edu>"
   :license "MIT"
 
-  :depends-on (:alexandria
-               :cl-autowrap
+  :depends-on (:cl-ppcre
                :cl-plus-c
-               :cl-ppcre
+               :alexandria
+               :cl-autowrap
                :trivial-garbage
                :trivial-channels
-               :trivial-features
-               #+darwin :cl-glut)
+               :trivial-features)
+
   :pathname "src"
   :serial t
 
