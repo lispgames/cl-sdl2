@@ -207,7 +207,7 @@ Stores the optional user-data in sdl2::*user-events*"
         (rc (gensym "RC-")))
     `(when (or ,recursive (not *event-loop*))
        (setf *event-loop* t)
-       (with-body-in-main-thread (:blocking ,background)
+       (in-main-thread (:blocking ,background)
 
          (let ((,quit nil)
                (,idle-func nil))

@@ -23,8 +23,8 @@
            #:with-init
            #:in-main-thread
            #:version-wrapped
+           #:call-in-main-thread
            #:make-this-thread-main
-           #:with-body-in-main-thread
 
            ;; video.lisp
            #:get-num-video-drivers

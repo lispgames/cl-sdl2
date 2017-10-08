@@ -115,15 +115,19 @@ returning an SDL_true into CL's boolean type system."
 
 (defmacro without-fp-traps (&body body)
   #+sbcl
-  `(sb-int:with-float-traps-masked (:underflow
-                                    :overflow
-                                    :inexact
-                                    :invalid
-                                    :divide-by-zero) ,@body)
+  `(sb-int:with-float-traps-masked
+       (:underflow
+        :overflow
+        :inexact
+        :invalid
+        :divide-by-zero)
+
+     ,@body)
+
   #-sbcl
   `(progn ,@body))
 
-(defmacro in-main-thread (function &key blocking)
+(defmacro call-in-main-thread (function &key blocking)
   `(without-fp-traps
 
      (let (#+sdl2::sdl2-swank (swank:*sldb-quit-restart* 'continue)
@@ -151,13 +155,13 @@ returning an SDL_true into CL's boolean type system."
 
          (tmt:call-in-main-thread ,function :blocking ,blocking)))))
 
-(defmacro with-body-in-main-thread ((&key blocking) &body body)
-  `(in-main-thread (lambda () ,@body) :blocking ,blocking))
+(defmacro in-main-thread ((&key blocking &allow-other-keys) &body body)
+  `(call-in-main-thread (lambda () ,@body) :blocking ,blocking))
 
 (defun make-this-thread-main (function)
-  "Depreciated, see (in-main-thread) or (with-body-in-main-thread)"
-  (format t "#'make-this-thread-main is depreciated. Use (in-main-thread) or (with-body-in-main-thread)")
-  (in-main-thread function))
+  "Depreciated, see (in-main-thread) or (call-in-main-thread)"
+  (format t "#'make-this-thread-main is depreciated. Use (in-main-thread) or (call-in-main-thread)")
+  (call-in-main-thread function))
 
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
@@ -165,7 +169,7 @@ returning an SDL_true into CL's boolean type system."
   (unless *has-init* (return-from init))
   (setf *has-init* true)
 
-  (with-body-in-main-thread ()
+  (in-main-thread ()
     (let ((init-flags (autowrap:mask-apply 'sdl-init-flags sdl-init-flags)))
       (check-rc (sdl-init init-flags))
       (unless *lisp-message-event*
@@ -174,12 +178,12 @@ returning an SDL_true into CL's boolean type system."
 (defun quit ()
   "Shuts down SDL2."
   (when *has-init*
-    (with-body-in-main-thread (:blocking t)
+    (in-main-thread (:blocking t)
       (sdl-quit)
       (setf *has-init* nil))))
 
 (defmacro with-init ((&rest sdl-init-flags) &body body)
-  `(with-body-in-main-thread ()
+  `(in-main-thread ()
      (init ,@sdl-init-flags)
      ,@body
      (quit)))
