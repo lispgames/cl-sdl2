@@ -134,7 +134,6 @@ Stores the optional user-data in sdl2::*user-events*"
 
 (defun expand-quit-handler (sdl-event forms quit)
   (declare (ignore sdl-event))
-  (format t "~A ~A ~A" sdl-event forms quit)
   `(:quit (setf ,quit (funcall #'(lambda () ,@forms)))))
 
 (defparameter *event-type-to-accessor*
@@ -183,10 +182,12 @@ Stores the optional user-data in sdl2::*user-events*"
 
 (defun expand-handler (sdl-event event-type params forms)
   (let ((parameter-pairs nil))
-    (do ((keyword params (if (cdr keyword)
-                             (cddr keyword)
-                             nil)))
-        ((null keyword))
+    (do
+     ((keyword
+       params
+       (if (cdr keyword) (cddr keyword) nil)))
+
+     ((null keyword))
       (push (list (first keyword) (second keyword)) parameter-pairs))
     `(,event-type
       (let (,@(unpack-event-params sdl-event event-type parameter-pairs))
@@ -195,8 +196,9 @@ Stores the optional user-data in sdl2::*user-events*"
 (defvar *event-loop* nil)
 
 ;; TODO you should be able to specify a target framerate
-(defmacro with-event-loop ((&key background (method :poll) (timeout nil) recursive)
+(defmacro with-event-loop ((&key (background t) (method :poll) (timeout nil) recursive)
                            &body event-handlers)
+
   (let ((quit (gensym "QUIT-"))
         (sdl-event (gensym "SDL-EVENT-"))
         (sdl-event-type (gensym "SDL-EVENT-TYPE"))
@@ -214,6 +216,9 @@ Stores the optional user-data in sdl2::*user-events*"
 
                   ;; Setup the idle function
                   (setf ,idle-func #'(lambda () ,@(expand-idle-handler event-handlers)))
+
+                  ;; Call initialization handlers
+                  (progn ,@(cddr (find :initialize event-handlers :key #'first)))
 
                   (loop :until ,quit
                         :do

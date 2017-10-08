@@ -3,6 +3,7 @@
 
 ;;; "sdl2" goes here. Hacks and glory await!
 
+(defvar *has-init* nil)
 (defvar *wakeup-event* nil)
 (defvar *lisp-message-event* nil)
 (defvar *main-thread-channel* nil)
@@ -122,48 +123,47 @@ returning an SDL_true into CL's boolean type system."
   #-sbcl
   `(progn ,@body))
 
-(defun in-main-thread (function &key blocking)
-  (without-fp-traps
+(defmacro in-main-thread (function &key blocking)
+  `(without-fp-traps
 
-    (format t "----------------------------------------------------------------------------------------------------~%")
-    (format t "Function is: ~A~%" function)
-    (format t "----------------------------------------------------------------------------------------------------~%")
-    (force-output)
+     (let (#+sdl2::sdl2-swank (swank:*sldb-quit-restart* 'continue)
+           #+sdl2::sdl2-slynk (slynk:*sly-db-quit-restart* 'continue))
 
-    (let (#+sdl2::sdl2-swank (swank:*sldb-quit-restart* 'continue)
-          #+sdl2::sdl2-slynk (slynk:*sly-db-quit-restart* 'continue))
+       (restart-bind
 
-      (restart-bind
+           ((continue
+              (lambda (&optional v)
+                (declare (ignore v))
+                (signal 'sdl-continue))
 
-          ((continue
-             (lambda (&optional v)
-               (declare (ignore v))
-               (signal 'sdl-continue))
+              :report-function
+              (lambda (stream)
+                (format stream "Return to the SDL2 main loop.")))
 
-             :report-function
-             (lambda (stream)
-               (format stream "Return to the SDL2 main loop.")))
+            (abort
+              (lambda (&optional v)
+                (declare (ignore v))
+                (signal 'sdl-quit))
 
-           (abort
-             (lambda (&optional v)
-               (declare (ignore v))
-               (signal 'sdl-quit))
+              :report-function
+              (lambda (stream)
+                (format stream "Abort, quitting SDL2 entirely."))))
 
-             :report-function
-             (lambda (stream)
-               (format stream "Abort, quitting SDL2 entirely."))))
-
-        (tmt:call-in-main-thread function :blocking blocking)))))
+         (tmt:call-in-main-thread ,function :blocking ,blocking)))))
 
 (defmacro with-body-in-main-thread ((&key blocking) &body body)
   `(in-main-thread (lambda () ,@body) :blocking ,blocking))
 
-(defun make-this-thread-main (&optional function)
+(defun make-this-thread-main (function)
   "Depreciated, see (in-main-thread) or (with-body-in-main-thread)"
+  (format t "#'make-this-thread-main is depreciated. Use (in-main-thread) or (with-body-in-main-thread)")
   (in-main-thread function))
 
 (defun init (&rest sdl-init-flags)
   "Initialize SDL2 with the specified subsystems. Initializes everything by default."
+
+  (unless *has-init* (return-from init))
+  (setf *has-init* true)
 
   (with-body-in-main-thread ()
     (let ((init-flags (autowrap:mask-apply 'sdl-init-flags sdl-init-flags)))
@@ -173,8 +173,10 @@ returning an SDL_true into CL's boolean type system."
 
 (defun quit ()
   "Shuts down SDL2."
-  (with-body-in-main-thread (:blocking t)
-    (sdl-quit)))
+  (when *has-init*
+    (with-body-in-main-thread (:blocking t)
+      (sdl-quit)
+      (setf *has-init* nil))))
 
 (defmacro with-init ((&rest sdl-init-flags) &body body)
   `(with-body-in-main-thread ()
