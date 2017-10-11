@@ -127,7 +127,7 @@ returning an SDL_true into CL's boolean type system."
   #-sbcl
   `(progn ,@body))
 
-(defmacro call-in-main-thread (function &key blocking)
+(defmacro call-in-main-thread (function &key background)
   `(without-fp-traps
 
      (let (#+sdl2::sdl2-swank (swank:*sldb-quit-restart* 'continue)
@@ -153,10 +153,10 @@ returning an SDL_true into CL's boolean type system."
               (lambda (stream)
                 (format stream "Abort, quitting SDL2 entirely."))))
 
-         (tmt:call-in-main-thread ,function :blocking ,blocking)))))
+         (tmt:call-in-main-thread ,function :blocking ,(not background))))))
 
-(defmacro in-main-thread ((&key blocking &allow-other-keys) &body body)
-  `(call-in-main-thread (lambda () ,@body) :blocking ,blocking))
+(defmacro in-main-thread ((&key background &allow-other-keys) &body body)
+  `(call-in-main-thread (lambda () ,@body) :background ,background))
 
 (defun make-this-thread-main (function)
   "Depreciated, see (in-main-thread) or (call-in-main-thread)"

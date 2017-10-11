@@ -99,4 +99,3 @@
              do (progn
                   (sdl2:game-controller-close controller)
                   (sdl2:haptic-close (cdr (assoc i haptic))))))))))
-

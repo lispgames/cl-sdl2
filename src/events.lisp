@@ -196,7 +196,7 @@ Stores the optional user-data in sdl2::*user-events*"
 (defvar *event-loop* nil)
 
 ;; TODO you should be able to specify a target framerate
-(defmacro with-event-loop ((&key (background t) (method :poll) (timeout nil) recursive)
+(defmacro with-event-loop ((&key background (method :poll) (timeout nil) recursive)
                            &body event-handlers)
 
   (let ((quit (gensym "QUIT-"))
@@ -207,7 +207,7 @@ Stores the optional user-data in sdl2::*user-events*"
         (rc (gensym "RC-")))
     `(when (or ,recursive (not *event-loop*))
        (setf *event-loop* t)
-       (in-main-thread (:blocking ,background)
+       (in-main-thread (:background ,background)
 
          (let ((,quit nil)
                (,idle-func nil))

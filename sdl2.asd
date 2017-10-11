@@ -61,9 +61,10 @@
   :description "simple examples to demonstrate common usage of sdl2."
   :author "Chip Collier <photex@lofidelitygames.com>"
   :license "MIT"
-  :depends-on (:sdl2 :cl-opengl)
+  :depends-on (:sdl2 :cl-opengl :cl-cairo2)
   :pathname "examples"
   :serial t
 
   :components ((:file "basic")
+               (:file "cairo-gl")
                (:file "renderer")))

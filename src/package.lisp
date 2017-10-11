@@ -110,8 +110,8 @@
            #:get-key-name
            #:scancode-name
            #:scancode-key-name
-	   #:start-text-input
-	   #:stop-text-input
+           #:start-text-input
+           #:stop-text-input
 
            ;; mouse.lisp
            #:warp-mouse-in-window
@@ -288,4 +288,4 @@
 
 (defpackage #:sdl2-examples
   (:use #:cl #:alexandria #:cffi)
-  (:export #:basic-test #:renderer-test))
+  (:export #:basic-test #:cairo-test #:renderer-test))
