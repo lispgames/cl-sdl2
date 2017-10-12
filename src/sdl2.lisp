@@ -178,7 +178,7 @@ returning an SDL_true into CL's boolean type system."
 (defun quit ()
   "Shuts down SDL2."
   (when *has-init*
-    (in-main-thread (:background nil)
+    (in-main-thread (:background t)
       (sdl-quit)
       (setf *has-init* nil))))
 
