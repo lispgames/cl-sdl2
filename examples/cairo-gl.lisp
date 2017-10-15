@@ -1,13 +1,14 @@
+(in-package :sdl2-examples)
+
 ;;;
 ;;; Demonstrate opening a window with SDL, establishing a GL context,
 ;;; drawing a texture with cairo, and rendering it to a GL texture.
 ;;;
 ;;; Note this unfortunately does not use the SDL_Texture stuff yet.
 ;;;
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (asdf:load-system :sdl2)
-  (asdf:load-system :cl-opengl)
-  (asdf:load-system :cl-cairo2))
+(require :sdl2)
+(require :cl-opengl)
+(require :cl-cairo2)
 
 (defparameter *vertex-shader* "
 varying vec2 texture_coordinate;
@@ -108,7 +109,7 @@ void main() {
   (sdl2:gl-swap-window window))
 
 (defun cairo-test (&key (width *texture-size*)
-                   (height *texture-size*) (margin (* *texture-size* .10)))
+                     (height *texture-size*) (margin (* *texture-size* .10)))
   (sdl2:with-init (:everything)
     (multiple-value-bind (window renderer)
         (sdl2:create-window-and-renderer width height '(:shown :opengl))
@@ -155,5 +156,3 @@ void main() {
 
             (sdl2:destroy-renderer renderer)
             (sdl2:destroy-window window)))))))
-
-#+-(cairo-test)

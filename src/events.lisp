@@ -182,10 +182,12 @@ Stores the optional user-data in sdl2::*user-events*"
 
 (defun expand-handler (sdl-event event-type params forms)
   (let ((parameter-pairs nil))
-    (do ((keyword params (if (cdr keyword)
-                             (cddr keyword)
-                             nil)))
-        ((null keyword))
+    (do
+     ((keyword
+       params
+       (if (cdr keyword) (cddr keyword) nil)))
+
+     ((null keyword))
       (push (list (first keyword) (second keyword)) parameter-pairs))
     `(,event-type
       (let (,@(unpack-event-params sdl-event event-type parameter-pairs))
@@ -196,6 +198,7 @@ Stores the optional user-data in sdl2::*user-events*"
 ;; TODO you should be able to specify a target framerate
 (defmacro with-event-loop ((&key background (method :poll) (timeout nil) recursive)
                            &body event-handlers)
+
   (let ((quit (gensym "QUIT-"))
         (sdl-event (gensym "SDL-EVENT-"))
         (sdl-event-type (gensym "SDL-EVENT-TYPE"))
@@ -205,32 +208,62 @@ Stores the optional user-data in sdl2::*user-events*"
     `(when (or ,recursive (not *event-loop*))
        (setf *event-loop* t)
        (in-main-thread (:background ,background)
+
          (let ((,quit nil)
                (,idle-func nil))
            (unwind-protect
                 (with-sdl-event (,sdl-event)
+
+                  ;; Setup the idle function
                   (setf ,idle-func #'(lambda () ,@(expand-idle-handler event-handlers)))
+
+                  ;; Call initialization handlers
                   (progn ,@(cddr (find :initialize event-handlers :key #'first)))
+
                   (loop :until ,quit
-                     :do (loop :as ,rc = (next-event ,sdl-event ,method ,timeout)
-                            ,@(if (eq :poll method)
-                                  `(:until (= 0 ,rc))
-                                  `(:until ,quit))
-                            :do
-                            (let* ((,sdl-event-type (get-event-type ,sdl-event))
-                                   (,sdl-event-id (and (user-event-type-p ,sdl-event-type)
-                                                       (,sdl-event :user :code))))
-                              (case ,sdl-event-type
-                                (:lisp-message () (get-and-handle-messages))
-                                ,@(loop :for (type params . forms) :in event-handlers
-                                     :collect
-                                     (if (eq type :quit)
-                                         (expand-quit-handler sdl-event forms quit)
-                                         (expand-handler sdl-event type params forms))
-                                     :into results
-                                     :finally (return (remove nil results))))
-                              (when (and ,sdl-event-id (not (eq ,sdl-event-type :lisp-message)))
-                                (free-user-data ,sdl-event-id))))
-                     (unless ,quit
-                       (funcall ,idle-func))))
+                        :do
+
+                           ;; Get the next event from the stack
+                           (loop :as ,rc = (next-event ,sdl-event ,method ,timeout)
+
+                                 ;; We're (:poll)ing or (:wait)ing
+                                 ,@(if (eq :poll method)
+                                       `(:until (= 0 ,rc))
+                                       `(:until ,quit))
+                                 :do
+
+                                    ;; Grab the event type, and event ID from the ffi:sdl-event
+                                    (let* ((,sdl-event-type (get-event-type ,sdl-event))
+
+                                           ;; Only get the ID if it's a user event
+                                           (,sdl-event-id (and (user-event-type-p ,sdl-event-type)
+                                                               (,sdl-event :user :code))))
+
+                                      ;; Switch the event type through the users passed forms
+                                      (case ,sdl-event-type
+
+                                        ;; Lisp basic error message
+                                        (:lisp-message () (get-and-handle-messages))
+
+                                        ;; Spread the list of user forms into switchable types
+                                        ,@(loop :for (type params . forms) :in event-handlers
+                                                :collect
+
+                                                ;; Quit is handled specially
+                                                (if (eq type :quit)
+                                                    (expand-quit-handler sdl-event forms quit)
+                                                    (expand-handler sdl-event type params forms))
+                                                  :into results
+
+                                                ;; Filter the list to remove empty items
+                                                :finally (return (remove nil results))))
+
+                                      (when (and ,sdl-event-id (not (eq ,sdl-event-type :lisp-message)))
+                                        (free-user-data ,sdl-event-id))))
+
+                           ;; Call the user's idle function after each loop
+                           (unless ,quit
+                             (funcall ,idle-func))))
+
+             ;; We've fallen out of the loop
              (setf *event-loop* nil)))))))

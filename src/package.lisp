@@ -18,11 +18,12 @@
   (:export ;; API
            #:init
            #:quit
+           #:version
            #:was-init
            #:with-init
            #:in-main-thread
-           #:version
            #:version-wrapped
+           #:call-in-main-thread
            #:make-this-thread-main
 
            ;; video.lisp
@@ -109,9 +110,9 @@
            #:get-key-name
            #:scancode-name
            #:scancode-key-name
-	   #:start-text-input
-	   #:stop-text-input
-	   
+           #:start-text-input
+           #:stop-text-input
+
            ;; mouse.lisp
            #:warp-mouse-in-window
            #:hide-cursor
@@ -287,4 +288,4 @@
 
 (defpackage #:sdl2-examples
   (:use #:cl #:alexandria #:cffi)
-  (:export #:basic-test #:renderer-test))
+  (:export #:basic-test #:cairo-test #:renderer-test))

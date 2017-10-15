@@ -111,15 +111,6 @@ This example will open a window with an opengl primitive in it. Any mouse
 movements or keystrokes are recorded in the terminal (or emacs SLIME output
 buffer ```*inferior-lisp*```). Hitting the ESCAPE key will terminate the example.
 
-## OSX
-
-Newer versions of OSX have had some difficulties as calls which require
-`nextEventMatchingMask` must be called from the main thread of your program.
-
-This is especially relevant to SBCL, although issues have also been noticed in CCL.
-
-Currently, initialisation must take place on your main thread:
-
 ```lisp
 (ql:quickload :sdl2/examples)
 
