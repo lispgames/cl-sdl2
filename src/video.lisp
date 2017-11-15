@@ -218,7 +218,7 @@
   (check-rc (sdl-gl-make-current win gl-context)))
 
 (defun gl-get-swap-interval ()
-  (check-rc (sdl-gl-get-swap-interval)))
+  (sdl-gl-get-swap-interval))
 
 (defun gl-set-swap-interval (interval)
   "0 for immediate updates, 1 for updates synchronized with the vertical retrace"
