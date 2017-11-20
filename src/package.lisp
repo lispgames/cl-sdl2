@@ -199,7 +199,7 @@
            #:destroy-renderer
            #:get-renderer
            #:get-renderer-info
-           ;#:get-renderer-output-size
+           #:get-renderer-output-size
            #:create-texture
            #:create-texture-from-surface
            #:set-texture-color-mod
