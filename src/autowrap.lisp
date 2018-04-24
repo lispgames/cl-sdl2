@@ -11,10 +11,14 @@
                     "/usr/include/X11/")
   :include-sources ("stdint.h"
                     "bits/types.h"
-                    "machine/_types.h"
                     "sys/types.h"
+                    "bits/stdint"
+                    "machine/_types.h"
                     "SDL2")
-  :sysincludes `,(append #+openbsd (list "/usr/X11R6/include"))
+  :sysincludes `,(cl:append #+openbsd
+                         (list "/usr/X11R6/include")
+                         #+(and unix (not darwin))
+                         (cl:list "/usr/lib/gcc/x86_64-pc-linux-gnu/7.3.1/include/"))
   :exclude-definitions ("SDL_LogMessageV"
                         "SDL_vsnprintf"
                         "_inline$"
@@ -31,5 +35,4 @@
                       ("SDL_SysWMmsg" . "SDL-SYSWM-MSG")
                       ("SDL_TRUE" . "TRUE")
                       ("SDL_FALSE" . "FALSE"))
-  :no-accessors cl:t
-  :release-p cl:t)
+  :no-accessors cl:t)
