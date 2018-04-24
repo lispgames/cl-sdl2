@@ -35,4 +35,5 @@
                       ("SDL_SysWMmsg" . "SDL-SYSWM-MSG")
                       ("SDL_TRUE" . "TRUE")
                       ("SDL_FALSE" . "FALSE"))
-  :no-accessors cl:t)
+  :no-accessors cl:t
+  :release-p cl:t)
