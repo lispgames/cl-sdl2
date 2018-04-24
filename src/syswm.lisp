@@ -1,7 +1,8 @@
 (in-package :sdl2)
 
+#++
 (defun get-window-wm-info (window)
-  (c-with ((info sdl2-ffi:sdl-syswm-info))
+  (c-with ((info sdl2-ffi::sdl-syswm-info))
     (setf (info :version :major) sdl2-ffi:+sdl-major-version+
           (info :version :minor) sdl2-ffi:+sdl-minor-version+
           (info :version :patch) sdl2-ffi:+sdl-patchlevel+)

@@ -21,7 +21,7 @@ typedef unsigned int UINT_PTR;
 #endif
 
 #if defined(_WIN64)
-typedef __int64 LONG_PTR; 
+typedef __int64 LONG_PTR;
 #else
 typedef long LONG_PTR;
 #endif
