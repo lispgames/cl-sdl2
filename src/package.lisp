@@ -243,6 +243,7 @@
    #:surface-format-format
    #:create-rgb-surface
    #:create-rgb-surface-from
+   #:create-rgb-surface-with-format-from
    #:free-surface
    #:load-bmp
    #:convert-surface
