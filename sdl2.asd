@@ -38,6 +38,7 @@
    (:file "library")
    (:file "autowrap")
    (:file "util")
+   (:file "constants")
    (:file "sdl2")
    (:file "rect")
    (:file "video")
@@ -55,7 +56,7 @@
    (:file "surface")
    (:file "rwops")
    (:file "render"
-          :depends-on ("rect"))))
+    :depends-on ("rect"))))
 
 (asdf:defsystem #:sdl2/examples
   :description "simple examples to demonstrate common usage of sdl2."

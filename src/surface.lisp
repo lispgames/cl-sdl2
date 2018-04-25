@@ -35,6 +35,12 @@
                                 r-mask g-mask b-mask a-mask)
    (lambda (s) (sdl-free-surface s))))
 
+(defun create-rgb-surface-with-format-from (pixels width height depth pitch
+                                            &key (format +pixelformat-rgba8888+))
+  (sdl-collect
+   (sdl-create-rgb-surface-with-format-from pixels width height depth pitch format)
+   (lambda (s) (sdl-free-surface s))))
+
 (defun free-surface (surface)
   (sdl-cancel-collect surface)
   (sdl-free-surface surface)
