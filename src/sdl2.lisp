@@ -1,8 +1,4 @@
-;;;; sdl2.lisp
-
 (in-package #:sdl2)
-
-;;; "sdl2" goes here. Hacks and glory await!
 
 (define-condition sdl-error (error)
   ((string :initarg :string :initform nil :accessor sdl-error-string))
@@ -29,8 +25,8 @@
   wrapped-ptr)
 
 (defun sdl-true-p (integer-bool)
-  "Use this function to convert truth from a low level wrapped SDL function
-returning an SDL_true into CL's boolean type system."
+  "Use this function to convert truth from a low level wrapped SDL function returning an SDL_true
+into CL's boolean type system."
   (= (autowrap:enum-value 'sdl2-ffi:sdl-bool :true) integer-bool))
 
 (autowrap:define-bitmask-from-constants (sdl-init-flags)
@@ -43,29 +39,25 @@ returning an SDL_true into CL's boolean type system."
   sdl2-ffi:+sdl-init-noparachute+
   '(:everything . #x0000FFFF))
 
-;;;
 ;;; NAMING CONVENTION: check-<foo>
-;;;
 ;;; If <foo> names a specific value (true, false, zero, null, etc),
 ;;; check-<foo> shall error `(when <foo> ...)`.  E.g., `(check-false
 ;;; x)` will *error* when `x` is false.
-;;;
 ;;; If <foo> names something that can have an error state (like a
 ;;; return code), `(check-<foo> x)` shall error when `x` is in that
 ;;; state.
-;;;
 
 (defmacro check-rc (form)
   (with-gensyms (rc)
     `(let ((,rc ,form))
-       (when (< ,rc 0)
+       (when (minusp ,rc)
          (error 'sdl-rc-error :rc ,rc :string (sdl-get-error)))
        ,rc)))
 
 (defmacro check-zero (form)
   (with-gensyms (rc)
     `(let ((,rc ,form))
-       (when (= ,rc 0)
+       (when (zerop ,rc)
          (error 'sdl-rc-error :rc ,rc :string (sdl-get-error)))
        ,rc)))
 
@@ -104,12 +96,10 @@ returning an SDL_true into CL's boolean type system."
                (funcall ,fun)
                ,(if background
                     `(progn
-                       (sendmsg *main-thread-channel*
-                                (cons ,fun nil))
+                       (sendmsg *main-thread-channel* (cons ,fun nil))
                        (values))
                     `(let ((,channel (make-channel)))
-                       (sendmsg *main-thread-channel*
-                                (cons ,fun ,channel))
+                       (sendmsg *main-thread-channel* (cons ,fun ,channel))
                        ,(unless no-event
                           '(push-event *wakeup-event*))
                        (let ((result (recvmsg ,channel)))
@@ -142,27 +132,22 @@ returning an SDL_true into CL's boolean type system."
     (handle-message msg)))
 
 (defun get-and-handle-messages ()
-  (loop as msg = (and *main-thread-channel*
-                      (getmsg *main-thread-channel*))
-        while msg do
+  (loop :as msg = (and *main-thread-channel*
+                       (getmsg *main-thread-channel*))
+        :while msg :do
           (handle-message msg)))
 
 (defmacro without-fp-traps (&body body)
   #+sbcl
-  `(sb-int:with-float-traps-masked (:underflow
-                                    :overflow
-                                    :inexact
-                                    :invalid
-                                    :divide-by-zero) ,@body)
+  `(sb-int:with-float-traps-masked (:underflow :overflow :inexact :invalid :divide-by-zero)
+     ,@body)
   #-sbcl
   `(progn ,@body))
 
 (defun sdl-main-thread ()
   (without-fp-traps
-    (let ((*main-thread* (bt:current-thread))
-          #+sdl2::sdl2-swank (swank:*sldb-quit-restart* 'continue)
-          #+sdl2::sdl2-slynk (slynk:*sly-db-quit-restart* 'continue))
-      (loop while *main-thread-channel* do
+    (let ((*main-thread* (bt:current-thread)))
+      (loop :while *main-thread-channel* :do
         (block loop-block
           (restart-bind ((continue (lambda (&optional v)
                                      (declare (ignore v))
@@ -183,19 +168,17 @@ returning an SDL_true into CL's boolean type system."
     (setf *main-thread-channel* (make-channel))))
 
 (defun make-this-thread-main (&optional function)
-  "Designate the current thread as the SDL2 main thread.  This
-function will not return until `SDL2:QUIT` is handled.  Users of this
-function will need to start other threads before this call, or specify
-`FUNCTION`.
+  "Designate the current thread as the SDL2 main thread. This function will not return until
+`SDL2:QUIT` is handled. Users of this function will need to start other threads before this call, or
+specify `FUNCTION`.
 
-If `FUNCTION` is specified, it will be called when the main thread
-channel is ensured.  This is like calling `IN-MAIN-THREAD`, except it
-allows for a potentially single-threaded application.  This function
-does **not** return just because `FUNCTION` returns; it still requires
-`SDL2:QUIT` be processed.
+If `FUNCTION` is specified, it will be called when the main thread channel is ensured. This is like
+calling `IN-MAIN-THREAD`, except it allows for a potentially single-threaded application. This
+function does **not** return just because `FUNCTION` returns; it still requires `SDL2:QUIT` be
+processed.
 
-This does **not** call `SDL2:INIT` by itself.  Do this either with
-`FUNCTION`, or from a separate thread."
+This does **not** call `SDL2:INIT` by itself. Do this either with `FUNCTION`, or from a separate
+thread."
   (ensure-main-channel)
   (when (functionp function)
     (sendmsg *main-thread-channel* (cons function nil)))
@@ -208,30 +191,27 @@ This does **not** call `SDL2:INIT` by itself.  Do this either with
   (unless *main-thread-channel*
     (ensure-main-channel)
 
-    ;; If we did not have a main-thread channel, make a default main
-    ;; thread.
+    ;; If we did not have a main-thread channel, make a default main thread.
     #-(and ccl darwin)
     (setf *the-main-thread* (bt:make-thread #'sdl-main-thread :name "SDL2 Main Thread"))
 
-    ;; On OSX, we need to run in the main thread; CCL allows us to
-    ;; safely do this.  On other platforms (mainly GLX?), we just need
-    ;; to run in a dedicated thread.
+    ;; On OSX, we need to run in the main thread; CCL allows us to safely do this. On other
+    ;; platforms (mainly GLX?), we just need to run in a dedicated thread.
     #+(and ccl darwin)
     (let ((thread (find 0 (ccl:all-processes) :key #'ccl:process-serial-number)))
       (setf *the-main-thread* thread)
       (ccl:process-interrupt thread #'sdl-main-thread)))
   (in-main-thread (:no-event t)
-    ;; HACK! glutInit on OSX uses some magic undocumented API to
-    ;; correctly make the calling thread the primary thread. This
-    ;; allows cl-sdl2 to actually work. Nothing else seemed to
-    ;; work at all to be honest.
+    ;; HACK! glutInit on OSX uses some magic undocumented API to correctly make the calling thread
+    ;; the primary thread. This allows cl-sdl2 to actually work. Nothing else seemed to work at all
+    ;; to be honest.
     #+(and ccl darwin)
     (cl-glut:init)
     (let ((init-flags (autowrap:mask-apply 'sdl-init-flags sdl-init-flags)))
       (check-rc (sdl-init init-flags))
       (unless *lisp-message-event*
-        (setf *lisp-message-event* (sdl-register-events 1))
-        (setf (c-ref *wakeup-event* sdl2-ffi:sdl-event :type) *lisp-message-event*)))))
+        (setf *lisp-message-event* (sdl-register-events 1)
+              (c-ref *wakeup-event* sdl2-ffi:sdl-event :type) *lisp-message-event*)))))
 
 (defun was-init (&rest flags)
   (/= 0 (sdl-was-init (autowrap:mask-apply 'sdl-init-flags flags))))

@@ -2,8 +2,7 @@
 
 (defmacro joystick-update ()
   "Use this function to update the current state of the open joysticks.
-This function is called automatically by the event loop if joystick
-events are enabled."
+This function is called automatically by the event loop if joystick events are enabled."
   `(sdl-joystick-update))
 
 (defun joystick-count ()

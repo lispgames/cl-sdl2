@@ -18,8 +18,7 @@
 
 (defun scancode (keysym)
   "Converts a keysym to a scancode keyword."
-  (autowrap:enum-key 'sdl2-ffi:sdl-scancode
-                     (scancode-value keysym)))
+  (autowrap:enum-key 'sdl2-ffi:sdl-scancode (scancode-value keysym)))
 
 (defun scancode-symbol (scancode)
   "Converts a scancode number to a scancode keyword."
@@ -76,4 +75,3 @@
 
 (defun stop-text-input ()
   (sdl-stop-text-input))
-

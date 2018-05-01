@@ -1,11 +1,7 @@
-;;;; sdl2.asd
-
 (asdf:defsystem #:sdl2
-  :serial t
   :description "Bindings for SDL2 using c2ffi."
   :author "Chip Collier <photex@lofidelitygames.com>, Ryan Pavlik <rpavlik@gmail.com>, Peter Keller <psilord@cs.wisc.edu>"
   :license "MIT"
-
   :depends-on (:alexandria
                :cl-autowrap
                :cl-plus-c
@@ -16,7 +12,6 @@
                #+darwin :cl-glut)
   :pathname "src"
   :serial t
-
   :components
   ((:module autowrap-spec
     :pathname "spec"
@@ -34,7 +29,6 @@
      (:static-file "SDL2.x86_64-unknown-freebsd.spec")
      (:static-file "SDL2.x86_64-unknown-openbsd.spec")))
    (:file "package")
-   (:file "optional-deps")
    (:file "library")
    (:file "autowrap")
    (:file "util")
@@ -55,16 +49,14 @@
    (:file "pixels")
    (:file "surface")
    (:file "rwops")
-   (:file "render"
-    :depends-on ("rect"))))
+   (:file "render" :depends-on ("rect"))))
 
 (asdf:defsystem #:sdl2/examples
-  :description "simple examples to demonstrate common usage of sdl2."
+  :description "Simple examples to demonstrate common usage of SDL2."
   :author "Chip Collier <photex@lofidelitygames.com>"
   :license "MIT"
   :depends-on (:sdl2 :cl-opengl)
   :pathname "examples"
   :serial t
-
   :components ((:file "basic")
                (:file "renderer")))

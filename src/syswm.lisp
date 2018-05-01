@@ -6,8 +6,7 @@
           (info :version :minor) sdl2-ffi:+sdl-minor-version+
           (info :version :patch) sdl2-ffi:+sdl-patchlevel+)
     (sdl-get-window-wm-info window (info &))
-    (let ((subsystem (autowrap:enum-key 'sdl2-ffi:sdl-syswm-type
-                                        (info :subsystem))))
+    (let ((subsystem (autowrap:enum-key 'sdl2-ffi:sdl-syswm-type (info :subsystem))))
       (list*
        :subsystem subsystem
        (ecase subsystem

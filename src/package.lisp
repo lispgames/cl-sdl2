@@ -8,14 +8,23 @@
   (:export #:sdl-quit))
 
 (defpackage #:sdl2
-  (:use #:cl #:alexandria #:autowrap.minimal #:plus-c
-        #:sdl2-ffi.accessors #:sdl2-ffi.functions
+  (:use #:cl
+        #:alexandria
+        #:autowrap.minimal
+        #:plus-c
+        #:sdl2-ffi.accessors
+        #:sdl2-ffi.functions
         #:trivial-channels)
-  (:import-from :cffi
-                #:mem-ref #:with-foreign-objects #:with-foreign-object
-                #:foreign-alloc #:foreign-free #:null-pointer-p)
+  (:import-from
+   #:cffi
+   #:mem-ref
+   #:with-foreign-objects
+   #:with-foreign-object
+   #:foreign-alloc
+   #:foreign-free
+   #:null-pointer-p)
   (:shadow #:sdl-error)
-  (:export ;; API
+  (:export
    #:init
    #:quit
    #:was-init
@@ -371,5 +380,8 @@
    #:+packedlayout-1010102+))
 
 (defpackage #:sdl2-examples
-  (:use #:cl #:alexandria #:cffi)
-  (:export #:basic-test #:renderer-test))
+  (:use #:cl
+        #:alexandria
+        #:cffi)
+  (:export #:basic-test
+           #:renderer-test))

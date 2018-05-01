@@ -1,8 +1,6 @@
 (in-package #:sdl2)
 
-;;; No idea why this is anonymous in SDL_pixels.h
-(autowrap:define-enum-from-constants
-    (sdl-pixel-format)
+(autowrap:define-enum-from-constants (sdl-pixel-format)
   sdl2-ffi:+sdl-pixelformat-unknown+
   sdl2-ffi:+sdl-pixelformat-index1lsb+
   sdl2-ffi:+sdl-pixelformat-index1msb+
@@ -40,8 +38,7 @@
   sdl2-ffi:+sdl-pixelformat-uyvy+
   sdl2-ffi:+sdl-pixelformat-yvyu+)
 
-(autowrap:define-enum-from-constants
-    (sdl-pixel-type)
+(autowrap:define-enum-from-constants (sdl-pixel-type)
   sdl2-ffi:+sdl-pixeltype-unknown+
   sdl2-ffi:+sdl-pixeltype-index1+
   sdl2-ffi:+sdl-pixeltype-index4+
@@ -55,14 +52,12 @@
   sdl2-ffi:+sdl-pixeltype-arrayf16+
   sdl2-ffi:+sdl-pixeltype-arrayf32+)
 
-(autowrap:define-enum-from-constants
-    (sdl-bitmap-order)
+(autowrap:define-enum-from-constants (sdl-bitmap-order)
   sdl2-ffi:+sdl-bitmaporder-none+
   sdl2-ffi:+sdl-bitmaporder-4321+
   sdl2-ffi:+sdl-bitmaporder-1234+)
 
-(autowrap:define-enum-from-constants
-    (sdl-packed-order)
+(autowrap:define-enum-from-constants (sdl-packed-order)
   sdl2-ffi:+sdl-packedorder-none+
   sdl2-ffi:+sdl-packedorder-xrgb+
   sdl2-ffi:+sdl-packedorder-rgbx+
@@ -73,8 +68,7 @@
   sdl2-ffi:+sdl-packedorder-abgr+
   sdl2-ffi:+sdl-packedorder-bgra+)
 
-(autowrap:define-enum-from-constants
-    (sdl-array-order)
+(autowrap:define-enum-from-constants (sdl-array-order)
   sdl2-ffi:+sdl-arrayorder-none+
   sdl2-ffi:+sdl-arrayorder-rgb+
   sdl2-ffi:+sdl-arrayorder-rgba+
@@ -83,8 +77,7 @@
   sdl2-ffi:+sdl-arrayorder-bgra+
   sdl2-ffi:+sdl-arrayorder-abgr+)
 
-(autowrap:define-enum-from-constants
-    (sdl-packed-layout)
+(autowrap:define-enum-from-constants (sdl-packed-layout)
   sdl2-ffi:+sdl-packedlayout-none+
   sdl2-ffi:+sdl-packedlayout-332+
   sdl2-ffi:+sdl-packedlayout-4444+

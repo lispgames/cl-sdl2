@@ -21,18 +21,15 @@
             (c-ref surface sdl2-ffi:sdl-surface :format :format)))
 
 (defun create-rgb-surface (width height depth
-                           &key (r-mask 0) (g-mask 0) (b-mask 0) (a-mask 0)
-                           (flags 0))
+                           &key (r-mask 0) (g-mask 0) (b-mask 0) (a-mask 0) (flags 0))
   (sdl-collect
-   (sdl-create-rgb-surface flags width height depth
-                           r-mask g-mask b-mask a-mask)
+   (sdl-create-rgb-surface flags width height depth r-mask g-mask b-mask a-mask)
    (lambda (s) (sdl-free-surface s))))
 
 (defun create-rgb-surface-from (pixels width height depth pitch
                                 &key (r-mask 0) (g-mask 0) (b-mask 0) (a-mask 0))
   (sdl-collect
-   (sdl-create-rgb-surface-from pixels width height depth pitch
-                                r-mask g-mask b-mask a-mask)
+   (sdl-create-rgb-surface-from pixels width height depth pitch r-mask g-mask b-mask a-mask)
    (lambda (s) (sdl-free-surface s))))
 
 (defun create-rgb-surface-with-format-from (pixels width height depth pitch
@@ -49,7 +46,8 @@
 (defun load-bmp (filename)
   (sdl-collect
    ;; Note, SDL_LoadBMP is a macro in SDL_surface.h that is exactly this
-   (check-nullptr (sdl-load-bmp-rw (sdl-rw-from-file (namestring (merge-pathnames filename)) "rb") 1))
+   (check-nullptr (sdl-load-bmp-rw
+                   (sdl-rw-from-file (namestring (merge-pathnames filename)) "rb") 1))
    (lambda (s) (sdl-free-surface s))))
 
 (defun convert-surface (surface format &key (flags 0))

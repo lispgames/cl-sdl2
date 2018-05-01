@@ -7,12 +7,6 @@
 (defun mouse-is-haptic-p ()
   (sdl-true-p (sdl-mouse-is-haptic)))
 
-(defmacro %haptic-open (fn source)
-  "Unused"
-  `(sdl-collect
-    (check-nullptr (,fn ,source))
-    (lambda (h) (sdl-haptic-close h))))
-
 ;; TODO wth can't I use the macro above?
 (defun haptic-open (source)
   "Use this function to open the N'th haptic device for use."
@@ -21,7 +15,7 @@
    (lambda (h) (sdl-haptic-close h))))
 
 (defun haptic-open-from-joystick (source)
-  "Use this function to open a joystick haptic device for use"
+  "Use this function to open a joystick haptic device for use."
   (sdl-collect
    (check-nullptr (sdl-haptic-open-from-joystick source))
    (lambda (h) (sdl-haptic-close h))))
@@ -58,4 +52,3 @@
 (defun rumble-stop (haptic)
   "Use this function to stop the rumble on a haptic device."
   (check-rc (sdl-haptic-rumble-stop haptic)))
-

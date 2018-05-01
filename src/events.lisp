@@ -7,6 +7,7 @@
   (c-let ((new-atomic sdl2-ffi:sdl-atomic-t))
     (setf (new-atomic :value) 0)
     new-atomic))
+(defvar *event-loop* nil)
 
 (defun new-event (&optional (event-type :firstevent))
   (c-let ((event sdl2-ffi:sdl-event))
@@ -35,8 +36,7 @@
                 new-event-code)
               (error (format nil "Failed to register new user-event type: ~a" user-event-type)))))))
 
-(defmacro with-sdl-event ((event &optional (event-type :firstevent))
-                          &body body)
+(defmacro with-sdl-event ((event &optional (event-type :firstevent)) &body body)
   "Allocate and automatically free an sdl event struct."
   `(c-let ((,event sdl2-ffi:sdl-event :from (new-event ,event-type)))
      (unwind-protect (progn ,@body)
@@ -54,13 +54,11 @@
   (remhash event-id *user-events*))
 
 (defun get-user-data (event-id)
-  "Returns the user-data attached to an event-id
-and if the event-id was found"
+  "Returns the user-data attached to an event-id and if the event-id was found"
   (gethash event-id *user-events*))
 
 (defun get-event-code (event-type)
-  (multiple-value-bind (user-event-code is-user-event)
-      (gethash event-type *user-event-codes*)
+  (multiple-value-bind (user-event-code is-user-event) (gethash event-type *user-event-codes*)
     (cond
       (is-user-event
        user-event-code)
@@ -71,8 +69,7 @@ and if the event-id was found"
 
 (defun get-event-type (event)
   (c-let ((event sdl2-ffi:sdl-event :from event))
-    (multiple-value-bind (user-event-type is-user-event)
-        (gethash (event :type) *user-event-types*)
+    (multiple-value-bind (user-event-type is-user-event) (gethash (event :type) *user-event-types*)
       (cond
         (is-user-event
          user-event-type)
@@ -114,8 +111,7 @@ Stores the optional user-data in sdl2::*user-events*"
   (push-event :quit))
 
 (defun next-event (event &optional (method :poll) timeout)
-  "Method can be either :poll, :wait.  If :wait is used,
-`TIMEOUT` may be specified."
+  "Method can be either :poll, :wait. If :wait is used, `TIMEOUT` may be specified."
   (case method
     (:poll (sdl-poll-event event))
     (:wait
@@ -171,10 +167,10 @@ Stores the optional user-data in sdl2::*user-events*"
 
 (defun unpack-event-params (event-var event-type params)
   (mapcar (lambda (param)
-            (let* ((keyword (first param))
-                   (binding (second param))
-                   (ref (or (cdr (assoc event-type *event-type-to-accessor*))
-                            :user)))
+            (let ((keyword (first param))
+                  (binding (second param))
+                  (ref (or (cdr (assoc event-type *event-type-to-accessor*))
+                           :user)))
               (if (eql keyword :user-data)
                   `(,binding (get-user-data (c-ref ,event-var sdl2-ffi:sdl-event ,ref :code)))
                   `(,binding (c-ref ,event-var sdl2-ffi:sdl-event ,ref ,keyword)))))
@@ -190,8 +186,6 @@ Stores the optional user-data in sdl2::*user-events*"
     `(,event-type
       (let (,@(unpack-event-params sdl-event event-type parameter-pairs))
         ,@forms))))
-
-(defvar *event-loop* nil)
 
 ;; TODO you should be able to specify a target framerate
 (defmacro with-event-loop ((&key background (method :poll) (timeout nil) recursive)
@@ -212,25 +206,25 @@ Stores the optional user-data in sdl2::*user-events*"
                   (setf ,idle-func #'(lambda () ,@(expand-idle-handler event-handlers)))
                   (progn ,@(cddr (find :initialize event-handlers :key #'first)))
                   (loop :until ,quit
-                     :do (loop :as ,rc = (next-event ,sdl-event ,method ,timeout)
-                            ,@(if (eq :poll method)
-                                  `(:until (= 0 ,rc))
-                                  `(:until ,quit))
-                            :do
-                            (let* ((,sdl-event-type (get-event-type ,sdl-event))
-                                   (,sdl-event-id (and (user-event-type-p ,sdl-event-type)
-                                                       (,sdl-event :user :code))))
-                              (case ,sdl-event-type
-                                (:lisp-message () (get-and-handle-messages))
-                                ,@(loop :for (type params . forms) :in event-handlers
-                                     :collect
-                                     (if (eq type :quit)
-                                         (expand-quit-handler sdl-event forms quit)
-                                         (expand-handler sdl-event type params forms))
-                                     :into results
-                                     :finally (return (remove nil results))))
-                              (when (and ,sdl-event-id (not (eq ,sdl-event-type :lisp-message)))
-                                (free-user-data ,sdl-event-id))))
-                     (unless ,quit
-                       (funcall ,idle-func))))
+                        :do (loop :as ,rc = (next-event ,sdl-event ,method ,timeout)
+                                  ,@(if (eq :poll method)
+                                        `(:until (= 0 ,rc))
+                                        `(:until ,quit))
+                                  :do (let* ((,sdl-event-type (get-event-type ,sdl-event))
+                                             (,sdl-event-id (and (user-event-type-p ,sdl-event-type)
+                                                                 (,sdl-event :user :code))))
+                                        (case ,sdl-event-type
+                                          (:lisp-message () (get-and-handle-messages))
+                                          ,@(loop :for (type params . forms) :in event-handlers
+                                                  :collect
+                                                  (if (eq type :quit)
+                                                      (expand-quit-handler sdl-event forms quit)
+                                                      (expand-handler sdl-event type params forms))
+                                                    :into results
+                                                  :finally (return (remove nil results))))
+                                        (when (and ,sdl-event-id
+                                                   (not (eq ,sdl-event-type :lisp-message)))
+                                          (free-user-data ,sdl-event-id))))
+                            (unless ,quit
+                              (funcall ,idle-func))))
              (setf *event-loop* nil)))))))
