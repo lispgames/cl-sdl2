@@ -208,9 +208,9 @@ about the specified renderer, and return it."
     (check-rc (sdl-query-texture texture nil nil nil (height &)))
     height))
 
-(defun update-texture (texture pixels &key rect width)
+(defun update-texture (texture rect pixels pitch)
   "Use this function to update the given texture rectangle with new pixel data."
-  (check-rc (sdl2-ffi.functions:sdl-update-texture texture rect pixels width)))
+  (check-rc (sdl2-ffi.functions:sdl-update-texture texture rect pixels pitch)))
 
 (defun create-texture (renderer pixel-format access width height)
   "Use this function to create a texture for a rendering context."
