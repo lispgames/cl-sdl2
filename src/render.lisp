@@ -113,6 +113,15 @@ rotating it by angle around the given center and also flipping it top-bottom and
   "Use this function to set the color used for drawing operations (Rect, Line and Clear)."
   (check-rc (sdl2-ffi.functions:sdl-set-render-draw-color renderer r g b a)))
 
+(defun get-render-draw-color (renderer)
+  "Use this function to get the current color used by renderer for drawing operations"
+  (c-with ((r sdl2-ffi:uint8)
+	   (g sdl2-ffi:uint8)
+	   (b sdl2-ffi:uint8)
+	   (a sdl2-ffi:uint8))
+    (check-rc (sdl2-ffi.functions:sdl-get-render-draw-color renderer (r &) (g &) (b &) (a &)))
+    (values r g b a)))
+
 (defun set-texture-blend-mode (texture blend-mode)
   "Use this function to set the blend mode for a texture, used by SDL_RenderCopy()."
   (check-rc (sdl2-ffi.functions:sdl-set-texture-blend-mode texture blend-mode)))

@@ -193,6 +193,7 @@
    #:render-fill-rect
    #:render-fill-rects
    #:set-render-draw-color
+   #:get-render-draw-color
    #:set-texture-blend-mode
    #:set-render-draw-blend-mode
    #:set-render-target
