@@ -100,3 +100,6 @@ controller to have a different binding."
    (sdl-collect
     (sdl-rw-from-file file-name "rb"))
    0))
+
+(defun game-controller-name (gamecontroller)
+  (sdl-game-controller-name gamecontroller))
