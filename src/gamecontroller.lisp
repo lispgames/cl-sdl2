@@ -99,4 +99,4 @@ controller to have a different binding."
   (sdl-game-controller-add-mappings-from-rw
    (sdl-collect
     (sdl-rw-from-file file-name "rb"))
-   1))
+   0))
