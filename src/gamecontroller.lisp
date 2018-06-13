@@ -91,3 +91,6 @@ controller to have a different binding."
 
 (defun game-controller-instance-id (c)
   (joystick-instance-id (game-controller-get-joystick c)))
+
+(defun game-controller-from-instance-id (instance-id)
+  (sdl-game-controller-from-instance-id instance-id))

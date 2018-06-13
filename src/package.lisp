@@ -154,6 +154,7 @@
    #:game-controller-add-mapping
    #:game-controller-get-joystick
    #:game-controller-instance-id
+   #:game-controller-from-instance-id
 
    ;; rect.lisp
    #:make-point
