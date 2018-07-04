@@ -130,6 +130,8 @@
    #:toggle-relative-mouse-mode
    #:mouse-state
    #:mouse-state-p
+   #:get-global-mouse-state
+   #:global-mouse-state-p
 
    ;; joystick.lisp
    #:joystick-update
