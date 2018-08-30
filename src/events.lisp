@@ -11,12 +11,10 @@
 
 (defun new-event (&optional (event-type :firstevent))
   (c-let ((event sdl2-ffi:sdl-event))
-    (sdl-collect event)
     (setf (event :type) (get-event-code event-type))
     event))
 
 (defun free-event (event)
-  (sdl-cancel-collect event)
   (foreign-free (ptr event))
   (invalidate event))
 

@@ -15,15 +15,6 @@
 (define-condition sdl-continue (condition) ())
 (define-condition sdl-quit (condition) ())
 
-(defun sdl-collect (wrapped-ptr &optional (free-fun #'foreign-free))
-  (let ((ptr (autowrap:ptr wrapped-ptr)))
-    (tg:finalize wrapped-ptr (lambda () (funcall free-fun ptr)))
-    wrapped-ptr))
-
-(defun sdl-cancel-collect (wrapped-ptr)
-  (tg:cancel-finalization wrapped-ptr)
-  wrapped-ptr)
-
 (defun sdl-true-p (integer-bool)
   "Use this function to convert truth from a low level wrapped SDL function returning an SDL_true
 into CL's boolean type system."

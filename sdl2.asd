@@ -6,7 +6,6 @@
                :cl-autowrap
                :cl-plus-c
                :cl-ppcre
-               :trivial-garbage
                :trivial-channels
                :trivial-features
                #+darwin :cl-glut)
