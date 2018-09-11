@@ -70,13 +70,10 @@ mapping."
   (sdl-game-controller-name-for-index device-index))
 
 (defun game-controller-open (device-index)
-  (sdl-collect
-   (check-nullptr (sdl-game-controller-open device-index))
-   (lambda (gc) (sdl-game-controller-close gc))))
+  (check-nullptr (sdl-game-controller-open device-index)))
 
 (defun game-controller-close (gamecontroller)
-  (sdl-game-controller-close gamecontroller)
-  (sdl-cancel-collect gamecontroller))
+  (sdl-game-controller-close gamecontroller))
 
 (defun game-controller-attached-p (gamecontroller)
   (sdl-true-p (sdl-game-controller-get-attached gamecontroller)))
@@ -97,8 +94,7 @@ controller to have a different binding."
 
 (defun game-controller-add-mappings-from-file (file-name)
   (sdl-game-controller-add-mappings-from-rw
-   (sdl-collect
-    (sdl-rw-from-file file-name "rb"))
+   (sdl-rw-from-file file-name "rb")
    0))
 
 (defun game-controller-name (gamecontroller)

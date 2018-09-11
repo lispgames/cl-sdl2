@@ -4,7 +4,7 @@
 
 (defun make-renderer-info ()
   "Return an uninitialized SDL_RendererInfo structure."
-  (sdl-collect (autowrap:alloc 'sdl2-ffi:sdl-renderer-info)))
+  (autowrap:alloc 'sdl2-ffi:sdl-renderer-info))
 
 (defmethod print-object ((rinfo sdl2-ffi:sdl-renderer-info) stream)
   (c-let ((rinfo sdl2-ffi:sdl-renderer-info :from rinfo))
@@ -22,7 +22,6 @@
 the garbage collector. This is not required, but may make garbage collection performance better if
 used in tight SDL_RendererInfo allocating loops."
   (foreign-free (ptr rinfo))
-  (sdl-cancel-collect rinfo)
   (autowrap:invalidate rinfo))
 
 ;;;; And now the wrapping of the SDL2 calls
@@ -54,28 +53,21 @@ specific 2D rendering driver specified in the index."
                width height
                (mask-apply 'sdl-window-flags flags)
                (winptr &) (rendptr &)))
-    (let ((window (sdl-collect
-                   (sdl2-ffi::make-sdl-window :ptr winptr)
-                   (lambda (w) (sdl-destroy-window w))))
-          (renderer (sdl-collect
-                     (sdl2-ffi::make-sdl-renderer :ptr rendptr)
-                     (lambda (r) (sdl-destroy-renderer r)))))
+    (let ((window (sdl2-ffi::make-sdl-window :ptr winptr))
+          (renderer (sdl2-ffi::make-sdl-renderer :ptr rendptr)))
       (values window renderer))))
 
 (defun create-renderer (window &optional index flags)
   "Create a 2D rendering context for a window."
-  (sdl-collect
-   (check-nullptr (sdl-create-renderer
-                   window (or index -1)
-                   (mask-apply 'sdl-renderer-flags flags)))
-   (lambda (r) (sdl-destroy-renderer r))))
+  (check-nullptr (sdl-create-renderer
+                  window (or index -1)
+                  (mask-apply 'sdl-renderer-flags flags))))
 
 (defun create-software-renderer (surface)
   "Create and return a 2D software rendering context for the surface."
   (check-nullptr (sdl-create-software-renderer surface)))
 
 (defun destroy-renderer (r)
-  (sdl-cancel-collect r)
   (sdl-destroy-renderer r)
   (invalidate r))
 
@@ -223,17 +215,14 @@ about the specified renderer, and return it."
 
 (defun create-texture (renderer pixel-format access width height)
   "Use this function to create a texture for a rendering context."
-  (sdl-collect
-   (check-nullptr (sdl-create-texture renderer
-                                      (enum-value 'sdl-pixel-format pixel-format)
-                                      (enum-value 'sdl2-ffi:sdl-texture-access access)
-                                      width height))
-   (lambda (tex) (sdl-destroy-texture tex))))
+  (check-nullptr (sdl-create-texture renderer
+                                     (enum-value 'sdl-pixel-format pixel-format)
+                                     (enum-value 'sdl2-ffi:sdl-texture-access access)
+                                     width height)))
 
 (defun create-texture-from-surface (renderer surface)
   "Use this function to create a texture from sdl2 surface for a rendering context."
-  (sdl-collect (check-nullptr (sdl-create-texture-from-surface renderer surface))
-               (lambda (tex) (sdl-destroy-texture tex))))
+  (check-nullptr (sdl-create-texture-from-surface renderer surface)))
 
 (defun set-texture-color-mod (texture r g b)
   "Use this function to set an additional color value multiplied into render copy operations."
@@ -259,7 +248,6 @@ about the specified renderer, and return it."
 
 (defun destroy-texture (texture)
   "Use this function to destroy the specified texture."
-  (sdl-cancel-collect texture)
   (sdl-destroy-texture texture)
   (invalidate texture))
 

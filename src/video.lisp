@@ -64,12 +64,9 @@ located at 0,0."
   (let ((window-flags (mask-apply 'sdl-window-flags flags))
         (x (windowpos-from-coord x))
         (y (windowpos-from-coord y)))
-    (sdl-collect
-     (check-nullptr (sdl-create-window title x y w h window-flags))
-     (lambda (w) (sdl-destroy-window w)))))
+    (check-nullptr (sdl-create-window title x y w h window-flags))))
 
 (defun destroy-window (win)
-  (sdl-cancel-collect win)
   (sdl-destroy-window win)
   (autowrap:invalidate win)
   (values))
@@ -184,12 +181,9 @@ Specifying `:windowed` or `:desktop` is \"windowed\" fullscreen, using
   (sdl-is-screen-saver-enabled))
 
 (defun gl-create-context (win)
-  (sdl-collect
-   (check-nullptr (sdl-gl-create-context win))
-   (lambda (x) (sdl-gl-delete-context x))))
+  (check-nullptr (sdl-gl-create-context win)))
 
 (defun gl-delete-context (gl-context)
-  (sdl-cancel-collect gl-context)
   (sdl-gl-delete-context gl-context)
   (autowrap:invalidate gl-context)
   (values))

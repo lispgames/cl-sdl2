@@ -22,46 +22,32 @@
 
 (defun create-rgb-surface (width height depth
                            &key (r-mask 0) (g-mask 0) (b-mask 0) (a-mask 0) (flags 0))
-  (sdl-collect
-   (sdl-create-rgb-surface flags width height depth r-mask g-mask b-mask a-mask)
-   (lambda (s) (sdl-free-surface s))))
+  (sdl-create-rgb-surface flags width height depth r-mask g-mask b-mask a-mask))
 
 (defun create-rgb-surface-from (pixels width height depth pitch
                                 &key (r-mask 0) (g-mask 0) (b-mask 0) (a-mask 0))
-  (sdl-collect
-   (sdl-create-rgb-surface-from pixels width height depth pitch r-mask g-mask b-mask a-mask)
-   (lambda (s) (sdl-free-surface s))))
+  (sdl-create-rgb-surface-from pixels width height depth pitch r-mask g-mask b-mask a-mask))
 
 (defun create-rgb-surface-with-format-from (pixels width height depth pitch
                                             &key (format +pixelformat-rgba8888+))
-  (sdl-collect
-   (sdl-create-rgb-surface-with-format-from pixels width height depth pitch format)
-   (lambda (s) (sdl-free-surface s))))
+  (sdl-create-rgb-surface-with-format-from pixels width height depth pitch format))
 
 (defun free-surface (surface)
-  (sdl-cancel-collect surface)
   (sdl-free-surface surface)
   (invalidate surface))
 
 (defun load-bmp (filename)
-  (sdl-collect
-   ;; Note, SDL_LoadBMP is a macro in SDL_surface.h that is exactly this
-   (check-nullptr (sdl-load-bmp-rw
-                   (sdl-rw-from-file (namestring (merge-pathnames filename)) "rb") 1))
-   (lambda (s) (sdl-free-surface s))))
+  ;; Note, SDL_LoadBMP is a macro in SDL_surface.h that is exactly this
+  (sdl-load-bmp-rw (sdl-rw-from-file (namestring (merge-pathnames filename)) "rb") 1))
 
 (defun convert-surface (surface format &key (flags 0))
-  (sdl-collect
-   (check-nullptr (sdl-convert-surface surface format flags))
-   (lambda (s) (sdl-free-surface s))))
+  (sdl-convert-surface surface format flags))
 
 (defun convert-surface-format (surface pixel-format-enum &key (flags 0))
-  (sdl-collect
-   (check-nullptr
-    (sdl-convert-surface-format surface
-                                (enum-value '(:enum (sdl-pixel-format)) pixel-format-enum)
-                                flags))
-   (lambda (s) (sdl-free-surface s))))
+  (check-nullptr
+   (sdl-convert-surface-format surface
+                               (enum-value '(:enum (sdl-pixel-format)) pixel-format-enum)
+                               flags)))
 
 (defun blit-surface (surface-src src-rect surface-dst dst-rect)
   (sdl-upper-blit surface-src src-rect surface-dst dst-rect))

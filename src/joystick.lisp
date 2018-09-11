@@ -9,13 +9,10 @@ This function is called automatically by the event loop if joystick events are e
   (check-rc (sdl-num-joysticks)))
 
 (defun joystick-open (device-index)
-  (sdl-collect
-   (check-nullptr (sdl-joystick-open device-index))
-   (lambda (j) (sdl-joystick-close j))))
+  (sdl-joystick-open device-index))
 
 (defun joystick-close (joystick)
-  (sdl-joystick-close joystick)
-  (sdl-cancel-collect joystick))
+  (sdl-joystick-close joystick))
 
 (defun joystick-name-for-index (device-index)
   (check-nil (sdl-joystick-name-for-index device-index)))

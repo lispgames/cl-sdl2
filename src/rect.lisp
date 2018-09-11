@@ -7,7 +7,6 @@
 (defun make-point (x y)
   "Return an SDL_Point filled in with the arguments. It will be garbage collected as needed."
   (c-let ((point sdl2-ffi:sdl-point))
-    (sdl-collect point)
     (setf (point :x) x
           (point :y) y)
     point))
@@ -48,7 +47,6 @@ dest-point."
 garbage collector. This is not required, but may make garbage collection performance better if used
 in tight SDL_Point allocating loops."
   (foreign-free (ptr point))
-  (sdl-cancel-collect point)
   (autowrap:invalidate point))
 
 ;; used as a helper for with-points
@@ -88,7 +86,6 @@ to (make-point 0 0).
   "Return a pointer to SDL_Point and the number of elements in it."
   (let ((num-points (length points)))
     (c-let ((c-points sdl2-ffi:sdl-point :count num-points))
-      (sdl-collect c-points)
       (loop :for i :from 0
             :for point :in points
             :do (copy-into-point (c-points i) point))
@@ -108,7 +105,6 @@ to (make-point 0 0).
   "Allocate and return a new SDL_Rect filled in with the arguments. It
 will be garbage collected as needed."
   (c-let ((rect sdl2-ffi:sdl-rect))
-    (sdl-collect rect)
     (setf (rect :x) x
           (rect :y) y
           (rect :w) w
@@ -143,18 +139,14 @@ dest-rect."
 garbage collector. This is not required, but may make garbage collection performance better if used
 in tight SDL_Rect allocating loops."
   (foreign-free (ptr rect))
-  (sdl-cancel-collect rect)
   (autowrap:invalidate rect))
 
 ;; I hope trivial-garbage deals with these things correctly...
 
 (defmacro let-rects (bindings &body body)
   (flet ((make-rect-list (bindings)
-           (loop :for rect :in bindings :collect (list rect 'sdl2-ffi:sdl-rect)))
-         (make-collect-calls (bindings)
-           (loop :for rect :in bindings :collect (list 'sdl-collect rect))))
+           (loop :for rect :in bindings :collect (list rect 'sdl2-ffi:sdl-rect))))
     `(c-let (,@(make-rect-list bindings))
-       ,@(make-collect-calls bindings)
        ,@body)))
 
 ;; used as a helper for with-rects
@@ -194,7 +186,6 @@ to (make-rect 0 0 0 0).
   "Return a pointer to SDL_Rect and the number of elements in it."
   (let ((num-rects (length rects)))
     (c-let ((c-rects sdl2-ffi:sdl-rect :count num-rects))
-      (sdl-collect c-rects)
       (loop :for i :from 0
             :for rect :in rects
             :do (copy-into-rect (c-rects i) rect))
