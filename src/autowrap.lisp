@@ -19,7 +19,8 @@
                  #+openbsd (list "/usr/X11R6/include")
                  #+(and unix (not darwin))
                  (cl:list "/usr/lib/gcc/x86_64-pc-linux-gnu/7.3.1/include/"))
- :exclude-definitions ("SDL_LogMessageV"
+ :exclude-definitions ("SDL_main"
+                       "SDL_LogMessageV"
                        "SDL_vsnprintf"
                        "_inline$"
                        "^_mm_")
