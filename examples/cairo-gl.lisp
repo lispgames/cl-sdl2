@@ -47,7 +47,7 @@ void main() {
     (compile-and-check-shader v-shader *vertex-shader*)
     (compile-and-check-shader f-shader *fragment-shader*)
     (let ((program (gl:create-program)))
-      (if (zerop 0)
+      (if (zerop program)
           (error "Error creating program")
           (progn
             (gl:attach-shader program v-shader)
