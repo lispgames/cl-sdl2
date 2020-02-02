@@ -99,6 +99,7 @@
    #:push-quit-event
    #:next-event
    #:with-event-loop
+   #:expand-handler
 
    ;; keyboard.lisp
    #:keysym-slot-value
