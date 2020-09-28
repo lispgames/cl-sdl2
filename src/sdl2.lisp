@@ -204,6 +204,11 @@ thread."
         (setf *lisp-message-event* (sdl-register-events 1)
               (c-ref *wakeup-event* sdl2-ffi:sdl-event :type) *lisp-message-event*)))))
 
+(defun init-everything ()
+  "Low-level function to initialize SDL2 with every subsystem. Useful when not
+   using cl-sdl2's threading mechanisms."
+  (sdl-init #x7f))
+
 (defun was-init (&rest flags)
   (/= 0 (sdl-was-init (autowrap:mask-apply 'sdl-init-flags flags))))
 
@@ -221,6 +226,11 @@ thread."
     (setf *the-main-thread* nil))
   (when *the-main-thread*
     (setf *the-main-thread* nil)))
+
+(defun quit* ()
+  "Low-level function to quit SDL2. Useful when not using cl-sdl2's
+   threading mechanisms."
+  (sdl-quit))
 
 (defmacro with-init ((&rest sdl-init-flags) &body body)
   `(progn

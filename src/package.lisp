@@ -4,8 +4,7 @@
 
 (uiop:define-package #:sdl2-ffi)
 (uiop:define-package #:sdl2-ffi.accessors)
-(uiop:define-package #:sdl2-ffi.functions
-  (:export #:sdl-quit))
+(uiop:define-package #:sdl2-ffi.functions)
 
 (defpackage #:sdl2
   (:use #:cl
@@ -26,7 +25,9 @@
   (:shadow #:sdl-error)
   (:export
    #:init
+   #:init-everything
    #:quit
+   #:quit*
    #:was-init
    #:with-init
    #:in-main-thread
