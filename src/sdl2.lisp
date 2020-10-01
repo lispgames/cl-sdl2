@@ -222,7 +222,11 @@ thread."
       (when mtc (sendmsg mtc nil))))
   (when (and *the-main-thread*
              (not (eq *the-main-thread* (bt:current-thread))))
-    (bt:join-thread *the-main-thread*)
+    (handler-case
+        (bt:join-thread *the-main-thread*)
+      (error (e)
+        (declare (ignore e))
+        (setf *main-thread-channel* nil)))
     (setf *the-main-thread* nil))
   (when *the-main-thread*
     (setf *the-main-thread* nil)))
