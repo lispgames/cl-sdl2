@@ -204,10 +204,10 @@ thread."
         (setf *lisp-message-event* (sdl-register-events 1)
               (c-ref *wakeup-event* sdl2-ffi:sdl-event :type) *lisp-message-event*)))))
 
-(defun init-everything ()
-  "Low-level function to initialize SDL2 with every subsystem. Useful when not
-   using cl-sdl2's threading mechanisms."
-  (sdl-init #x7f))
+(defun init* (flags)
+  "Low-level function to initialize SDL2 with the supplied subsystems. Useful
+   when not using cl-sdl2's threading mechanisms."
+  (sdl-init (autowrap:mask-apply 'sdl-init-flags flags)))
 
 (defun was-init (&rest flags)
   (/= 0 (sdl-was-init (autowrap:mask-apply 'sdl-init-flags flags))))

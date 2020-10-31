@@ -26,7 +26,7 @@
   (:shadow #:sdl-error)
   (:export
    #:init
-   #:init-everything
+   #:init*
    #:quit
    #:quit*
    #:was-init
