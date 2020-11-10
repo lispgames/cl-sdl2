@@ -182,7 +182,9 @@ Stores the optional user-data in sdl2::*user-events*"
         ((null keyword))
       (push (list (first keyword) (second keyword)) parameter-pairs))
     `(,event-type
-      (let (,@(unpack-event-params sdl-event event-type parameter-pairs))
+      (let (,@(unpack-event-params sdl-event
+                                   event-type
+                                   (nreverse parameter-pairs)))
         ,@forms))))
 
 ;; TODO you should be able to specify a target framerate
