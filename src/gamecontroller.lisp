@@ -95,7 +95,7 @@ controller to have a different binding."
 (defun game-controller-add-mappings-from-file (file-name)
   (sdl-game-controller-add-mappings-from-rw
    (sdl-rw-from-file file-name "rb")
-   0))
+   1))
 
 (defun game-controller-name (gamecontroller)
   (sdl-game-controller-name gamecontroller))
