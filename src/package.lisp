@@ -2,9 +2,10 @@
 
 (push :sdl2 *features*)
 
-(uiop:define-package #:sdl2-ffi)
-(uiop:define-package #:sdl2-ffi.accessors)
+(uiop:define-package #:sdl2-ffi (:use))
+(uiop:define-package #:sdl2-ffi.accessors (:use))
 (uiop:define-package #:sdl2-ffi.functions
+  (:use)
   (:export #:sdl-quit))
 
 (defpackage #:sdl2
