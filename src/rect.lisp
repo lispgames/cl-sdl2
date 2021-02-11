@@ -1,8 +1,8 @@
 (in-package #:sdl2)
 
-;;;; TODO: This is missing these interfaces out of SDL_rect.h
+;;;; TODO: This is missing the interface out of SDL_rect.h
 ;;;; SDL_EnclosePoints()
-;;;; SDL_IntersectRectAndLine()
+
 
 (defun make-point (x y)
   "Return an SDL_Point filled in with the arguments. It will be garbage collected as needed."
@@ -235,6 +235,21 @@ value is always a newly allocated SDL_Rect structure."
       (unless (sdl-true-p (sdl-intersect-rect rect intersect intersect))
         (return-from intersect-rect (values nil empty))))
     (values t intersect)))
+
+(defun intersect-rect-and-line (rect x1 y1 x2 y2)
+  "Returns five values where the first value is T if the coordinates of the line
+intersect RECT. The remaining returned values represent the starting and ending
+coordinates of the line clipped to the boundary of the rectangle."
+  (c-with ((x1pos :int) (y1pos :int)
+	   (x2pos :int) (y2pos :int))
+
+    (setf x1pos x1 y1pos y1
+	  x2pos x2 y2pos y2)
+
+    (let ((intersected
+	    (sdl-true-p (sdl-intersect-rect-and-line rect (x1pos &) (y1pos &)
+						     (x2pos &) (y2pos &)))))
+      (values intersected x1pos y1pos x2pos y2pos))))
 
 (defun union-rect (first-rect &rest rects)
   "Calculate and return the union of all rectangles passed in. The result will be one large
