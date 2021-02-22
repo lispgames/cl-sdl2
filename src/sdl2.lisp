@@ -183,15 +183,20 @@ thread."
     (ensure-main-channel)
 
     ;; If we did not have a main-thread channel, make a default main thread.
-    #-(and ccl darwin)
+    #-(and (or sbcl ccl) darwin)
     (setf *the-main-thread* (bt:make-thread #'sdl-main-thread :name "SDL2 Main Thread"))
 
-    ;; On OSX, we need to run in the main thread; CCL allows us to safely do this. On other
-    ;; platforms (mainly GLX?), we just need to run in a dedicated thread.
+    ;; On OSX, we need to run in the main thread; some implementations allow us to safely
+    ;; do this. On other platforms (mainly GLX?), we just need to run in a dedicated thread.
     #+(and ccl darwin)
     (let ((thread (find 0 (ccl:all-processes) :key #'ccl:process-serial-number)))
       (setf *the-main-thread* thread)
       (ccl:process-interrupt thread #'sdl-main-thread)))
+    #+(and sbcl darwin)
+    (let ((thread (sb-thread:main-thread)))
+      (setf *the-main-thread* thread)
+      (sb-thread:interrupt-thread thread #'sdl-main-thread))
+
   (in-main-thread (:no-event t)
     ;; HACK! glutInit on OSX uses some magic undocumented API to correctly make the calling thread
     ;; the primary thread. This allows cl-sdl2 to actually work. Nothing else seemed to work at all
@@ -220,6 +225,7 @@ thread."
       (setf *main-thread-channel* nil)
       (setf *lisp-message-event* nil)
       (when mtc (sendmsg mtc nil))))
+  #-(and sbcl darwin)
   (when (and *the-main-thread*
              (not (eq *the-main-thread* (bt:current-thread))))
     (handler-case
