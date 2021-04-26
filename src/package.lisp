@@ -189,6 +189,13 @@
    #:intersect-rect
    #:union-rect
 
+   ;; color.lisp
+   #:make-color
+   #:color-r
+   #:color-g
+   #:color-b
+   #:color-a
+
    ;; render.lisp
    #:render-set-viewport
    #:render-get-viewport

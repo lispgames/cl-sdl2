@@ -48,6 +48,7 @@
    (:file "pixels")
    (:file "surface")
    (:file "rwops")
+   (:file "color")
    (:file "render" :depends-on ("rect"))))
 
 (asdf:defsystem #:sdl2/examples
