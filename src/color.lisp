@@ -1,6 +1,6 @@
 (in-package #:sdl2)
 
-(defun make-rgb-color (r g b a)
+(defun make-color (r g b a)
   "Return an SDL_Color filled in with the arguments. It will be garbage collected as needed."
   (c-let ((color sdl2-ffi:sdl-color))
     (setf (color :r) r
