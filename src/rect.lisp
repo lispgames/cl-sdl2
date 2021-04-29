@@ -54,10 +54,12 @@ in tight SDL_Point allocating loops."
   (cond
     ((symbolp binding)
      `(let ((,binding (make-point 0 0)))
-        ,@body))
+        (unwind-protect (progn ,@body)
+	  (free-point ,binding))))
     ((= (length binding) 3)
      `(let ((,(first binding) (make-point ,@(cdr binding))))
-        ,@body))
+	(unwind-protect (progn ,@body)
+	  (free-point ,(first binding)))))
     (t
      (error "with-point: Must have a binding of either a symbol or a symbol and 2 forms which are ~
 x y of a point"))))
@@ -154,10 +156,12 @@ in tight SDL_Rect allocating loops."
   (cond
     ((symbolp binding)
      `(let ((,binding (make-rect 0 0 0 0)))
-        ,@body))
+        (unwind-protect (progn ,@body)
+	  (free-rect ,binding))))
     ((= (length binding) 5)
      `(let ((,(first binding) (make-rect ,@(cdr binding))))
-        ,@body))
+        (unwind-protect (progn ,@body)
+	  (free-rect ,(first binding)))))
     (t
      (error "with-rect: Must have a binding of either a symbol or a symbol and 4 forms which are ~
 x y w h of a rectangle"))))
