@@ -9,8 +9,7 @@
 (defmethod print-object ((rinfo sdl2-ffi:sdl-renderer-info) stream)
   (c-let ((rinfo sdl2-ffi:sdl-renderer-info :from rinfo))
     (print-unreadable-object (rinfo stream :type t :identity t)
-      (format stream "name ~S flags ~A num-texture-formats ~A texture-formats TBD max-texture-width ~
-~A max-texture-height ~A"
+      (format stream "name ~S flags ~A num-texture-formats ~A texture-formats TBD max-texture-width ~A max-texture-height ~A"
               (rinfo :name)
               (rinfo :flags)
               (rinfo :num-texture-formats)
