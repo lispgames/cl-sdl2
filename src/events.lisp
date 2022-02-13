@@ -171,7 +171,9 @@ Stores the optional user-data in sdl2::*user-events*"
                            :user)))
               (if (eql keyword :user-data)
                   `(,binding (get-user-data (c-ref ,event-var sdl2-ffi:sdl-event ,ref :code)))
-                  `(,binding (c-ref ,event-var sdl2-ffi:sdl-event ,ref ,keyword)))))
+                  (if (and (or (eql ref :text) (eql ref :edit)) (eql keyword :text))
+                      `(,binding (c-ref ,event-var sdl2-ffi:sdl-event ,ref ,keyword string))
+                      `(,binding (c-ref ,event-var sdl2-ffi:sdl-event ,ref ,keyword))))))
           params))
 
 (defun expand-handler (sdl-event event-type params forms)
