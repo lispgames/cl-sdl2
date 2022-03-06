@@ -195,7 +195,8 @@ thread."
     #+(and sbcl darwin)
     (let ((thread (sb-thread:main-thread)))
       (setf *the-main-thread* thread)
-      (sb-thread:interrupt-thread thread #'sdl-main-thread))
+      (when (not (eq thread (bt:current-thread)))
+	(sb-thread:interrupt-thread thread #'sdl-main-thread)))
 
   (in-main-thread (:no-event t)
     ;; HACK! glutInit on OSX uses some magic undocumented API to correctly make the calling thread
