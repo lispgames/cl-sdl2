@@ -1,6 +1,6 @@
 (asdf:defsystem #:sdl2
   :description "Bindings for SDL2 using c2ffi."
-  :author "Chip Collier <photex@lofidelitygames.com>, Ryan Pavlik <rpavlik@gmail.com>, Peter Keller <psilord@cs.wisc.edu>"
+  :author "Michael Fiano <mail@mfiano.net>, Chip Collier <photex@lofidelitygames.com>, Ryan Pavlik <rpavlik@gmail.com>, Peter Keller <psilord@cs.wisc.edu>"
   :license "MIT"
   :depends-on (:alexandria
                :cl-autowrap
