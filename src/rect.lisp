@@ -5,7 +5,7 @@
 
 
 (defun make-point (x y)
-  "Return an SDL_Point filled in with the arguments. It will be garbage collected as needed."
+  "Return an SDL_Point filled in with the arguments."
   (c-let ((point sdl2-ffi:sdl-point))
     (setf (point :x) x
           (point :y) y)
@@ -43,9 +43,7 @@ dest-point."
   dest-point)
 
 (defun free-point (point)
-  "Specifically free the SDL_Point structure which will do the right thing with respect to the
-garbage collector. This is not required, but may make garbage collection performance better if used
-in tight SDL_Point allocating loops."
+  "Specifically free the SDL_Point structure."
   (foreign-free (ptr point))
   (autowrap:invalidate point))
 
@@ -104,8 +102,7 @@ to (make-point 0 0).
       `(progn ,@body)))
 
 (defun make-rect (x y w h)
-  "Allocate and return a new SDL_Rect filled in with the arguments. It
-will be garbage collected as needed."
+  "Allocate and return a new SDL_Rect filled in with the arguments."
   (c-let ((rect sdl2-ffi:sdl-rect))
     (setf (rect :x) x
           (rect :y) y
@@ -137,13 +134,9 @@ dest-rect."
   dest-rect)
 
 (defun free-rect (rect)
-  "Specifically free the SDL_Rect structure which will do the right thing with respect to the
-garbage collector. This is not required, but may make garbage collection performance better if used
-in tight SDL_Rect allocating loops."
+  "Specifically free the SDL_Rect structure."
   (foreign-free (ptr rect))
   (autowrap:invalidate rect))
-
-;; I hope trivial-garbage deals with these things correctly...
 
 (defmacro let-rects (bindings &body body)
   (flet ((make-rect-list (bindings)

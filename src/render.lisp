@@ -18,9 +18,7 @@
               (rinfo :max-texture-height)))))
 
 (defun free-render-info (rinfo)
-  "Specifically free the SDL_RendererInfo structure which will do the right thing with respect to
-the garbage collector. This is not required, but may make garbage collection performance better if
-used in tight SDL_RendererInfo allocating loops."
+  "Specifically free the SDL_RendererInfo structure."
   (foreign-free (ptr rinfo))
   (autowrap:invalidate rinfo))
 
