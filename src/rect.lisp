@@ -1,9 +1,5 @@
 (in-package #:sdl2)
 
-;;;; TODO: This is missing the interface out of SDL_rect.h
-;;;; SDL_EnclosePoints()
-
-
 (defun make-point (x y)
   "Return an SDL_Point filled in with the arguments."
   (c-let ((point sdl2-ffi:sdl-point))
