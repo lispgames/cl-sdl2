@@ -234,26 +234,146 @@ value is always a newly allocated SDL_Rect structure."
     (values t intersect)))
 
 (defun intersect-rect-and-line (rect x1 y1 x2 y2)
-  "Returns five values where the first value is T if the coordinates of the line
-intersect RECT. The remaining returned values represent the starting and ending
-coordinates of the line clipped to the boundary of the rectangle."
+  "Returns five values where the first value is T if the coordinates of the line intersect RECT. The
+remaining returned values represent the starting and ending coordinates of the line clipped to the
+boundary of the rectangle."
   (c-with ((x1pos :int)
-	   (y1pos :int)
-	   (x2pos :int)
-	   (y2pos :int))
-
+           (y1pos :int)
+           (x2pos :int)
+           (y2pos :int))
     (setf x1pos x1
-	  y1pos y1
-	  x2pos x2
-	  y2pos y2)
-
+          y1pos y1
+          x2pos x2
+          y2pos y2)
     (let ((intersected (sdl-true-p (sdl-intersect-rect-and-line rect (x1pos &) (y1pos &) (x2pos &) (y2pos &)))))
       (values intersected x1pos y1pos x2pos y2pos))))
 
 (defun union-rect (first-rect &rest rects)
   "Calculate and return the union of all rectangles passed in. The result will be one large
-rectangle as a newly allocated SDL_rect in which all others fit perfectly."
+rectangle as a newly allocated SDL_Rect in which all others fit perfectly."
   (let ((union-rect (copy-rect first-rect)))
     (dolist (rect rects)
       (sdl-union-rect rect union-rect union-rect))
     union-rect))
+
+;;; SDL_RectF
+
+(defmacro c-f-rect ((r) &body body)
+  `(c-let ((,r sdl2-ffi:sdl-f-rect :from ,r))
+     ,@body))
+
+(defmacro c-f-rects ((&rest wrappers) &body body)
+  (if wrappers
+      `(c-f-rect (,(car wrappers))
+         (c-f-rects (,@(cdr wrappers)) ,@body))
+      `(progn ,@body)))
+
+(defun make-f-rect (x y w h)
+  (c-let ((f-rect sdl2-ffi:sdl-f-rect))
+    (setf (f-rect :x) x
+          (f-rect :y) y
+          (f-rect :w) w
+          (f-rect :h) h)
+    f-rect))
+
+(define-struct-accessors (f-rect sdl2-ffi:sdl-f-rect)
+  :x :y (width :w) (height :h))
+
+(defmethod print-object ((f-rect sdl2-ffi:sdl-f-rect) stream)
+  (c-f-rect (f-rect)
+    (print-unreadable-object (f-rect stream :type t :identity t)
+      (format stream "x ~A y ~A w ~A h ~A" (f-rect :x) (f-rect :y) (f-rect :w) (f-rect :h)))))
+
+(defun copy-frect (f-rect)
+  "Allocate and return a new SDL_FRect and make its slots be equal to the passed in SDL_FRect."
+  (c-f-rect (f-rect)
+    (make-f-rect (f-rect :x) (f-rect :y) (f-rect :w) (f-rect :h))))
+
+(defun copy-into-f-rect (dest-f-rect src-f-rect)
+  "Copy the information from the SDL_FRect src-rect into the SDL_FRect dest-rect. Return the
+dest-rect."
+  (c-f-rects (dest-f-rect src-f-rect)
+    (setf (dest-f-rect :x) (src-f-rect :x)
+          (dest-f-rect :y) (src-f-rect :y)
+          (dest-f-rect :w) (src-f-rect :w)
+          (dest-f-rect :h) (src-f-rect :h)))
+  dest-f-rect)
+
+(defun free-f-rect (f-rect)
+  "Specifically free the SDL_FRect structure."
+  (foreign-free (ptr f-rect))
+  (autowrap:invalidate f-rect))
+
+(defmacro let-f-rects (bindings &body body)
+  (flet ((make-f-rect-list (bindings)
+           (loop :for f-rect :in bindings :collect (list f-rect 'sdl2-ffi:sdl-f-rect))))
+    `(c-let (,@(make-f-rect-list bindings))
+       ,@body)))
+
+;; used as a helper for with-f-rects
+(defmacro %with-f-rect ((binding) &body body)
+  (cond
+    ((symbolp binding)
+     `(let ((,binding (make-f-rect 0 0 0 0)))
+        (unwind-protect (progn ,@body)
+          (free-f-rect ,binding))))
+    ((= (length binding) 5)
+     `(let ((,(first binding) (make-f-rect ,@(cdr binding))))
+        (unwind-protect (progn ,@body)
+          (free-f-rect ,(first binding)))))
+    (t
+     (error "with-f-rect: Must have a binding of either a symbol or a symbol and 4 forms which are ~
+x y w h of a rectangle"))))
+
+(defmacro with-f-rects (bindings &body body)
+  "A LET-like convenient bindings facility for SDL_FRect structures. Raw symbols are bound
+to (make-f-rect 0 0 0 0).
+
+  Example:
+
+  (let ((a 1) (b 2) (c 3) (d 4))
+    (with-f-rects (foo
+                   (qux 5 10 15 20)
+                   (bar (1+ a) b c (* d 10)))
+       (list foo qux bar)))
+
+  -> (#<SDL-FFI:SDL-F-RECT x 0 y 0 w 0 z 0>
+      #<SDL-FFI:SDL-F-RECT x 5 y 10 w 15 h 20>
+      #<SDL-FFI:SDL-F-RECT x 2 y 2 w 3 d 40>)"
+  (if (null bindings)
+      `(progn ,@body)
+      `(%with-f-rect (,(car bindings))
+         (with-f-rects ,(cdr bindings) ,@body))))
+
+(defun f-rects* (&rest f-rects)
+  "Return a pointer to SDL_FRect and the number of elements in it."
+  (let ((num-f-rects (length f-rects)))
+    (c-let ((c-f-rects sdl2-ffi:sdl-f-rect :count num-f-rects))
+      (loop :for i :from 0
+            :for f-rect :in f-rects
+            :do (copy-into-f-rect (c-f-rects i) f-rect))
+      (values (c-f-rects &) num-f-rects))))
+
+(defun f-rect-empty (&rest f-rects)
+  "Return T if the rectangle has no width or height."
+  (every (lambda (f-rect)
+           (c-f-rect (f-rect)
+             (and (not (null-pointer-p (ptr f-rect)))
+                  (or (<= (f-rect :w) 0.0)
+                      (<= (f-rect :h) 0.0)))))
+         f-rects))
+
+(defun %f-rect-equal (a b)
+  "Return T if the two rectanges are valid and the slots are equal"
+  (c-f-rects (a b)
+    (and (= (a :x) (b :x))
+         (= (a :y) (b :y))
+         (= (a :w) (b :w))
+         (= (a :h) (b :h)))))
+
+(defun f-rect-equals (first-f-rect &rest f-rects)
+  "Return T if the passed in SDL_FRect structures are valid and all slots are equal to each other."
+  (dolist (f-rect f-rects)
+    (when (not (%f-rect-equal first-f-rect f-rect))
+      (return-from f-rect-equals nil)))
+  t)
