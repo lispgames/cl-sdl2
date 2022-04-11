@@ -165,29 +165,41 @@
    #:game-controller-name
 
    ;; rect.lisp
-   #:make-point
-   #:point-x
-   #:point-y
-   #:copy-point
+   #:copy-f-rect
+   #:copy-into-f-rect
    #:copy-into-point
-   #:free-point
-   #:with-points
-   #:points*
-   #:make-rect
-   #:rect-x
-   #:rect-y
-   #:rect-width
-   #:rect-height
-   #:copy-rect
    #:copy-into-rect
+   #:copy-point
+   #:copy-rect
+   #:f-rect-empty
+   #:f-rect-equals
+   #:f-rect-height
+   #:f-rect-width
+   #:f-rect-x
+   #:f-rect-y
+   #:f-rects*
+   #:free-f-rect
+   #:free-point
    #:free-rect
-   #:with-rects
-   #:rects*
-   #:rect-empty
-   #:rect-equals
    #:has-intersect
    #:intersect-rect
+   #:make-f-rect
+   #:make-point
+   #:make-rect
+   #:point-x
+   #:point-y
+   #:points*
+   #:rect-empty
+   #:rect-equals
+   #:rect-height
+   #:rect-width
+   #:rect-x
+   #:rect-y
+   #:rects*
    #:union-rect
+   #:with-f-rects
+   #:with-points
+   #:with-rects
 
    ;; render.lisp
    #:render-set-viewport

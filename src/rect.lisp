@@ -284,7 +284,7 @@ rectangle as a newly allocated SDL_Rect in which all others fit perfectly."
     (print-unreadable-object (f-rect stream :type t :identity t)
       (format stream "x ~A y ~A w ~A h ~A" (f-rect :x) (f-rect :y) (f-rect :w) (f-rect :h)))))
 
-(defun copy-frect (f-rect)
+(defun copy-f-rect (f-rect)
   "Allocate and return a new SDL_FRect and make its slots be equal to the passed in SDL_FRect."
   (c-f-rect (f-rect)
     (make-f-rect (f-rect :x) (f-rect :y) (f-rect :w) (f-rect :h))))
