@@ -8,7 +8,7 @@
         (when (string= prefix "SDL-HINT-")
           (let* ((hint (subseq name 10 (1- (length name))))
                  (keyword (alexandria:make-keyword hint)))
-            (setf (gethash keyword hints) hint)))))
+            (setf (gethash keyword hints) (symbol-value x))))))
     hints))
 
 (defun set-hint (hint value)
