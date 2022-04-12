@@ -38,6 +38,7 @@
    (:file "util")
    (:file "constants")
    (:file "sdl2")
+   (:file "hints")
    (:file "rect")
    (:file "video")
    (:file "events")
