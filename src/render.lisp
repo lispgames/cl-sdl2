@@ -99,6 +99,18 @@ rotating it by angle around the given center and also flipping it top-bottom and
              center
              (mask-apply 'sdl-renderer-flip flip))))
 
+(defun render-copy-ex-f (renderer texture &key source-rect dest-rect angle center flip)
+  "Copy a portion of the source texture to the current rendering target, with rotation and flipping,
+at subpixel precision."
+  (check-rc (sdl2-ffi.functions:sdl-render-copy-ex-f
+             renderer
+             texture
+             source-rect
+             dest-rect
+             (coerce (or angle 0) 'double-float)
+             center
+             (mask-apply 'sdl-renderer-flip flip))))
+
 (defun set-render-draw-color (renderer r g b a)
   "Use this function to set the color used for drawing operations (Rect, Line and Clear)."
   (check-rc (sdl2-ffi.functions:sdl-set-render-draw-color renderer r g b a)))

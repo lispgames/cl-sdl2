@@ -225,6 +225,7 @@
    #:set-render-target
    #:render-copy
    #:render-copy-ex
+   #:render-copy-ex-f
    #:render-present
    #:update-texture
    #:get-num-render-drivers
