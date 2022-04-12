@@ -171,6 +171,9 @@ Specifying `:windowed` or `:desktop` is \"windowed\" fullscreen, using
 (defun get-window-id (win)
   (sdl-get-window-id win))
 
+(defun get-window-display-index (window)
+  (sdl2-ffi.functions:sdl-get-window-display-index window))
+
 (defun enable-screensaver ()
   (sdl-enable-screen-saver))
 

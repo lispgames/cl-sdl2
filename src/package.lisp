@@ -201,6 +201,7 @@
    #:get-window-flags
    #:get-window-pixel-format
    #:get-window-id
+   #:get-window-display-index
    #:enable-screensaver
    #:disable-screensaver
    #:screensaver-enabled-p
