@@ -11,13 +11,14 @@
   (sdl-true-p (check-rc (sdl-show-cursor sdl2-ffi:+sdl-enable+))))
 
 (defun set-relative-mouse-mode (enabled)
-  (check-rc (sdl-set-relative-mouse-mode enabled)))
+  (let ((enabled (ecase enabled ((1 t) 1) ((0 nil) 0))))
+    (check-rc (sdl-set-relative-mouse-mode enabled))))
 
 (defun relative-mouse-mode-p ()
   (sdl-true-p (sdl-get-relative-mouse-mode)))
 
 (defun toggle-relative-mouse-mode ()
-  (set-relative-mouse-mode (if (relative-mouse-mode-p) 0 1)))
+  (set-relative-mouse-mode (relative-mouse-mode-p)))
 
 (defun mouse-state ()
   "Returns (VALUES X Y BITMASK) where X, Y give the mouse cursor position relative to the focused
