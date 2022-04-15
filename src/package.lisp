@@ -226,6 +226,7 @@
    #:render-copy
    #:render-copy-ex
    #:render-copy-ex-f
+   #:render-copy-f
    #:render-present
    #:update-texture
    #:get-num-render-drivers

@@ -87,6 +87,10 @@ structure."
   "Use this function to copy a portion of the texture to the current rendering target."
   (check-rc (sdl2-ffi.functions:sdl-render-copy renderer texture source-rect dest-rect)))
 
+(defun render-copy-f (renderer texture &key source-rect dest-rect)
+  "Copy a portion of the texture to the current rendering target at subpixel precision."
+  (check-rc (sdl2-ffi.functions:sdl-render-copy-f renderer texture source-rect dest-rect)))
+
 (defun render-copy-ex (renderer texture &key source-rect dest-rect angle center flip)
   "Use this function to copy a portion of the texture to the current rendering target, optionally
 rotating it by angle around the given center and also flipping it top-bottom and/or left-right."
