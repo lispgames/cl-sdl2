@@ -197,6 +197,13 @@ about the specified renderer, and return it."
     (check-rc (sdl-get-renderer-info renderer rinfo))
     rinfo))
 
+(defun get-renderer-max-texture-size (renderer)
+  (c-let ((info sdl2-ffi:sdl-renderer-info :from (get-renderer-info renderer)))
+    (unwind-protect
+         (values (info :max-texture-width)
+                 (info :max-texture-height))
+      (free-render-info info))))
+
 ;; TODO SDL_GetRendererOutputSize
 (defun get-renderer-output-size (renderer)
   (c-with ((x :int)

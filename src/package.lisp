@@ -237,6 +237,7 @@
    #:destroy-renderer
    #:get-renderer
    #:get-renderer-info
+   #:get-renderer-max-texture-size
    #:get-renderer-output-size
    #:create-texture
    #:create-texture-from-surface
