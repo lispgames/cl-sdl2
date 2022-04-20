@@ -217,7 +217,9 @@
    #:render-draw-rect
    #:render-draw-rects
    #:render-fill-rect
+   #:render-fill-rect-f
    #:render-fill-rects
+   #:render-fill-rects-f
    #:set-render-draw-color
    #:get-render-draw-color
    #:set-texture-blend-mode

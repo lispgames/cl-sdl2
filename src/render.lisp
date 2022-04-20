@@ -169,10 +169,19 @@ at subpixel precision."
 the drawing color. "
   (check-rc (sdl2-ffi.functions:sdl-render-fill-rect renderer sdl-rect)))
 
+(defun render-fill-rect-f (renderer sdl-rect)
+  "Fill a rectangle on the current rendering target with the drawing color at subpixel precision."
+  (check-rc (sdl2-ffi.functions:sdl-render-fill-rect-f renderer sdl-rect)))
+
 (defun render-fill-rects (renderer rects num-rects)
   "Use this function to fill some number of rectangles on the current
 rendering target with the drawing color."
   (check-rc (sdl2-ffi.functions:sdl-render-fill-rects renderer rects num-rects)))
+
+(defun render-fill-rects-f (renderer rects num-rects)
+  "Fill some number of rectangles on the current rendering target with the drawing color at subpixel
+precision."
+  (check-rc (sdl2-ffi.functions:sdl-render-fill-rects-f renderer rects num-rects)))
 
 (defun render-set-viewport (renderer sdl-rect)
   "Use this function to set the drawing area for rendering on the current target."
