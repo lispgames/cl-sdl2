@@ -49,6 +49,12 @@
   (let ((mask (autowrap:mask-apply 'keymod keywords)))
     (/= 0 (logand mask value))))
 
+(defun get-mod-state ()
+  (sdl2-ffi.functions:sdl-get-mod-state))
+
+(defun mod-key-state-p (key)
+  (mod-value-p (get-mod-state) key))
+
 (defun keyboard-state-p (scancode)
   "Whether the key corresponding to the given scancode is currently pressed."
   (let ((state (nth-value 1 (autowrap:inhibit-string-conversion

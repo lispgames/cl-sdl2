@@ -117,11 +117,13 @@
    #:scancode
    #:scancode-symbol
    #:scancode-key-to-value
+   #:get-mod-state
    #:mod-value
    #:sym-value
    #:scancode=
    #:mod-keywords
    #:mod-value-p
+   #:mod-key-state-p
    #:keyboard-state-p
    #:get-key-from-scancode
    #:get-key-name
