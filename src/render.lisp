@@ -140,6 +140,9 @@ at subpixel precision."
   "Use this function to set a texture as the current rendering target."
   (check-rc (sdl2-ffi.functions:sdl-set-render-target renderer texture)))
 
+(defun get-render-target (renderer)
+  (check-rc (sdl2-ffi.functions:sdl-get-render-target renderer)))
+
 (defun render-draw-line (renderer x1 y1 x2 y2)
   "Use this function to draw a line on the current rendering target."
   (check-rc (sdl2-ffi.functions:sdl-render-draw-line renderer x1 y1 x2 y2)))

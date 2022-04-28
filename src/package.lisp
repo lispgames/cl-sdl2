@@ -227,6 +227,7 @@
    #:set-texture-blend-mode
    #:set-render-draw-blend-mode
    #:set-render-target
+   #:get-render-target
    #:render-copy
    #:render-copy-ex
    #:render-copy-ex-f
