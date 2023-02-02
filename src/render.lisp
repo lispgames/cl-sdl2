@@ -129,6 +129,7 @@ at subpixel precision."
     (values r g b a)))
 
 (defmacro with-renderer-draw-color ((renderer r g b a) &body body)
+    "Use this macro to temporary set the color used for drawing operations (Rect, Line and Clear)."
     (with-gensyms (rv gv bv av)
     `(multiple-value-bind (,rv ,gv ,bv ,av) (sdl2:get-render-draw-color ,renderer)
          (sdl2:set-render-draw-color ,renderer ,r ,g ,b ,a)
