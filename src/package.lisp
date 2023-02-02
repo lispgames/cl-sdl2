@@ -222,6 +222,7 @@
    #:render-fill-rects-f
    #:set-render-draw-color
    #:get-render-draw-color
+   #:with-renderer-draw-color
    #:set-texture-blend-mode
    #:set-render-draw-blend-mode
    #:set-render-target
