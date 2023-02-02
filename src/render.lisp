@@ -129,14 +129,12 @@ at subpixel precision."
     (values r g b a)))
 
 (defmacro with-renderer-draw-color ((renderer r g b a) &body body)
-    (let ((rv (gensym))
-          (gv (gensym))
-          (bv (gensym))
-          (av (gensym)))
+    (with-gensyms (rv gv bv av)
     `(multiple-value-bind (,rv ,gv ,bv ,av) (sdl2:get-render-draw-color ,renderer)
          (sdl2:set-render-draw-color ,renderer ,r ,g ,b ,a)
-         (progn ,@body)
-         (sdl2:set-render-draw-color ,renderer ,rv ,gv ,bv ,av))))
+         (unwind-protect
+              (progn ,@body)
+             (sdl2:set-render-draw-color ,renderer ,rv ,gv ,bv ,av)))))
 
 (defun set-texture-blend-mode (texture blend-mode)
   "Use this function to set the blend mode for a texture, used by SDL_RenderCopy()."
