@@ -190,6 +190,7 @@
    #:free-rect
    #:has-intersect
    #:intersect-rect
+   #:intersect-rect-and-line
    #:make-f-rect
    #:make-point
    #:make-rect
