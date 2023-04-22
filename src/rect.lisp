@@ -310,7 +310,7 @@ dest-rect."
 (defmacro %with-f-rect ((binding) &body body)
   (cond
     ((symbolp binding)
-     `(let ((,binding (make-f-rect 0 0 0 0)))
+     `(let ((,binding (make-f-rect 0.0 0.0 0.0 0.0)))
         (unwind-protect (progn ,@body)
           (free-f-rect ,binding))))
     ((= (length binding) 5)
@@ -323,7 +323,7 @@ x y w h of a rectangle"))))
 
 (defmacro with-f-rects (bindings &body body)
   "A LET-like convenient bindings facility for SDL_FRect structures. Raw symbols are bound
-to (make-f-rect 0 0 0 0).
+to (make-f-rect 0.0 0.0 0.0 0.0).
 
   Example:
 
