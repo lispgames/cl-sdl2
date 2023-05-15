@@ -410,10 +410,3 @@
    #:+packedlayout-8888+
    #:+packedlayout-2101010+
    #:+packedlayout-1010102+))
-
-(defpackage #:sdl2-examples
-  (:use #:cl
-        #:alexandria
-        #:cffi)
-  (:export #:basic-test
-           #:renderer-test))

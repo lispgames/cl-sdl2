@@ -63,5 +63,6 @@
   :depends-on (:sdl2 :cl-opengl)
   :pathname "examples"
   :serial t
-  :components ((:file "basic")
+  :components ((:file "package")
+               (:file "basic")
                (:file "renderer")))
