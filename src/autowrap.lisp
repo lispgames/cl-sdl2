@@ -17,7 +17,10 @@
                    "SDL2")
  :sysincludes `,(cl:append
                  #+openbsd (cl:list "/usr/X11R6/include")
-                 #+(and unix (not darwin))
+                 ;; On ppc64 avoid interference from clang's
+                 ;; inttypes.h, so that Uint8/Uint16/Uint32/Uint64 map
+                 ;; correctly to uint8_t/uint16_t/uint32_t/uint64_t.
+                 #+(and unix (not darwin) (not ppc64))
                  (cl:list "/usr/lib/clang/13.0.1/include/"))
  :exclude-definitions ("SDL_main"
                        "SDL_LogMessageV"
