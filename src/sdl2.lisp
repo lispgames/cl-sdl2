@@ -111,6 +111,7 @@ into CL's boolean type system."
                    (sdl-quit
                      (lambda (c)
                        (declare (ignore c))
+                       (when chan (sendmsg chan nil))
                        (quit)
                        (return-from handle-message))))
       (handler-bind ((error (lambda (e) (setf condition e))))
