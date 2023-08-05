@@ -26,6 +26,8 @@
      (:static-file "SDL2.i686-pc-linux-gnu.spec")
      (:static-file "SDL2.i686-pc-windows-msvc.spec")
      (:static-file "SDL2.i686-unknown-linux-android.spec")
+     (:static-file "SDL2.powerpc64-pc-linux-gnu.spec")
+     (:static-file "SDL2.powerpc64le-pc-linux-gnu.spec")
      (:static-file "SDL2.x86_64-apple-darwin9.spec")
      (:static-file "SDL2.x86_64-pc-linux-gnu.spec")
      (:static-file "SDL2.x86_64-pc-windows-msvc.spec")
