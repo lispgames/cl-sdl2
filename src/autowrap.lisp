@@ -9,16 +9,21 @@
                    "/usr/include/"
                    "/usr/include/arm-linux-gnueabihf"
                    "/usr/include/X11/")
- :include-sources ("stdint.h"
-                   "bits/types.h"
-                   "sys/types.h"
-                   "bits/stdint"
-                   "machine/_types.h"
-                   "SDL2")
+ :include-sources #.(cl:append
+                      #+darwin (cl:list "MacOSX.sdk/usr/include/sys/_types"
+                                        "MacOSX.sdk/usr/include/_types"
+                                        "MacOSX.sdk/usr/include/arm/_types")
+                      (cl:list "stdint.h"
+                               "bits/types.h"
+                               "sys/types.h"
+                               "bits/stdint"
+                               "machine/_types.h"
+                               "SDL2"))
  :sysincludes `,(cl:append
-                 #+openbsd (cl:list "/usr/X11R6/include")
-                 #+(and unix (not darwin))
-                 (cl:list "/usr/lib/clang/13.0.1/include/"))
+                  #+openbsd (cl:list "/usr/X11R6/include")
+                  #+(and unix (not darwin))
+                  (cl:list "/usr/lib/clang/13.0.1/include/")
+                  #+darwin (cl:list "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/"))
  :exclude-definitions ("SDL_main"
                        "SDL_LogMessageV"
                        "SDL_vsnprintf"
