@@ -5,10 +5,18 @@
   `(sdl-warp-mouse-in-window ,win ,x ,y))
 
 (defun hide-cursor ()
+  "Set the cursor to invisible in all SDL2 windows."
   (sdl-true-p (check-rc (sdl-show-cursor sdl2-ffi:+sdl-disable+))))
 
 (defun show-cursor ()
+  "Set the cursor to visible in all SDL2 windows."
   (sdl-true-p (check-rc (sdl-show-cursor sdl2-ffi:+sdl-enable+))))
+
+(defun show-cursor-p ()
+  "Returns whether the cursor is currently visible."
+  (ecase (check-rc (sdl-show-cursor sdl2-ffi:+sdl-query+))
+    (0 nil)
+    (1 t)))
 
 (defun set-relative-mouse-mode (enabled)
   (let ((enabled (ecase enabled ((1 t) 1) ((0 nil) 0))))
