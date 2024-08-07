@@ -8,6 +8,7 @@
                :cl-ppcre
                :trivial-channels
                :trivial-features
+               :float-features
                #+darwin :cl-glut)
   :pathname "src"
   :serial t
