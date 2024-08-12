@@ -310,7 +310,7 @@ dest-rect."
 (defmacro %with-f-rect ((binding) &body body)
   (cond
     ((symbolp binding)
-     `(let ((,binding (make-f-rect 0 0 0 0)))
+     `(let ((,binding (make-f-rect 0.0 0.0 0.0 0.0)))
         (unwind-protect (progn ,@body)
           (free-f-rect ,binding))))
     ((= (length binding) 5)
