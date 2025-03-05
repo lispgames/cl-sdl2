@@ -9,7 +9,7 @@ It is licensed under the [MIT license](https://opensource.org/licenses/MIT).
 sdl2 is in Quicklisp, see below for instructions.
 
 ## SDL 2.0 C Library Install
-See https://wiki.libsdl.org/Installation
+See https://wiki.libsdl.org/SDL2/Installation
 
 On Linux, you can probably find SDL2 in your distribution's package
 set.  For other platforms, or for building manually, [download the
