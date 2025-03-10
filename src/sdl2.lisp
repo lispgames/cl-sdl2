@@ -128,15 +128,8 @@ into CL's boolean type system."
         :while msg :do
           (handle-message msg)))
 
-(defmacro without-fp-traps (&body body)
-  #+sbcl
-  `(sb-int:with-float-traps-masked (:underflow :overflow :inexact :invalid :divide-by-zero)
-     ,@body)
-  #-sbcl
-  `(progn ,@body))
-
 (defun sdl-main-thread ()
-  (without-fp-traps
+  (float-features:with-float-traps-masked t
     (let ((*main-thread* (bt:current-thread)))
       (loop :while *main-thread-channel* :do
         (block loop-block
