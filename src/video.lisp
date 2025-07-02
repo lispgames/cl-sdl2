@@ -230,3 +230,9 @@ Specifying `:windowed` or `:desktop` is \"windowed\" fullscreen, using
 
 (defun gl-get-proc-address (proc-name)
   (sdl-gl-get-proc-address proc-name))
+
+(defun gl-get-drawable-size (win)
+  (c-with ((width :int)
+           (height :int))
+    (sdl-gl-get-drawable-size win (width &) (height &))
+    (list width height)))

@@ -93,6 +93,7 @@
    #:gl-set-attr
    #:gl-set-attrs
    #:gl-get-proc-address
+   #:gl-get-drawable-size
    #:with-everything
 
    ;; events.lisp
