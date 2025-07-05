@@ -53,6 +53,7 @@
                             (sym (sdl2:sym-value keysym))
                             (mod-value (sdl2:mod-value keysym)))
                         (cond
+                          ((sdl2:scancode= scancode :scancode-e) (error "Demonstrate SDL restarts"))
                           ((sdl2:scancode= scancode :scancode-w) (format t "~a~%" "WALK"))
                           ((sdl2:scancode= scancode :scancode-s) (sdl2:show-cursor))
                           ((sdl2:scancode= scancode :scancode-h) (sdl2:hide-cursor)))
