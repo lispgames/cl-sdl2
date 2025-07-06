@@ -260,9 +260,9 @@ about the specified renderer, and return it."
 
 (defun get-texture-color-mod (texture)
   "Use this function to get the additional color value multiplied into render copy operations."
-  (c-with ((r :unsigned-short)
-           (g :unsigned-short)
-           (b :unsigned-short))
+  (c-with ((r :unsigned-char)
+           (g :unsigned-char)
+           (b :unsigned-char))
     (check-rc (sdl-get-texture-color-mod texture (r &) (g &) (b &)))
     (values r g b)))
 
@@ -272,7 +272,7 @@ about the specified renderer, and return it."
 
 (defun get-texture-alpha-mod (texture)
   "Use this function to get the additional alpha value multiplied into render copy operations."
-  (c-with ((alpha :unsigned-short))
+  (c-with ((alpha :unsigned-char))
     (check-rc (sdl-get-texture-alpha-mod texture (alpha &)))
     alpha))
 
